@@ -61,6 +61,18 @@ build CMakeFiles/BoardSweep.dir/BoardRepresentation.cpp.obj: CXX_COMPILER__Board
   OBJECT_DIR = CMakeFiles\BoardSweep.dir
   OBJECT_FILE_DIR = CMakeFiles\BoardSweep.dir
 
+build CMakeFiles/BoardSweep.dir/GameStart.cpp.obj: CXX_COMPILER__BoardSweep_Debug C$:/Users/nflet/CLionProjects/BoardSweep/GameStart.cpp || cmake_object_order_depends_target_BoardSweep
+  DEP_FILE = CMakeFiles\BoardSweep.dir\GameStart.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  OBJECT_DIR = CMakeFiles\BoardSweep.dir
+  OBJECT_FILE_DIR = CMakeFiles\BoardSweep.dir
+
+build CMakeFiles/BoardSweep.dir/BoardVisualization.cpp.obj: CXX_COMPILER__BoardSweep_Debug C$:/Users/nflet/CLionProjects/BoardSweep/BoardVisualization.cpp || cmake_object_order_depends_target_BoardSweep
+  DEP_FILE = CMakeFiles\BoardSweep.dir\BoardVisualization.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  OBJECT_DIR = CMakeFiles\BoardSweep.dir
+  OBJECT_FILE_DIR = CMakeFiles\BoardSweep.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target BoardSweep
@@ -69,7 +81,7 @@ build CMakeFiles/BoardSweep.dir/BoardRepresentation.cpp.obj: CXX_COMPILER__Board
 #############################################
 # Link the executable BoardSweep.exe
 
-build BoardSweep.exe: CXX_EXECUTABLE_LINKER__BoardSweep_Debug CMakeFiles/BoardSweep.dir/main.cpp.obj CMakeFiles/BoardSweep.dir/BoardRepresentation.cpp.obj
+build BoardSweep.exe: CXX_EXECUTABLE_LINKER__BoardSweep_Debug CMakeFiles/BoardSweep.dir/main.cpp.obj CMakeFiles/BoardSweep.dir/BoardRepresentation.cpp.obj CMakeFiles/BoardSweep.dir/GameStart.cpp.obj CMakeFiles/BoardSweep.dir/BoardVisualization.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\BoardSweep.dir
