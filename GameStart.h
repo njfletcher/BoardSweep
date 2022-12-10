@@ -7,6 +7,6 @@
 
 #endif //BOARDSWEEP_GAMESTART_H
 
-#include "BoardRepresentation.h"
+#include "Representation/Board.h"
 
 Board *  initializeBoardFromFen(char fen[]);

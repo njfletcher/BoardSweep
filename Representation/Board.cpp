@@ -2,7 +2,7 @@
 // Created by nflet on 12/7/2022.
 //
 
-#include "BoardRepresentation.h"
+#include "Board.h"
 
 unsigned long long Board::getBitboardByType(enumPiece piece)const{
     return bitboards[piece];
