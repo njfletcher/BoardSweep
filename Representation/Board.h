@@ -15,7 +15,7 @@ class Board{
 public:
 
     unsigned long long bitboards[14];
-    int sideToMove;
+    bool sideToMove;
 
     //4th bit: white kingside, 3rd bit: white queenside, 2nd bit:black kingside, 1st bit: black queenside
     //set bit means right to castle
