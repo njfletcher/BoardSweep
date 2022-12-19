@@ -18,7 +18,7 @@ void displayBitboard(unsigned long long binary){
         for(int square = 64 - (rankCount * 8); square < 64 - (rankCount * 8)+8; square++){
 
             cout << " ";
-            printf("%d", (binary & ( util << square ))>> square);
+            cout <<( (binary & ( util << square ))>> square);
 
         }
 
