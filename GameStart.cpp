@@ -9,36 +9,36 @@ using namespace std;
 
 
 Board*  initializeBoardFromFen(const char fen[]){
-    //"rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2 "
+    //"rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
 
     Board  * board = new Board;
 
     for(int i = 0; i<14;i++){
         board->bitboards[i] =0;
     }
-    int currentSquare = 56;
-    int charCount =0;
-    int numSquaresVisited =0;
+    unsigned int currentSquare = 56;
+    unsigned int charCount =0;
+    unsigned int numSquaresVisited =0;
 
 
     //load the squares
     while(numSquaresVisited <64){
 
-
         char occupancy = fen[charCount];
-        cout<< occupancy << endl;
+
 
         if(occupancy == '/'){
             currentSquare-=16;
         }
         else{
-            if(occupancy <9){
+            //ascii value of 9 is 57
+            if(occupancy <57){
                 currentSquare+= (occupancy - '0');
                 numSquaresVisited +=(occupancy - '0');
 
             }
             else{
-                board->bitboards[(enumPiece)occupancy]|= 1ULL << currentSquare;
+                board->bitboards[occupancy] |= 1ULL << currentSquare;
                 currentSquare++;
                 numSquaresVisited++;
             }
@@ -47,6 +47,12 @@ Board*  initializeBoardFromFen(const char fen[]){
         charCount++;
 
     }
+    board->bitboards[allWhite] = board->bitboards[P] | board->bitboards[B] | board->bitboards[N] |
+            board->bitboards[R] | board->bitboards[Q] | board->bitboards[K];
+
+    board->bitboards[allBlack] = board->bitboards[p] | board->bitboards[b] | board->bitboards[n] |
+                                 board->bitboards[r] | board->bitboards[q] | board->bitboards[k];
+
 
 
     charCount++;
@@ -54,7 +60,7 @@ Board*  initializeBoardFromFen(const char fen[]){
         board->sideToMove = white;
     }
     else board->sideToMove = black;
-    charCount++;
+    charCount+=2;
 
     while(!(fen[charCount] == ' ')){
         char castleChar = fen[charCount];
@@ -79,7 +85,6 @@ Board*  initializeBoardFromFen(const char fen[]){
     }
     charCount++;
 
-    cout << fen[charCount] << endl;
     if(fen[charCount] == '-'){
         board->enPassSquare = 64;
         charCount++;
@@ -109,13 +114,14 @@ Board*  initializeBoardFromFen(const char fen[]){
 
     for(int i =decimalCountHalf-1; i>=0;i--){
 
+        //cout << pow(10,i)* (fen[charCount]-'0')<<endl;
         halfMoveCount += pow(10,i)* (fen[charCount]-'0');
         charCount++;
     }
 
-
     board->halfMoveCount = halfMoveCount;
     charCount++;
+
     int decimalCountFull =0;
     int fullMoveCount =0;
     while(!(fen[charCount] == '\0')){
@@ -127,6 +133,7 @@ Board*  initializeBoardFromFen(const char fen[]){
 
 
     for(int i =decimalCountFull-1; i >=0;i--){
+
         fullMoveCount += pow(10,i)* (fen[charCount]-'0');
         charCount++;
     }

@@ -32,10 +32,14 @@ void displayBitboard(unsigned long long binary){
 
 void displayWholeBoard(Board * board){
 
-    cout<< board->sideToMove << " " << board->enPassSquare << " " << board->castleRights << " " << board->halfMoveCount << " " << board-> fullMoveCount;
+    cout<< "Side to move: " <<board->sideToMove <<endl;
+    cout<< "EnPassant Square: " << board->enPassSquare<<endl;
+    cout<< "Castle Rights: " << board->castleRights << endl;
+    cout <<"Half move count: " << board->halfMoveCount << endl;
+    cout << "Full move count: " << board-> fullMoveCount << endl;
     cout << endl;
     cout << "----------------All Pieces----------------------" << endl;
-    displayBitboard(board->bitboards[allBlack] || board->bitboards[allWhite] );
+    displayBitboard(board->bitboards[allBlack] | board->bitboards[allWhite] );
 
     cout << "----------------White Pieces----------------------" << endl;
     displayBitboard(board->bitboards[allWhite] );

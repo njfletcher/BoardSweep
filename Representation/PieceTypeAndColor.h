@@ -6,20 +6,20 @@
 //capital letter = white, lowercase = black
 enum enumPiece
 {
-    allWhite,
-    allBlack,
-    P,
-    p,
-    N,
-    n,
-    B,
-    b,
-    R,
-    r,
-    Q,
-    q,
-    K,
-    k
+    allWhite = 0,
+    allBlack = 1,
+    P = 'P',
+    p = 'p',
+    N = 'N',
+    n = 'n',
+    B = 'B',
+    b = 'b',
+    R = 'R',
+    r = 'r',
+    Q = 'Q',
+    q = 'q',
+    K = 'K',
+    k = 'k'
 };
 
 enum enumColor{
