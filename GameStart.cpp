@@ -4,9 +4,11 @@
 
 #include "GameStart.h"
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 
-Board*  initializeBoardFromFen(char fen[]){
+Board*  initializeBoardFromFen(const char fen[]){
     //"rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2 "
 
     Board  * board = new Board;
@@ -22,11 +24,12 @@ Board*  initializeBoardFromFen(char fen[]){
     //load the squares
     while(numSquaresVisited <64){
 
+
         char occupancy = fen[charCount];
+        cout<< occupancy << endl;
 
         if(occupancy == '/'){
-            currentSquare = currentSquare - 16;
-            break;
+            currentSquare-=16;
         }
         else{
             if(occupancy <9){
@@ -35,7 +38,7 @@ Board*  initializeBoardFromFen(char fen[]){
 
             }
             else{
-                board->bitboards[occupancy]|= 1ULL << currentSquare;
+                board->bitboards[(enumPiece)occupancy]|= 1ULL << currentSquare;
                 currentSquare++;
                 numSquaresVisited++;
             }
@@ -48,9 +51,9 @@ Board*  initializeBoardFromFen(char fen[]){
 
     charCount++;
     if(fen[charCount] == 'w'){
-        board->sideToMove = Board::white;
+        board->sideToMove = white;
     }
-    else board->sideToMove = Board::black;
+    else board->sideToMove = black;
     charCount++;
 
     while(!(fen[charCount] == ' ')){
@@ -76,6 +79,7 @@ Board*  initializeBoardFromFen(char fen[]){
     }
     charCount++;
 
+    cout << fen[charCount] << endl;
     if(fen[charCount] == '-'){
         board->enPassSquare = 64;
         charCount++;

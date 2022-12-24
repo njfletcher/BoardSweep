@@ -1,11 +1,9 @@
 //
 // Created by nflet on 12/19/2022.
 //
+#pragma once
 
-#ifndef BOARDSWEEP_PIECETYPEANDCOLOR_H
-#define BOARDSWEEP_PIECETYPEANDCOLOR_H
-
-#endif //BOARDSWEEP_PIECETYPEANDCOLOR_H
+//capital letter = white, lowercase = black
 enum enumPiece
 {
     allWhite,

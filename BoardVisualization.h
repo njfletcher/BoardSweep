@@ -1,11 +1,11 @@
 //
 // Created by nflet on 12/9/2022.
 //
+#pragma once
 
-#ifndef BOARDSWEEP_BOARDVISUALIZATION_H
-#define BOARDSWEEP_BOARDVISUALIZATION_H
-
-#endif //BOARDSWEEP_BOARDVISUALIZATION_H
+#include "Representation/Board.h"
 
 
 void displayBitboard(unsigned long long bitboard);
+
+void displayWholeBoard(Board * board);

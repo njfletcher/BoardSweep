@@ -1,20 +1,13 @@
 //
 // Created by nflet on 12/19/2022.
 //
-
-#ifndef BOARDSWEEP_MOVE_H
-#define BOARDSWEEP_MOVE_H
-
-#endif //BOARDSWEEP_MOVE_H
+#pragma once
 
 #include "Board.h"
 
 class Move{
 
 public:
-
-
-protected:
     int squareTo;
     int squareFrom;
     Board * current;
@@ -26,4 +19,7 @@ protected:
     enumPiece promotedTo;
     enumPiece capturedPiece;
     enumColor turn;
+
+
+
 };

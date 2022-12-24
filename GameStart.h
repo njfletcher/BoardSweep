@@ -1,12 +1,8 @@
 //
 // Created by nflet on 12/9/2022.
 //
-
-#ifndef BOARDSWEEP_GAMESTART_H
-#define BOARDSWEEP_GAMESTART_H
-
-#endif //BOARDSWEEP_GAMESTART_H
+#pragma once
 
 #include "Representation/Board.h"
 
-Board *  initializeBoardFromFen(char fen[]);
+Board *  initializeBoardFromFen(const char fen[]);

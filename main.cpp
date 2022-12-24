@@ -1,7 +1,13 @@
 #include <iostream>
-
+#include "BoardVisualization.h"
+#include "GameStart.h"
+#include "Representation/Move.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+
+    Board * board = initializeBoardFromFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2 ");
+    displayWholeBoard(board);
+
     return 0;
+
 }
