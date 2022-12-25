@@ -22,6 +22,7 @@ enum enumPiece
     k = 'k'
 };
 
+
 enum enumColor{
     white,
     black
