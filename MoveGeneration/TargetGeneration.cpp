@@ -1,7 +1,7 @@
 //
 // Created by nflet on 12/25/2022.
 //
-#include "MoveGeneration.h"
+#include "TargetGeneration.h"
 #include "../BoardVisualization.h"
 
 //to get other ranks from first rank, shift left by increments of 8.
@@ -102,4 +102,46 @@ unsigned long long** initializePawnAttackLookups(){
 
 
     return lookups;
+}
+
+unsigned long long generateKnightTarget(unsigned long long knight){
+    /*
+    0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0
+    0 0 2 0 1 0 0 0
+    0 3 0 0 0 8 0 0
+    0 0 0 K 0 0 0 0
+    0 4 0 0 0 7 0 0
+    0 0 5 0 6 0 0 0
+     */
+
+    unsigned long long knightTargets =0;
+
+    //in order 1-8
+    knightTargets |= (knight<<17) & (~aFile);
+    knightTargets |= (knight << 15) & (~(aFile<<7));
+    knightTargets |= (knight << 6) & (~(aFile<<7 | (aFile <<6)));
+    knightTargets |= (knight >> 10) & (~(aFile<<7 | (aFile <<6)));
+    knightTargets |= (knight >> 17) & (~(aFile<<7));
+    knightTargets |= (knight >> 15) & (~aFile);
+    knightTargets |= (knight >> 6) & (~(aFile | (aFile << 1)));
+    knightTargets |= (knight << 10) & (~(aFile | (aFile << 1)));
+
+    return knightTargets;
+
+
+}
+
+unsigned long long* initializeKnightMoveLookups(){
+
+    unsigned long long* lookups = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+        unsigned long long setBit = 1ULL << i;
+        lookups[i] = generateKnightTarget(setBit);
+    }
+
+    return lookups;
+
 }

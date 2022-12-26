@@ -24,3 +24,7 @@ unsigned long long generateBPawnWestAttackTarget(unsigned long long blackPawns);
 unsigned long long** initializePawnMoveLookups();
 
 unsigned long long** initializePawnAttackLookups();
+
+unsigned long long generateKnightTarget(unsigned long long knight);
+
+unsigned long long* initializeKnightMoveLookups();
