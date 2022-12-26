@@ -21,3 +21,6 @@ unsigned long long generateBPawnEastAttackTarget(unsigned long long blackPawns);
 
 unsigned long long generateBPawnWestAttackTarget(unsigned long long blackPawns);
 
+unsigned long long** initializePawnMoveLookups();
+
+unsigned long long** initializePawnAttackLookups();

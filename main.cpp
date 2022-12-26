@@ -9,8 +9,17 @@ int main() {
     //Board * board = initializeBoardFromFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b - h8 10 2");
     //displayWholeBoard(board);
 
-    displayBitboard(generateWPawnEastAttackTarget((unsigned long long)0xFF<<8));
-    displayBitboard(generateWPawnWestAttackTarget((unsigned long long)0xFF<<8));
+    unsigned long long ** pawnMoveLookups = initializePawnAttackLookups();
+
+    unsigned long long* wPawnMoves = *pawnMoveLookups;
+    unsigned long long* bPawnMoves = *(++pawnMoveLookups);
+
+    for(int i = 0; i < 64; i++){
+
+        displayBitboard(*bPawnMoves);
+        bPawnMoves++;
+    }
+
 
     return 0;
 
