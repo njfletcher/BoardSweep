@@ -28,3 +28,7 @@ unsigned long long** initializePawnAttackLookups();
 unsigned long long generateKnightTarget(unsigned long long knight);
 
 unsigned long long* initializeKnightMoveLookups();
+
+unsigned long long generateKingTarget(unsigned long long king);
+
+unsigned long long* initializeKingMoveLookups();

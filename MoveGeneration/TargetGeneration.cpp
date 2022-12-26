@@ -111,7 +111,7 @@ unsigned long long generateKnightTarget(unsigned long long knight){
     0 0 0 0 0 0 0 0
     0 0 2 0 1 0 0 0
     0 3 0 0 0 8 0 0
-    0 0 0 K 0 0 0 0
+    0 0 0 N 0 0 0 0
     0 4 0 0 0 7 0 0
     0 0 5 0 6 0 0 0
      */
@@ -144,4 +144,45 @@ unsigned long long* initializeKnightMoveLookups(){
 
     return lookups;
 
+}
+
+unsigned long long generateKingTarget(unsigned long long king){
+    /*
+    0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0
+    0 0 1 8 7 0 0 0
+    0 0 2 K 6 0 0 0
+    0 0 3 4 5 0 0 0
+    0 0 0 0 0 0 0 0
+     */
+
+    unsigned long long kingTargets =0;
+
+    //in order 1-8
+
+    kingTargets |= (king << 7) & (~(aFile<<7));
+    kingTargets |= (king >> 1) & (~(aFile<<7));
+    kingTargets |= (king >> 9) & (~(aFile<<7));
+    kingTargets |= (king >> 8);
+    kingTargets |= (king >> 7) & (~aFile);
+    kingTargets |= (king << 1) & (~aFile);
+    kingTargets |= (king << 9) & (~aFile);
+    kingTargets |= (king << 8);
+
+    return kingTargets;
+
+}
+
+unsigned long long* initializeKingMoveLookups(){
+
+    unsigned long long* lookups = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+        unsigned long long setBit = 1ULL << i;
+        lookups[i] = generateKingTarget(setBit);
+    }
+
+    return lookups;
 }

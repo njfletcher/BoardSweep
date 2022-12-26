@@ -21,10 +21,12 @@ int main() {
 
     unsigned long long * knightMoveLookups = initializeKnightMoveLookups();
 
+    unsigned long long * kingMoveLookups = initializeKingMoveLookups();
+
     for(int i = 0; i < 64; i++){
 
-        displayBitboard(*knightMoveLookups);
-        knightMoveLookups++;
+        displayBitboard(*kingMoveLookups);
+        kingMoveLookups++;
     }
 
 
