@@ -248,7 +248,60 @@ unsigned long long generateBishopTargetEmptyBoard(int bishopSquare){
 }
 
 unsigned long long generateRookTargetEmptyBoard(int rookSquare){
+    /*
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      1 1 1 R 1 1 1 1
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+       */
+    unsigned long long eightRank = firstRank<<56;
+    unsigned long long hFile = aFile<<7;
+    unsigned long long rookTargets =0;
+    unsigned long long rookN = (1ULL << rookSquare) & (~eightRank);
 
+    //north ray
+    while(rookN){
+        unsigned long long next = rookN <<8;
+        rookTargets |= next;
+        rookN = next & ~eightRank;
+
+    }
+
+    unsigned long long rookE = (1ULL << rookSquare) & (~hFile);
+
+    //east ray
+    while(rookE){
+        unsigned long long next = rookE <<1;
+        rookTargets |= next;
+        rookE = next & ~hFile;
+
+    }
+
+    unsigned long long rookS = (1ULL << rookSquare) & (~firstRank);
+
+    //south ray
+    while(rookS){
+        unsigned long long next = rookS >>8;
+        rookTargets |= next;
+        rookS = next & ~firstRank;
+
+    }
+
+    unsigned long long rookW = (1ULL << rookSquare) & (~aFile);
+
+    //west ray
+    while(rookW){
+        unsigned long long next = rookW >>1;
+        rookTargets |= next;
+        rookW = next & ~aFile;
+
+    }
+
+    return rookTargets;
 }
 
 unsigned long long generateQueenTargetEmptyBoard(int queenSquare){
