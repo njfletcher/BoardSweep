@@ -25,7 +25,7 @@ int main() {
 
     for(int i = 0; i < 64; i++){
 
-        displayBitboard(generateRookTargetEmptyBoard(i));
+        displayBitboard(generateQueenTargetEmptyBoard(i));
 
     }
 

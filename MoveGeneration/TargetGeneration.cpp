@@ -306,4 +306,5 @@ unsigned long long generateRookTargetEmptyBoard(int rookSquare){
 
 unsigned long long generateQueenTargetEmptyBoard(int queenSquare){
 
+    return generateBishopTargetEmptyBoard(queenSquare) | generateRookTargetEmptyBoard(queenSquare);
 }
