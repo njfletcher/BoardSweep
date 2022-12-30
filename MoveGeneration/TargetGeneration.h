@@ -38,3 +38,9 @@ unsigned long long generateBishopTargetEmptyBoard(int bishopSquare);
 unsigned long long generateRookTargetEmptyBoard(int rookSquare);
 
 unsigned long long generateQueenTargetEmptyBoard(int queenSquare);
+
+unsigned long long generateBishopTargetOnTheFly(int bishopSquare,unsigned long long allPieces);
+
+unsigned long long generateRookTargetOnTheFly(int rookSquare,unsigned long long allPieces);
+
+unsigned long long generateQueenTargetOnTheFly(int queenSquare,unsigned long long allPieces);

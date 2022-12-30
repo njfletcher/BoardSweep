@@ -25,7 +25,7 @@ int main() {
 
     for(int i = 0; i < 64; i++){
 
-        displayBitboard(generateQueenTargetEmptyBoard(i));
+        //displayBitboard(generateQueenTargetOnTheFly(i,1ULL << (i-1) | 1ULL << (i -8)));
 
     }
 

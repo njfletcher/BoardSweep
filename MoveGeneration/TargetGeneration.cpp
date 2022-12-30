@@ -308,3 +308,123 @@ unsigned long long generateQueenTargetEmptyBoard(int queenSquare){
 
     return generateBishopTargetEmptyBoard(queenSquare) | generateRookTargetEmptyBoard(queenSquare);
 }
+
+unsigned long long generateBishopTargetOnTheFly(int bishopSquare, unsigned long long allPieces){
+    /*
+  0 0 0 0 0 0 0 0
+  0 0 0 0 0 0 0 1
+  1 0 0 0 0 0 1 0
+  0 1 0 0 0 1 0 0
+  0 0 1 0 1 0 0 0
+  0 0 0 B 0 0 0 0
+  0 0 1 0 1 0 0 0
+  0 1 0 0 0 1 0 0
+   */
+
+
+    unsigned long long hFile = aFile<<7;
+    unsigned long long bishopTargets =0;
+    unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile);
+
+    //northeast ray
+    while(bishopNE){
+        unsigned long long next = bishopNE <<9;
+        bishopTargets |= next;
+        bishopNE = next & ~hFile & ~allPieces;
+
+    }
+
+    unsigned long long bishopNW = (1ULL << bishopSquare) & (~aFile);
+
+    //northwest ray
+    while(bishopNW){
+        unsigned long long next = bishopNW <<7;
+        bishopTargets |= next;
+        bishopNW = next & ~aFile & ~allPieces;
+
+    }
+
+    unsigned long long bishopSE = (1ULL << bishopSquare) & (~hFile);
+
+    //southeast ray
+    while(bishopSE){
+        unsigned long long next = bishopSE >>7;
+        bishopTargets |= next;
+        bishopSE = next & ~hFile & ~allPieces;
+
+    }
+
+    unsigned long long bishopSW = (1ULL << bishopSquare) & (~aFile);
+
+    //southwest ray
+    while(bishopSW){
+        unsigned long long next = bishopSW >>9;
+        bishopTargets |= next;
+        bishopSW = next & ~aFile & ~allPieces;
+
+    }
+
+    return bishopTargets;
+}
+
+unsigned long long generateRookTargetOnTheFly(int rookSquare,unsigned long long allPieces){
+/*
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+      1 1 1 R 1 1 1 1
+      0 0 0 1 0 0 0 0
+      0 0 0 1 0 0 0 0
+       */
+    unsigned long long eightRank = firstRank<<56;
+    unsigned long long hFile = aFile<<7;
+    unsigned long long rookTargets =0;
+    unsigned long long rookN = (1ULL << rookSquare) & (~eightRank);
+
+    //north ray
+    while(rookN){
+        unsigned long long next = rookN <<8;
+        rookTargets |= next;
+        rookN = next & ~eightRank & ~allPieces;
+
+    }
+
+    unsigned long long rookE = (1ULL << rookSquare) & (~hFile);
+
+    //east ray
+    while(rookE){
+        unsigned long long next = rookE <<1;
+        rookTargets |= next;
+        rookE = next & ~hFile & ~allPieces;
+
+    }
+
+    unsigned long long rookS = (1ULL << rookSquare) & (~firstRank);
+
+    //south ray
+    while(rookS){
+        unsigned long long next = rookS >>8;
+        rookTargets |= next;
+        rookS = next & ~firstRank & ~allPieces;
+
+    }
+
+    unsigned long long rookW = (1ULL << rookSquare) & (~aFile);
+
+    //west ray
+    while(rookW){
+        unsigned long long next = rookW >>1;
+        rookTargets |= next;
+        rookW = next & ~aFile & ~allPieces;
+
+    }
+
+    return rookTargets;
+}
+
+unsigned long long generateQueenTargetOnTheFly(int queenSquare,unsigned long long allPieces){
+
+    return generateBishopTargetOnTheFly(queenSquare,allPieces) | generateRookTargetOnTheFly(queenSquare,allPieces);
+}
