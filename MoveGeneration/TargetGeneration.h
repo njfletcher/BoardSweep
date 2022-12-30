@@ -25,10 +25,16 @@ unsigned long long** initializePawnMoveLookups();
 
 unsigned long long** initializePawnAttackLookups();
 
-unsigned long long generateKnightTarget(unsigned long long knight);
+unsigned long long generateKnightTarget(int knightSquare);
 
 unsigned long long* initializeKnightMoveLookups();
 
-unsigned long long generateKingTarget(unsigned long long king);
+unsigned long long generateKingTarget(int kingSquare);
 
 unsigned long long* initializeKingMoveLookups();
+
+unsigned long long generateBishopTargetEmptyBoard(int bishopSquare);
+
+unsigned long long generateRookTargetEmptyBoard(int rookSquare);
+
+unsigned long long generateQueenTargetEmptyBoard(int queenSquare);

@@ -25,8 +25,8 @@ int main() {
 
     for(int i = 0; i < 64; i++){
 
-        displayBitboard(*kingMoveLookups);
-        kingMoveLookups++;
+        displayBitboard(generateBishopTargetEmptyBoard(i));
+
     }
 
 

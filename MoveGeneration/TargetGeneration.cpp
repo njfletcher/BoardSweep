@@ -104,7 +104,7 @@ unsigned long long** initializePawnAttackLookups(){
     return lookups;
 }
 
-unsigned long long generateKnightTarget(unsigned long long knight){
+unsigned long long generateKnightTarget(int knightSquare){
     /*
     0 0 0 0 0 0 0 0
     0 0 0 0 0 0 0 0
@@ -116,6 +116,7 @@ unsigned long long generateKnightTarget(unsigned long long knight){
     0 0 5 0 6 0 0 0
      */
 
+    unsigned long long knight = 1ULL << knightSquare;
     unsigned long long knightTargets =0;
 
     //in order 1-8
@@ -138,15 +139,14 @@ unsigned long long* initializeKnightMoveLookups(){
     unsigned long long* lookups = new unsigned long long[64];
 
     for(int i = 0; i <64; i++){
-        unsigned long long setBit = 1ULL << i;
-        lookups[i] = generateKnightTarget(setBit);
+        lookups[i] = generateKnightTarget(i);
     }
 
     return lookups;
 
 }
 
-unsigned long long generateKingTarget(unsigned long long king){
+unsigned long long generateKingTarget(int kingSquare){
     /*
     0 0 0 0 0 0 0 0
     0 0 0 0 0 0 0 0
@@ -158,6 +158,7 @@ unsigned long long generateKingTarget(unsigned long long king){
     0 0 0 0 0 0 0 0
      */
 
+    unsigned long long king = 1ULL << kingSquare;
     unsigned long long kingTargets =0;
 
     //in order 1-8
@@ -180,9 +181,76 @@ unsigned long long* initializeKingMoveLookups(){
     unsigned long long* lookups = new unsigned long long[64];
 
     for(int i = 0; i <64; i++){
-        unsigned long long setBit = 1ULL << i;
-        lookups[i] = generateKingTarget(setBit);
+        lookups[i] = generateKingTarget(i);
     }
 
     return lookups;
+}
+
+unsigned long long generateBishopTargetEmptyBoard(int bishopSquare){
+
+    /*
+   0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 1
+   1 0 0 0 0 0 1 0
+   0 1 0 0 0 1 0 0
+   0 0 1 0 1 0 0 0
+   0 0 0 B 0 0 0 0
+   0 0 1 0 1 0 0 0
+   0 1 0 0 0 1 0 0
+    */
+
+
+    unsigned long long hFile = aFile<<7;
+    unsigned long long bishopTargets =0;
+    unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile);
+
+    //northeast ray
+    while(bishopNE){
+        unsigned long long next = bishopNE <<9;
+        bishopTargets |= next;
+        bishopNE = next & ~hFile;
+
+    }
+
+    unsigned long long bishopNW = (1ULL << bishopSquare) & (~aFile);
+
+    //northwest ray
+    while(bishopNW){
+        unsigned long long next = bishopNW <<7;
+        bishopTargets |= next;
+        bishopNW = next & ~aFile;
+
+    }
+
+    unsigned long long bishopSE = (1ULL << bishopSquare) & (~hFile);
+
+    //southeast ray
+    while(bishopSE){
+        unsigned long long next = bishopSE >>7;
+        bishopTargets |= next;
+        bishopSE = next & ~hFile;
+
+    }
+
+    unsigned long long bishopSW = (1ULL << bishopSquare) & (~aFile);
+
+    //southwest ray
+    while(bishopSW){
+        unsigned long long next = bishopSW >>9;
+        bishopTargets |= next;
+        bishopSW = next & ~aFile;
+
+    }
+
+    return bishopTargets;
+
+}
+
+unsigned long long generateRookTargetEmptyBoard(int rookSquare){
+
+}
+
+unsigned long long generateQueenTargetEmptyBoard(int queenSquare){
+
 }
