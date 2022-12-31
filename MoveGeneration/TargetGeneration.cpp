@@ -309,44 +309,45 @@ unsigned long long generateBishopTargetOnTheFly(int bishopSquare, unsigned long 
 
 
     unsigned long long hFile = aFile<<7;
+    unsigned long long eightRank = firstRank<<56;
     unsigned long long bishopTargets =0;
-    unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile);
+    unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile)  & (~eightRank);
 
     //northeast ray
     while(bishopNE){
         unsigned long long next = bishopNE <<9;
         bishopTargets |= next;
-        bishopNE = next & ~hFile & ~allPieces;
+        bishopNE = next & ~hFile & ~allPieces  & (~eightRank);
 
     }
 
-    unsigned long long bishopNW = (1ULL << bishopSquare) & (~aFile);
+    unsigned long long bishopNW = (1ULL << bishopSquare) & (~aFile)  & (~eightRank);
 
     //northwest ray
     while(bishopNW){
         unsigned long long next = bishopNW <<7;
         bishopTargets |= next;
-        bishopNW = next & ~aFile & ~allPieces;
+        bishopNW = next & ~aFile & ~allPieces  & (~eightRank);
 
     }
 
-    unsigned long long bishopSE = (1ULL << bishopSquare) & (~hFile);
+    unsigned long long bishopSE = (1ULL << bishopSquare) & (~hFile) & (~firstRank);
 
     //southeast ray
     while(bishopSE){
         unsigned long long next = bishopSE >>7;
         bishopTargets |= next;
-        bishopSE = next & ~hFile & ~allPieces;
+        bishopSE = next & ~hFile & ~allPieces & (~firstRank);
 
     }
 
-    unsigned long long bishopSW = (1ULL << bishopSquare) & (~aFile);
+    unsigned long long bishopSW = (1ULL << bishopSquare) & (~aFile) & (~firstRank);
 
     //southwest ray
     while(bishopSW){
         unsigned long long next = bishopSW >>9;
         bishopTargets |= next;
-        bishopSW = next & ~aFile & ~allPieces;
+        bishopSW = next & ~aFile & ~allPieces & (~firstRank);
 
     }
 
