@@ -166,6 +166,9 @@ unsigned long long* initializeKingMoveLookups(){
     return lookups;
 }
 
+//used in magic bitboard hashing process.
+//note: target bits at edge of each ray(on border) do not matter for magic bitboard process
+//so they are not included in the returned map
 unsigned long long generateBishopTargetEmptyBoard(int bishopSquare){
 
     /*
@@ -181,44 +184,45 @@ unsigned long long generateBishopTargetEmptyBoard(int bishopSquare){
 
 
     unsigned long long hFile = aFile<<7;
+    unsigned long long eightRank = firstRank<<56;
     unsigned long long bishopTargets =0;
-    unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile);
+    unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile) & (~eightRank);
 
     //northeast ray
     while(bishopNE){
-        unsigned long long next = bishopNE <<9;
+        unsigned long long next = bishopNE <<9 & ~hFile & ~eightRank;
         bishopTargets |= next;
-        bishopNE = next & ~hFile;
+        bishopNE = next;
 
     }
 
-    unsigned long long bishopNW = (1ULL << bishopSquare) & (~aFile);
+    unsigned long long bishopNW = (1ULL << bishopSquare) & (~aFile) & (~eightRank);
 
     //northwest ray
     while(bishopNW){
-        unsigned long long next = bishopNW <<7;
+        unsigned long long next = bishopNW <<7  & ~aFile & (~eightRank);
         bishopTargets |= next;
-        bishopNW = next & ~aFile;
+        bishopNW = next;
 
     }
 
-    unsigned long long bishopSE = (1ULL << bishopSquare) & (~hFile);
+    unsigned long long bishopSE = (1ULL << bishopSquare) & (~hFile) & (~firstRank);
 
     //southeast ray
     while(bishopSE){
-        unsigned long long next = bishopSE >>7;
+        unsigned long long next = bishopSE >>7 & ~hFile & (~firstRank);
         bishopTargets |= next;
-        bishopSE = next & ~hFile;
+        bishopSE = next;
 
     }
 
-    unsigned long long bishopSW = (1ULL << bishopSquare) & (~aFile);
+    unsigned long long bishopSW = (1ULL << bishopSquare) & (~aFile) & (~firstRank);
 
     //southwest ray
     while(bishopSW){
-        unsigned long long next = bishopSW >>9;
+        unsigned long long next = bishopSW >>9  & ~aFile & (~firstRank);
         bishopTargets |= next;
-        bishopSW = next & ~aFile;
+        bishopSW = next;
 
     }
 
@@ -226,6 +230,9 @@ unsigned long long generateBishopTargetEmptyBoard(int bishopSquare){
 
 }
 
+//used in magic bitboard hashing process.
+//note: target bits at edge of each ray(on border) do not matter for magic bitboard process
+//so they are not included in the returned map
 unsigned long long generateRookTargetEmptyBoard(int rookSquare){
     /*
       0 0 0 1 0 0 0 0
@@ -244,9 +251,9 @@ unsigned long long generateRookTargetEmptyBoard(int rookSquare){
 
     //north ray
     while(rookN){
-        unsigned long long next = rookN <<8;
+        unsigned long long next = rookN <<8  & ~eightRank;
         rookTargets |= next;
-        rookN = next & ~eightRank;
+        rookN = next;
 
     }
 
@@ -254,9 +261,9 @@ unsigned long long generateRookTargetEmptyBoard(int rookSquare){
 
     //east ray
     while(rookE){
-        unsigned long long next = rookE <<1;
+        unsigned long long next = rookE <<1  & ~hFile;
         rookTargets |= next;
-        rookE = next & ~hFile;
+        rookE = next;
 
     }
 
@@ -264,9 +271,9 @@ unsigned long long generateRookTargetEmptyBoard(int rookSquare){
 
     //south ray
     while(rookS){
-        unsigned long long next = rookS >>8;
+        unsigned long long next = rookS >>8 & ~firstRank;
         rookTargets |= next;
-        rookS = next & ~firstRank;
+        rookS = next;
 
     }
 
@@ -274,9 +281,9 @@ unsigned long long generateRookTargetEmptyBoard(int rookSquare){
 
     //west ray
     while(rookW){
-        unsigned long long next = rookW >>1;
+        unsigned long long next = rookW >>1 & ~aFile;
         rookTargets |= next;
-        rookW = next & ~aFile;
+        rookW = next;
 
     }
 
