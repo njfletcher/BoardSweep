@@ -61,27 +61,6 @@ unsigned long long generateBPawnWestAttackTarget(unsigned long long blackPawns){
     return (blackPawns >> 9) & (~(aFile<<7));
 }
 
-unsigned long long** initializePawnMoveLookups(){
-
-    unsigned long long** lookups = new unsigned long long*[2];
-
-    //white pawns, one mask for each square
-    lookups[0] = new unsigned long long[64];
-    //black pawns, one mask for each square
-    lookups[1] = new unsigned long long[64];
-
-    for(int i = 0; i <64; i++){
-
-        unsigned long long setBit = 1ULL << i;
-
-        lookups[0][i] = generateWPawnSinglePushTarget(setBit,~0) | generateWPawnDoublePushTarget(setBit,~0);
-        lookups[1][i] = generateBPawnSinglePushTarget(setBit,~0) | generateBPawnDoublePushTarget(setBit,~0);
-    }
-
-
-
-    return lookups;
-}
 unsigned long long** initializePawnAttackLookups(){
 
     unsigned long long** lookups = new unsigned long long*[2];
