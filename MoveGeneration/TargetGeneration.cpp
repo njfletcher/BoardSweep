@@ -3,6 +3,7 @@
 //
 #include "TargetGeneration.h"
 #include "../BoardVisualization.h"
+#include "../BitUtil.h"
 
 //to get other ranks from first rank, shift left by increments of 8.
 //rank i = firstRank << (8 * (i-1))
@@ -414,4 +415,47 @@ unsigned long long generateRookTargetOnTheFly(int rookSquare,unsigned long long 
 unsigned long long generateQueenTargetOnTheFly(int queenSquare,unsigned long long allPieces){
 
     return generateBishopTargetOnTheFly(queenSquare,allPieces) | generateRookTargetOnTheFly(queenSquare,allPieces);
+}
+
+unsigned long long* initializeBishopTargetLookups(){
+
+    unsigned long long* lookups = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+        lookups[i] = generateBishopTargetEmptyBoard(i);
+    }
+
+    return lookups;
+
+}
+unsigned long long* initializeRookTargetLookups(){
+
+    unsigned long long* lookups = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+        lookups[i] = generateRookTargetEmptyBoard(i);
+    }
+
+    return lookups;
+}
+unsigned long long* initializeBishopTargetCountLookup(unsigned long long * bishopMasks){
+
+    unsigned long long* lookups = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+        lookups[i] = countSetBits(bishopMasks[i]);
+    }
+
+    return lookups;
+
+}
+unsigned long long* initializeRookTargetCountLookup(unsigned long long * rookMasks){
+    unsigned long long* lookups = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+        lookups[i] = countSetBits(rookMasks[i]);
+    }
+
+    return lookups;
+
 }
