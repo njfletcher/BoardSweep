@@ -1,18 +1,13 @@
 //
 // Created by nflet on 12/25/2022.
 //
+#include <iostream>
 #include "TargetGeneration.h"
 #include "../BoardVisualization.h"
 #include "../BitUtil.h"
+#include "../Representation/UsefulConstants.h"
 
-//to get other ranks from first rank, shift left by increments of 8.
-//rank i = firstRank << (8 * (i-1))
-unsigned long long firstRank = (unsigned long long)0xFF;
-
-
-//to get other files from first file(a), shift left by increments of 1.
-//file i = aFile <<(i-1)
-unsigned long long aFile = (unsigned long long)0x101010101010101;
+using namespace std;
 
 
 unsigned long long generateWPawnSinglePushTarget(unsigned long long whitePawns, unsigned long long emptySquares){
@@ -31,35 +26,34 @@ unsigned long long generateBPawnSinglePushTarget(unsigned long long blackPawns, 
 
 unsigned long long generateWPawnDoublePushTarget(unsigned long long whitePawns, unsigned long long emptySquares){
 
-    unsigned long long fourthRank = firstRank << 24;
+
     unsigned long long singlePushTargets = generateWPawnSinglePushTarget(whitePawns,emptySquares);
     unsigned long long doubleTargets = singlePushTargets << 8;
-    return doubleTargets & emptySquares & fourthRank;
+    return doubleTargets & emptySquares & RankMasks[3];
 
 }
 
 unsigned long long generateBPawnDoublePushTarget(unsigned long long blackPawns, unsigned long long emptySquares){
 
-    unsigned long long fifthRank = firstRank << 32;
     unsigned long long singlePushTargets = generateBPawnSinglePushTarget(blackPawns,emptySquares);
     unsigned long long doubleTargets = singlePushTargets >> 8;
-    return doubleTargets & emptySquares & fifthRank;
+    return doubleTargets & emptySquares & RankMasks[4];
 }
 
 unsigned long long generateWPawnEastAttackTarget(unsigned long long whitePawns){
-    return (whitePawns << 9) & (~aFile);
+    return (whitePawns << 9) & (~FileMasks[0]);
 }
 
 unsigned long long generateWPawnWestAttackTarget(unsigned long long whitePawns){
-    return (whitePawns << 7) & (~(aFile<<7));
+    return (whitePawns << 7) & (~FileMasks[7]);
 }
 
 unsigned long long generateBPawnEastAttackTarget(unsigned long long blackPawns){
-    return (blackPawns >> 7) & (~aFile);
+    return (blackPawns >> 7) & (~FileMasks[0]);
 }
 
 unsigned long long generateBPawnWestAttackTarget(unsigned long long blackPawns){
-    return (blackPawns >> 9) & (~(aFile<<7));
+    return (blackPawns >> 9) & (~FileMasks[7]);
 }
 
 unsigned long long** initializePawnAttackLookups(){
@@ -99,15 +93,21 @@ unsigned long long generateKnightTarget(int knightSquare){
     unsigned long long knight = 1ULL << knightSquare;
     unsigned long long knightTargets =0;
 
+    unsigned long long aFile = FileMasks[0];
+    unsigned long long bFile = FileMasks[1];
+    unsigned long long gFile = FileMasks[6];
+    unsigned long long hFile = FileMasks[7];
+
+
     //in order 1-8
     knightTargets |= (knight<<17) & (~aFile);
-    knightTargets |= (knight << 15) & (~(aFile<<7));
-    knightTargets |= (knight << 6) & (~(aFile<<7 | (aFile <<6)));
-    knightTargets |= (knight >> 10) & (~(aFile<<7 | (aFile <<6)));
-    knightTargets |= (knight >> 17) & (~(aFile<<7));
+    knightTargets |= (knight << 15) & (~hFile);
+    knightTargets |= (knight << 6) & (~(hFile | gFile));
+    knightTargets |= (knight >> 10) & (~(hFile | gFile));
+    knightTargets |= (knight >> 17) & (~hFile);
     knightTargets |= (knight >> 15) & (~aFile);
-    knightTargets |= (knight >> 6) & (~(aFile | (aFile << 1)));
-    knightTargets |= (knight << 10) & (~(aFile | (aFile << 1)));
+    knightTargets |= (knight >> 6) & (~(aFile | bFile));
+    knightTargets |= (knight << 10) & (~(aFile | bFile));
 
     return knightTargets;
 
@@ -138,14 +138,17 @@ unsigned long long generateKingTarget(int kingSquare){
     0 0 0 0 0 0 0 0
      */
 
+    unsigned long long aFile = FileMasks[0];
+    unsigned long long hFile = FileMasks[7];
+
     unsigned long long king = 1ULL << kingSquare;
     unsigned long long kingTargets =0;
 
     //in order 1-8
 
-    kingTargets |= (king << 7) & (~(aFile<<7));
-    kingTargets |= (king >> 1) & (~(aFile<<7));
-    kingTargets |= (king >> 9) & (~(aFile<<7));
+    kingTargets |= (king << 7) & (~hFile);
+    kingTargets |= (king >> 1) & (~hFile);
+    kingTargets |= (king >> 9) & (~hFile);
     kingTargets |= (king >> 8);
     kingTargets |= (king >> 7) & (~aFile);
     kingTargets |= (king << 1) & (~aFile);
@@ -184,8 +187,10 @@ unsigned long long generateBishopTargetEmptyBoard(int bishopSquare){
     */
 
 
-    unsigned long long hFile = aFile<<7;
-    unsigned long long eightRank = firstRank<<56;
+    unsigned long long hFile = FileMasks[7];
+    unsigned long long eightRank = RankMasks[7];
+    unsigned long long firstRank = RankMasks[0];
+    unsigned long long aFile = FileMasks[0];
     unsigned long long bishopTargets =0;
     unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile) & (~eightRank);
 
@@ -245,8 +250,10 @@ unsigned long long generateRookTargetEmptyBoard(int rookSquare){
       0 0 0 1 0 0 0 0
       0 0 0 1 0 0 0 0
        */
-    unsigned long long eightRank = firstRank<<56;
-    unsigned long long hFile = aFile<<7;
+    unsigned long long hFile = FileMasks[7];
+    unsigned long long eightRank = RankMasks[7];
+    unsigned long long firstRank = RankMasks[0];
+    unsigned long long aFile = FileMasks[0];
     unsigned long long rookTargets =0;
     unsigned long long rookN = (1ULL << rookSquare) & (~eightRank);
 
@@ -309,8 +316,10 @@ unsigned long long generateBishopTargetOnTheFly(int bishopSquare, unsigned long 
    */
 
 
-    unsigned long long hFile = aFile<<7;
-    unsigned long long eightRank = firstRank<<56;
+    unsigned long long hFile = FileMasks[7];
+    unsigned long long eightRank = RankMasks[7];
+    unsigned long long firstRank = RankMasks[0];
+    unsigned long long aFile = FileMasks[0];
     unsigned long long bishopTargets =0;
     unsigned long long bishopNE = (1ULL << bishopSquare) & (~hFile)  & (~eightRank);
 
@@ -366,8 +375,10 @@ unsigned long long generateRookTargetOnTheFly(int rookSquare,unsigned long long 
       0 0 0 1 0 0 0 0
       0 0 0 1 0 0 0 0
        */
-    unsigned long long eightRank = firstRank<<56;
-    unsigned long long hFile = aFile<<7;
+    unsigned long long hFile = FileMasks[7];
+    unsigned long long eightRank = RankMasks[7];
+    unsigned long long firstRank = RankMasks[0];
+    unsigned long long aFile = FileMasks[0];
     unsigned long long rookTargets =0;
     unsigned long long rookN = (1ULL << rookSquare) & (~eightRank);
 
@@ -438,9 +449,9 @@ unsigned long long* initializeRookTargetLookups(){
 
     return lookups;
 }
-unsigned long long* initializeBishopTargetCountLookup(unsigned long long * bishopMasks){
+unsigned int* initializeBishopTargetCountLookup(unsigned long long * bishopMasks){
 
-    unsigned long long* lookups = new unsigned long long[64];
+    unsigned int* lookups = new unsigned int[64];
 
     for(int i = 0; i <64; i++){
         lookups[i] = countSetBits(bishopMasks[i]);
@@ -449,8 +460,8 @@ unsigned long long* initializeBishopTargetCountLookup(unsigned long long * bisho
     return lookups;
 
 }
-unsigned long long* initializeRookTargetCountLookup(unsigned long long * rookMasks){
-    unsigned long long* lookups = new unsigned long long[64];
+unsigned int* initializeRookTargetCountLookup(unsigned long long * rookMasks){
+    unsigned int* lookups = new unsigned int[64];
 
     for(int i = 0; i <64; i++){
         lookups[i] = countSetBits(rookMasks[i]);
@@ -458,4 +469,80 @@ unsigned long long* initializeRookTargetCountLookup(unsigned long long * rookMas
 
     return lookups;
 
+}
+
+//based on algorithm found in Fritz Reul's publication
+unsigned long long generateUniqueBlockerMask(int iteration, int changeableBits, unsigned long long attackMask){
+
+    unsigned long long uniqueMask = 0ULL;
+
+    unsigned long long mask = attackMask;
+
+    //loop over bits in attack mask one by one
+    for (int count = 0; count < changeableBits; count++)
+    {
+
+        int square = getIndexLSB(mask);
+
+        popBit(&mask, square);
+
+        //add popped bit to uniqueMask if the iteration number and the shift share bits
+        if (iteration & (1 << count)){
+
+            uniqueMask |= (1ULL << square);
+        }
+    }
+
+    return uniqueMask;
+
+}
+
+unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCounts, unsigned long long* rookAttacks){
+
+
+    unsigned long long** lookups = new unsigned long long*[64];
+
+    for(int square = 0; square <64; square++){
+
+        lookups[square] = new unsigned long long[4096];
+
+        unsigned long long attackMask = rookAttacks[square];
+        int bitCount = bitCounts[square];
+        unsigned long long upperBound = 1ULL << bitCount;
+
+        for(int iteration =0; iteration < upperBound; iteration++){
+
+            unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(iteration,bitCount,attackMask);
+            // use magic number to hash and get index then put into the array
+        }
+
+
+    }
+
+    return lookups;
+}
+
+unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bitCounts, unsigned long long* bishopAttacks){
+
+
+    unsigned long long** lookups = new unsigned long long*[64];
+
+    for(int square = 0; square <64; square++){
+
+        lookups[square] = new unsigned long long[512];
+
+        unsigned long long attackMask = bishopAttacks[square];
+        int bitCount = bitCounts[square];
+        unsigned long long upperBound = 1ULL << bitCount;
+
+        for(int iteration =0; iteration < upperBound; iteration++){
+
+            unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(iteration,bitCount,attackMask);
+            // use magic number to hash and get index then put into the array
+        }
+
+
+    }
+
+    return lookups;
 }

@@ -4,6 +4,10 @@
 #pragma once
 
 
-int countSetBits(unsigned long long bitboard);
+unsigned int countSetBits(unsigned long long bitboard);
 
-int getIndexLSB(unsigned long long bitboard);
+unsigned int getIndexLSB(unsigned long long bitboard);
+
+void popBit(unsigned long long* bitboardPtr, int index);
+
+unsigned int popLSB(unsigned long long* bitboardPtr);

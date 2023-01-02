@@ -33,6 +33,10 @@ unsigned long long generateQueenTargetOnTheFly(int queenSquare,unsigned long lon
 unsigned long long* initializeBishopTargetLookups();
 unsigned long long* initializeRookTargetLookups();
 
-unsigned long long* initializeBishopTargetCountLookup(unsigned long long * bishopMasks);
-unsigned long long* initializeRookTargetCountLookup(unsigned long long * rookMasks);
+unsigned int* initializeBishopTargetCountLookup(unsigned long long * bishopMasks);
+unsigned int* initializeRookTargetCountLookup(unsigned long long * rookMasks);
 
+unsigned long long generateUniqueBlockerMask(int iteration, int changeableBits, unsigned long long attackMask);
+
+unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCounts, unsigned long long* rookAttacks);
+unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bitCounts, unsigned long long* bishopAttacks);

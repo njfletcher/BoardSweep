@@ -2,7 +2,7 @@
 // Created by nflet on 12/7/2022.
 //
 #pragma once
-#include "PieceTypeAndColor.h"
+#include "UsefulConstants.h"
 
 
 

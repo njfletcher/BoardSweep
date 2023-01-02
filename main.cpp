@@ -3,7 +3,9 @@
 #include "GameStart.h"
 #include "Representation/Move.h"
 #include "MoveGeneration/TargetGeneration.h"
+#include "Representation/UsefulConstants.h"
 #include "BitUtil.h"
+#include <iomanip>
 
 using namespace std;
 int main() {
@@ -23,24 +25,18 @@ int main() {
     unsigned long long * bishopTargetLookups = initializeBishopTargetLookups();
     unsigned long long * rookTargetLookups = initializeRookTargetLookups();
 
-    unsigned long long * bishopTargetCountLookups = initializeBishopTargetCountLookup(bishopTargetLookups);
-    unsigned long long * rookTargetCountLookups = initializeRookTargetCountLookup(rookTargetLookups);
+    unsigned int * bishopTargetCountLookups = initializeBishopTargetCountLookup(bishopTargetLookups);
+    unsigned int * rookTargetCountLookups = initializeRookTargetCountLookup(rookTargetLookups);
 
 
 
-    unsigned long long test = 0ULL;
-    int count = 0;
-    for(int i = 0; i < 64; i++){
+    unsigned long long test = 0x101010101010101;
 
-      cout<< rookTargetCountLookups[i] << " ";
-      count++;
-      if(count>7){
-          count = 0;
-          cout << endl;
-      }
+    //displayBitboard(test);
+
+    cout<< (1ULL << 12) << endl;
 
 
-    }
 
 
     return 0;
