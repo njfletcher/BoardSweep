@@ -472,22 +472,27 @@ unsigned int* initializeRookTargetCountLookup(unsigned long long * rookMasks){
 }
 
 //based on algorithm found in Fritz Reul's publication
-unsigned long long generateUniqueBlockerMask(int iteration, int changeableBits, unsigned long long attackMask){
+unsigned long long generateUniqueBlockerMask(int currVal, int changeableBits, unsigned long long attackMask){
 
     unsigned long long uniqueMask = 0ULL;
 
-    unsigned long long mask = attackMask;
+    unsigned long long tempMask = attackMask;
 
-    //loop over bits in attack mask one by one
-    for (int count = 0; count < changeableBits; count++)
-    {
+    int binaryLength = changeableBits;
 
-        int square = getIndexLSB(mask);
+    //loop through the bits of currVal,
+    //associating the jth bit in the binary of currVal to the jth changeable bit in the mask
+    /*for example, the 11th bit in the binary value of currVal would be associated with the 11th changeable
+     * bit in the passed-in mask.
+     */
+    for (int bitCount = 0; bitCount < binaryLength; bitCount++){
 
-        popBit(&mask, square);
+        int square = getIndexLSB(tempMask);
 
-        //add popped bit to uniqueMask if the iteration number and the shift share bits
-        if (iteration & (1 << count)){
+        popBit(&tempMask, square);
+
+        //add popped bit to uniqueMask only if current value has a set bit in the index of bitCount
+        if (currVal & (1 << bitCount)){
 
             uniqueMask |= (1ULL << square);
         }
@@ -508,11 +513,12 @@ unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCount
 
         unsigned long long attackMask = rookAttacks[square];
         int bitCount = bitCounts[square];
-        unsigned long long upperBound = 1ULL << bitCount;
 
-        for(int iteration =0; iteration < upperBound; iteration++){
+        unsigned long long maxVal = 1ULL << bitCount;
 
-            unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(iteration,bitCount,attackMask);
+        for(int currVal =0; currVal < maxVal; currVal++){
+
+            unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(currVal,bitCount,attackMask);
             // use magic number to hash and get index then put into the array
         }
 
@@ -533,11 +539,12 @@ unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bitCou
 
         unsigned long long attackMask = bishopAttacks[square];
         int bitCount = bitCounts[square];
-        unsigned long long upperBound = 1ULL << bitCount;
 
-        for(int iteration =0; iteration < upperBound; iteration++){
+        unsigned long long maxVal = 1ULL << bitCount;
 
-            unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(iteration,bitCount,attackMask);
+        for(int currVal =0; currVal < maxVal; currVal++){
+
+            unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(currVal,bitCount,attackMask);
             // use magic number to hash and get index then put into the array
         }
 
