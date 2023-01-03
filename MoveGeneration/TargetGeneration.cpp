@@ -509,12 +509,14 @@ unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCount
 
     for(int square = 0; square <64; square++){
 
-        lookups[square] = new unsigned long long[4096];
-
-        unsigned long long attackMask = rookAttacks[square];
         int bitCount = bitCounts[square];
 
         unsigned long long maxVal = 1ULL << bitCount;
+
+        lookups[square] = new unsigned long long[maxVal];
+
+        unsigned long long attackMask = rookAttacks[square];
+
 
         for(int currVal =0; currVal < maxVal; currVal++){
 
@@ -535,12 +537,14 @@ unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bitCou
 
     for(int square = 0; square <64; square++){
 
-        lookups[square] = new unsigned long long[512];
-
-        unsigned long long attackMask = bishopAttacks[square];
         int bitCount = bitCounts[square];
 
         unsigned long long maxVal = 1ULL << bitCount;
+
+        lookups[square] = new unsigned long long[maxVal];
+
+        unsigned long long attackMask = bishopAttacks[square];
+
 
         for(int currVal =0; currVal < maxVal; currVal++){
 
