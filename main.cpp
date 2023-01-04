@@ -25,16 +25,18 @@ int main() {
     unsigned long long * bishopTargetLookups = initializeBishopTargetLookups();
     unsigned long long * rookTargetLookups = initializeRookTargetLookups();
 
-    unsigned int * bishopTargetCountLookups = initializeBishopTargetCountLookup(bishopTargetLookups);
-    unsigned int * rookTargetCountLookups = initializeRookTargetCountLookup(rookTargetLookups);
+
+    unsigned long long ** bishopMagicAttacks = initializeBishopMagicAttackTable(bishopTargetLookups);
+    unsigned long long ** rookMagicAttacks = initializeRookMagicAttackTable(rookTargetLookups);
+
+    displayBitboard(getBishopTargetFromBlockers(0,1ULL<<20,bishopMagicAttacks));
+
+    displayBitboard(getRookTargetFromBlockers(0,1ULL<<30,rookMagicAttacks));
 
 
 
-    unsigned long long test = 0x101010101010101;
 
-    //displayBitboard(test);
 
-    cout<< (1ULL << 12) << endl;
 
 
 

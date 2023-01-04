@@ -502,14 +502,103 @@ unsigned long long generateUniqueBlockerMask(int currVal, int changeableBits, un
 
 }
 
-unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCounts, unsigned long long* rookAttacks){
+void findMagicNumbers(unsigned long long* attacks, bool bishop){
+
+
+    unsigned int seed = 57;
+
+    for(int square = 0; square < 64; square++){
+
+        //get original target mask
+        unsigned long long targetMask = attacks[square];
+
+        //get target count
+        int targetCount;
+        if(bishop) targetCount= BishopTargetCount[square];
+        else targetCount= RookTargetCount[square];
+
+        unsigned int maxValue = 1<< targetCount;
+
+        unsigned long long* uniqueBlockers = new unsigned long long[maxValue];
+        unsigned long long* resultingAttackMasks = new unsigned long long[maxValue];
+        unsigned long long* usedAttackMasks = new unsigned long long[maxValue];
+
+        //initialize all unique blockers and all attack masks that result from those unique blockers
+        for(int i =0; i<maxValue;i++){
+
+            unsigned long long uniqueMask =generateUniqueBlockerMask(i,targetCount,targetMask);
+            uniqueBlockers[i] = uniqueMask;
+            if(bishop) resultingAttackMasks[i] = generateBishopTargetOnTheFly(square,uniqueMask);
+            else resultingAttackMasks[i] = generateRookTargetOnTheFly(square,uniqueMask);
+
+        }
+
+        bool magicNotFound = true;
+        unsigned long long magic = 0;
+        while(magicNotFound){
+
+            //reset used masks
+            for(int i =0; i<maxValue;i++){
+                usedAttackMasks[i] = 0ULL;
+            }
+
+            //get new candidate
+            unsigned long long candidate = generateSparseBitboard(&seed);
+
+            if(countSetBits((targetMask * candidate) & 0xFF00000000000000ULL) < 6) continue;
+
+            bool found = true;
+            //hash all unique blockers into indices, checking for acceptable collisions
+            for(int i =0; i < maxValue;i++){
+
+                unsigned long long currentBlocker = uniqueBlockers[i];
+
+                int index = (int)((currentBlocker * candidate) >> (64 - targetCount));
+
+
+                if(usedAttackMasks[i] == 0ULL){
+                    usedAttackMasks[index] = resultingAttackMasks[i];
+                }
+                else{
+
+                    //bad collision
+                    if(usedAttackMasks[index] != resultingAttackMasks[i]){
+
+                        found = false;
+                        break;
+                    }
+                }
+            }
+            if(found){
+                magic = candidate;
+                magicNotFound = false;
+            }
+            else{
+                continue;
+            }
+        }
+
+
+        cout << magic << ", " << endl;
+
+        delete uniqueBlockers;
+        delete resultingAttackMasks;
+        delete usedAttackMasks;
+
+
+    }
+
+}
+
+
+unsigned long long** initializeRookMagicAttackTable(unsigned long long* rookAttacks){
 
 
     unsigned long long** lookups = new unsigned long long*[64];
 
     for(int square = 0; square <64; square++){
 
-        int bitCount = bitCounts[square];
+        int bitCount = RookTargetCount[square];
 
         unsigned long long maxVal = 1ULL << bitCount;
 
@@ -522,6 +611,10 @@ unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCount
 
             unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(currVal,bitCount,attackMask);
             // use magic number to hash and get index then put into the array
+
+            int index = (int)((uniqueBlockerMask * RookMagics[square]) >> (64 - bitCount));
+
+            lookups[square][index] = generateRookTargetOnTheFly(square,uniqueBlockerMask);
         }
 
 
@@ -530,14 +623,14 @@ unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCount
     return lookups;
 }
 
-unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bitCounts, unsigned long long* bishopAttacks){
+unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bishopAttacks){
 
 
     unsigned long long** lookups = new unsigned long long*[64];
 
     for(int square = 0; square <64; square++){
 
-        int bitCount = bitCounts[square];
+        int bitCount = BishopTargetCount[square];
 
         unsigned long long maxVal = 1ULL << bitCount;
 
@@ -550,10 +643,28 @@ unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bitCou
 
             unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(currVal,bitCount,attackMask);
             // use magic number to hash and get index then put into the array
+
+            int index = (int)((uniqueBlockerMask * BishopMagics[square]) >> (64 - bitCount));
+
+            lookups[square][index] = generateBishopTargetOnTheFly(square,uniqueBlockerMask);
         }
 
 
     }
 
     return lookups;
+}
+
+unsigned long long getBishopTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks){
+
+    int index = (int)((blockers * BishopMagics[square]) >> (64 - BishopTargetCount[square]));
+
+    return magicAttacks[square][index];
+
+}
+unsigned long long getRookTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks){
+
+    int index = (int)((blockers * RookMagics[square]) >> (64 - RookTargetCount[square]));
+
+    return magicAttacks[square][index];
 }

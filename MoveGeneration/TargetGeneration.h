@@ -38,5 +38,10 @@ unsigned int* initializeRookTargetCountLookup(unsigned long long * rookMasks);
 
 unsigned long long generateUniqueBlockerMask(int iteration, int changeableBits, unsigned long long attackMask);
 
-unsigned long long** initializeRookMagicAttackTable(unsigned long long* bitCounts, unsigned long long* rookAttacks);
-unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bitCounts, unsigned long long* bishopAttacks);
+void findMagicNumbers(unsigned long long* attacks, bool bishop);
+
+unsigned long long** initializeRookMagicAttackTable(unsigned long long* rookAttacks);
+unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bishopAttacks);
+
+unsigned long long getBishopTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks);
+unsigned long long getRookTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks);

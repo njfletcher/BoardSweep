@@ -2,6 +2,8 @@
 // Created by nflet on 12/31/2022.
 //
 
+#include "BitUtil.h"
+
 
 //Based on Brian Kernighan's algorithm
 unsigned int countSetBits(unsigned long long bitboard){
@@ -41,3 +43,39 @@ unsigned int popLSB(unsigned long long* bitboardPtr){
 
     return index;
 }
+
+unsigned int xorShift(unsigned int* start){
+
+    unsigned int temp = *start;
+
+    temp ^= temp << 13;
+    temp ^= temp >> 17;
+    temp ^= temp << 3;
+
+    *start = temp;
+
+    return temp;
+}
+
+unsigned long long generateRandomBitboard(unsigned int* seed){
+
+    unsigned long long first = ((unsigned long long) xorShift(seed)) & 0xFFFF;
+    unsigned long long second = ((unsigned long long) xorShift(seed)) & 0xFFFF;
+    unsigned long long third = ((unsigned long long) xorShift(seed)) & 0xFFFF;
+    unsigned long long fourth = ((unsigned long long) xorShift(seed)) & 0xFFFF;
+
+
+    return first | (second << 16) | (third << 32) | (fourth << 48);
+
+
+
+}
+//Based on Tord Romstad's method
+unsigned long long generateSparseBitboard(unsigned int* seed){
+
+    return generateRandomBitboard(seed) & generateRandomBitboard(seed) & generateRandomBitboard(seed);
+}
+
+
+
+

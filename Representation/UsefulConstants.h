@@ -31,3 +31,9 @@ enum enumColor{
 extern const unsigned long long FileMasks[];
 
 extern const unsigned long long RankMasks[];
+
+extern const int BishopTargetCount[];
+extern const int RookTargetCount[];
+
+extern const unsigned long long BishopMagics[];
+extern const unsigned long long RookMagics[];
