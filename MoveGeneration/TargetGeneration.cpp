@@ -504,9 +504,6 @@ unsigned long long generateUniqueBlockerMask(int currVal, int changeableBits, un
 
 void findMagicNumbers(unsigned long long* attacks, bool bishop){
 
-
-    unsigned int seed = 57;
-
     for(int square = 0; square < 64; square++){
 
         //get original target mask
@@ -514,8 +511,8 @@ void findMagicNumbers(unsigned long long* attacks, bool bishop){
 
         //get target count
         int targetCount;
-        if(bishop) targetCount= BishopTargetCount[square];
-        else targetCount= RookTargetCount[square];
+        if(bishop) targetCount = BishopTargetCount[square];
+        else targetCount = RookTargetCount[square];
 
         unsigned int maxValue = 1<< targetCount;
 
@@ -534,7 +531,6 @@ void findMagicNumbers(unsigned long long* attacks, bool bishop){
         }
 
         bool magicNotFound = true;
-        unsigned long long magic = 0;
         while(magicNotFound){
 
             //reset used masks
@@ -543,49 +539,41 @@ void findMagicNumbers(unsigned long long* attacks, bool bishop){
             }
 
             //get new candidate
-            unsigned long long candidate = generateSparseBitboard(&seed);
+            unsigned long long candidate = generateSparseBitboard();
+
 
             if(countSetBits((targetMask * candidate) & 0xFF00000000000000ULL) < 6) continue;
 
-            bool found = true;
+
+            bool success = true;
             //hash all unique blockers into indices, checking for acceptable collisions
-            for(int i =0; i < maxValue;i++){
+            for(int i =0; i < maxValue;i++) {
 
                 unsigned long long currentBlocker = uniqueBlockers[i];
 
-                int index = (int)((currentBlocker * candidate) >> (64 - targetCount));
+                int index = (int) ((currentBlocker * candidate) >> (64 - targetCount));
 
 
-                if(usedAttackMasks[i] == 0ULL){
+                if (usedAttackMasks[index] == 0ULL) {
                     usedAttackMasks[index] = resultingAttackMasks[i];
                 }
-                else{
+                else if(usedAttackMasks[index] != resultingAttackMasks[i]){
 
-                    //bad collision
-                    if(usedAttackMasks[index] != resultingAttackMasks[i]){
-
-                        found = false;
-                        break;
-                    }
+                    success = false;
+                    break;
                 }
+
             }
-            if(found){
-                magic = candidate;
+            if(success){
+                cout<< candidate << ", " << endl;
                 magicNotFound = false;
-            }
-            else{
-                continue;
             }
         }
 
 
-        cout << magic << ", " << endl;
-
-        delete uniqueBlockers;
-        delete resultingAttackMasks;
-        delete usedAttackMasks;
-
-
+        delete[] resultingAttackMasks;
+        delete[] uniqueBlockers;
+        delete[] usedAttackMasks;
     }
 
 }
@@ -600,7 +588,7 @@ unsigned long long** initializeRookMagicAttackTable(unsigned long long* rookAtta
 
         int bitCount = RookTargetCount[square];
 
-        unsigned long long maxVal = 1ULL << bitCount;
+        unsigned int maxVal = 1 << bitCount;
 
         lookups[square] = new unsigned long long[maxVal];
 
@@ -632,7 +620,7 @@ unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bishop
 
         int bitCount = BishopTargetCount[square];
 
-        unsigned long long maxVal = 1ULL << bitCount;
+        unsigned int maxVal = 1 << bitCount;
 
         lookups[square] = new unsigned long long[maxVal];
 

@@ -29,9 +29,34 @@ int main() {
     unsigned long long ** bishopMagicAttacks = initializeBishopMagicAttackTable(bishopTargetLookups);
     unsigned long long ** rookMagicAttacks = initializeRookMagicAttackTable(rookTargetLookups);
 
-    displayBitboard(getBishopTargetFromBlockers(0,1ULL<<20,bishopMagicAttacks));
 
-    displayBitboard(getRookTargetFromBlockers(0,1ULL<<30,rookMagicAttacks));
+
+    int square = 27;
+    unsigned long long attackMask = bishopTargetLookups[square];
+    int bitCount = BishopTargetCount[square];
+    unsigned int maxVal = 1<< bitCount;
+
+
+
+   for(int currVal =0; currVal < maxVal; currVal++){
+
+        unsigned long long uniqueBlockerMask = generateUniqueBlockerMask(currVal,bitCount,attackMask);
+        // use magic number to hash and get index then put into the array
+
+        //int index = (int)((uniqueBlockerMask * RookMagics[square]) >> (64 - bitCount));
+
+
+       displayBitboard(uniqueBlockerMask);
+
+       unsigned long long result = getBishopTargetFromBlockers(square,uniqueBlockerMask,bishopMagicAttacks);
+
+       displayBitboard(result);
+
+       cout << "+++++++++++++++++++++++++++++++++++++" << endl;
+
+
+    }
+
 
 
 
