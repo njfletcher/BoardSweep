@@ -10,7 +10,7 @@
 using namespace std;
 int main() {
 
-    //Board * board = initializeBoardFromFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b - h8 10 2");
+    Board * board = initializeBoardFromFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b - h8 10 2");
     //displayWholeBoard(board);
 
     unsigned long long ** pawnAttackLookups = initializePawnAttackLookups();
@@ -60,12 +60,7 @@ int main() {
 
 
 
-
-
-
-
-
-
     return 0;
 
 }
+

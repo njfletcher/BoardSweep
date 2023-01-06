@@ -45,3 +45,4 @@ unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bishop
 
 unsigned long long getBishopTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks);
 unsigned long long getRookTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks);
+unsigned long long getQueenTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** rookMagicA, unsigned long long ** bishopMagicA);

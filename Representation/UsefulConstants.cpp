@@ -189,3 +189,4 @@ extern const unsigned long long RookMagics[64] = {
         1153207390808580418
 };
 
+

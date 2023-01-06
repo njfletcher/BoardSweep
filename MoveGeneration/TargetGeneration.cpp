@@ -656,3 +656,12 @@ unsigned long long getRookTargetFromBlockers(int square, unsigned long long bloc
 
     return magicAttacks[square][index];
 }
+
+unsigned long long getQueenTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** rookMagicA, unsigned long long ** bishopMagicA){
+
+    int rookIndex = (int)((blockers * RookMagics[square]) >> (64 - RookTargetCount[square]));
+    int bishopIndex = (int)((blockers * BishopMagics[square]) >> (64 - BishopTargetCount[square]));
+
+    return rookMagicA[square][rookIndex] | bishopMagicA[square][bishopIndex];
+
+}
