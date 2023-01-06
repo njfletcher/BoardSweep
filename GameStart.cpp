@@ -38,9 +38,73 @@ Board*  initializeBoardFromFen(const char fen[]){
 
             }
             else{
-                board->bitboards[occupancy] |= 1ULL << currentSquare;
-                currentSquare++;
-                numSquaresVisited++;
+
+
+                switch(occupancy){
+
+                    case 'P':
+                        board->bitboards[P] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'p':
+                        board->bitboards[p] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'N':
+                        board->bitboards[N] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'n':
+                        board->bitboards[n] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'B':
+                        board->bitboards[B] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'b':
+                        board->bitboards[b] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'R':
+                        board->bitboards[R] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'r':
+                        board->bitboards[r] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'Q':
+                        board->bitboards[Q] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'q':
+                        board->bitboards[q] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'K':
+                        board->bitboards[K] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+                    case 'k':
+                        board->bitboards[k] |= 1ULL << currentSquare;
+                        currentSquare++;
+                        numSquaresVisited++;
+                        break;
+
+                }
+
             }
         }
 

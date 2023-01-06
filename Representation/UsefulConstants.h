@@ -39,17 +39,3 @@ extern const int RookTargetCount[];
 extern const unsigned long long BishopMagics[];
 extern const unsigned long long RookMagics[];
 
-unsigned long long ** pawnAttackLookups;
-extern unsigned long long* wPawnAttacks;
-extern unsigned long long* bPawnAttacks;
-
-extern unsigned long long * knightMoveLookups;
-
-extern unsigned long long * kingMoveLookups;
-
-extern unsigned long long * bishopTargetLookups;
-extern unsigned long long * rookTargetLookups;
-
-
-extern unsigned long long ** bishopMagicAttacks;
-extern unsigned long long ** rookMagicAttacks;

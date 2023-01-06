@@ -4,10 +4,5 @@
 
 #include "Board.h"
 
-unsigned long long Board::getBitboardByType(enumPiece piece)const{
-    return bitboards[piece];
-}
-unsigned long long Board::getBitboardByTypeAndColor(enumPiece piece, enumColor c) const{
-    return bitboards[piece + c];
-}
+
 

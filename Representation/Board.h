@@ -27,14 +27,4 @@ public:
     unsigned int halfMoveCount;
     unsigned int fullMoveCount;
 
-    //using single char enum items so fen string chars can be used to directly index bitboard array
-    //Uppercase = white piece, lowercase = black piece
-
-    unsigned long long getBitboardByType(enumPiece piece) const;
-    unsigned long long getBitboardByTypeAndColor(enumPiece piece, enumColor c) const;
-
-
-
-
-
 };
