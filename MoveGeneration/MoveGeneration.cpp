@@ -51,11 +51,12 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Target
         attack |= getQueenTargetFromBlockers(square,allPieces,t);
     }
 
-    unsigned long long kings = bitboards[K+side];
-    while(kings){
-        int square = popLSB(&kings);
-        attack |= t->kingMoveLookups[square];
-    }
+    unsigned long long king = bitboards[K+side];
+
+    //assumption is that there will always have to be a single king on the board for each side
+    int square = popLSB(&king);
+    attack |= t->kingMoveLookups[square];
+
 
 
     return attack;
@@ -63,8 +64,9 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Target
 }
 
 
-void generateAllQuietMoves(bool side,unsigned long long* bitboards, TargetLibrary* t){
+void generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
 
+    unsigned long long* bitboards = board->bitboards;
 
     unsigned long long allPieces = bitboards[0] | bitboards[1];
 
@@ -136,15 +138,40 @@ void generateAllQuietMoves(bool side,unsigned long long* bitboards, TargetLibrar
         }
     }
 
-    unsigned long long kings = bitboards[K+side];
-    while(kings){
-        int fromSquare = popLSB(&kings);
-        unsigned long long kingAllMoves =  t->kingMoveLookups[fromSquare] & ~allPieces;
-        while(kingAllMoves){
-            int toSquare = popLSB(&kingAllMoves);
-            cout<< "from: " << fromSquare << "to: " << toSquare << "king" << " side: " << side << endl;
-        }
+    unsigned long long king = bitboards[K+side];
+
+    //assumption is that there will always have to be a single king on the board for each side
+    int kingSquare = popLSB(&king);
+    unsigned long long kingAllMoves =  t->kingMoveLookups[kingSquare] & ~allPieces;
+    while(kingAllMoves){
+        int toSquare = popLSB(&kingAllMoves);
+        cout<< "from: " << kingSquare << "to: " << toSquare << "king" << " side: " << side << endl;
     }
+
+
+    bool sideHasQueenSideCastle = board->castleRights & (1ULL<<(0+(side * 2))) && 1;
+    bool sideHasKingSideCastle = board->castleRights & (1ULL<<(1+(side * 2))) && 1;
+
+    //kingside rook before castle is always 3 bits left of king,
+    int kingRookSquare = kingSquare +3;
+
+    //queenside rook before castle is always 4 bits right of king
+    int queenRookSquare = kingSquare -4;
+
+    if(sideHasKingSideCastle){
+
+        //shift king left 2 and shift kingSideRook right 2
+
+        cout<< "from: " << kingSquare << "to: " << kingSquare+2 << "kingCastle" << " side: " << side << endl;
+
+    }
+    if(sideHasQueenSideCastle){
+
+        //shift king right 3 and shift queenSideRook left 3
+        cout<< "from: " << kingSquare << "to: " << kingSquare-3 << "kingCastle" << " side: " << side << endl;
+    }
+
+
 
 
 }
@@ -212,7 +239,7 @@ void generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
         int fromSquare = popLSB(&rooks);
         unsigned long long rookAllCaptures =
                 getRookTargetFromBlockers(fromSquare, allPieces & t->rookTargetLookups[fromSquare],
-                                          t->rookMagicAttacks) & ~enemyPieces;
+                                          t->rookMagicAttacks) & enemyPieces;
         while (rookAllCaptures) {
             int toSquare = popLSB(&rookAllCaptures);
             cout << "from: " << fromSquare << "to: " << toSquare << "rook" << " side: " << side << endl;
@@ -230,15 +257,17 @@ void generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
         }
     }
 
-    unsigned long long kings = bitboards[K + side];
-    while (kings) {
-        int fromSquare = popLSB(&kings);
-        unsigned long long kingAllCaptures = t->kingMoveLookups[fromSquare] & enemyPieces;
-        while (kingAllCaptures) {
-            int toSquare = popLSB(&kingAllCaptures);
-            cout << "from: " << fromSquare << "to: " << toSquare << "king" << " side: " << side << endl;
-        }
+
+    unsigned long long king = bitboards[K + side];
+
+    //assumption is that there will always have to be a single king on the board for each side
+    int fromSquare = popLSB(&king);
+    unsigned long long kingAllCaptures = t->kingMoveLookups[fromSquare] & enemyPieces;
+    while (kingAllCaptures) {
+        int toSquare = popLSB(&kingAllCaptures);
+        cout << "from: " << fromSquare << "to: " << toSquare << "king" << " side: " << side << endl;
     }
+
 
 
 }

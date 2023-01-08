@@ -17,7 +17,7 @@ public:
     unsigned long long bitboards[14];
     bool sideToMove;
 
-    //4th bit: white kingside, 3rd bit: white queenside, 2nd bit:black kingside, 1st bit: black queenside
+    //4th bit: black kingside, 3rd bit: black queenside, 2nd bit:white kingside, 1st bit: white queenside
     //set bit means right to castle
     unsigned int castleRights;
 
