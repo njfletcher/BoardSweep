@@ -6,38 +6,39 @@
 #include "../BoardVisualization.h"
 #include "../BitUtil.h"
 #include "../Representation/UsefulConstants.h"
+#include "../Representation/TargetLibrary.h"
 
 using namespace std;
 
 
-unsigned long long generateWPawnSinglePushTarget(unsigned long long whitePawns, unsigned long long emptySquares){
+unsigned long long generateWPawnSinglePushTarget(unsigned long long whitePawns){
 
     unsigned long long targetSquares = whitePawns << 8;
 
-    return targetSquares & emptySquares;
+    return targetSquares;
 }
 
-unsigned long long generateBPawnSinglePushTarget(unsigned long long blackPawns, unsigned long long emptySquares){
+unsigned long long generateBPawnSinglePushTarget(unsigned long long blackPawns){
 
     unsigned long long targetSquares = blackPawns >> 8;
 
-    return targetSquares & emptySquares;
+    return targetSquares;
 }
 
-unsigned long long generateWPawnDoublePushTarget(unsigned long long whitePawns, unsigned long long emptySquares){
+unsigned long long generateWPawnDoublePushTarget(unsigned long long whitePawns){
 
 
-    unsigned long long singlePushTargets = generateWPawnSinglePushTarget(whitePawns,emptySquares);
+    unsigned long long singlePushTargets = generateWPawnSinglePushTarget(whitePawns);
     unsigned long long doubleTargets = singlePushTargets << 8;
-    return doubleTargets & emptySquares & RankMasks[3];
+    return doubleTargets & RankMasks[3];
 
 }
 
-unsigned long long generateBPawnDoublePushTarget(unsigned long long blackPawns, unsigned long long emptySquares){
+unsigned long long generateBPawnDoublePushTarget(unsigned long long blackPawns){
 
-    unsigned long long singlePushTargets = generateBPawnSinglePushTarget(blackPawns,emptySquares);
+    unsigned long long singlePushTargets = generateBPawnSinglePushTarget(blackPawns);
     unsigned long long doubleTargets = singlePushTargets >> 8;
-    return doubleTargets & emptySquares & RankMasks[4];
+    return doubleTargets & RankMasks[4];
 }
 
 unsigned long long generateWPawnEastAttackTarget(unsigned long long whitePawns){
@@ -55,7 +56,46 @@ unsigned long long generateBPawnEastAttackTarget(unsigned long long blackPawns){
 unsigned long long generateBPawnWestAttackTarget(unsigned long long blackPawns){
     return (blackPawns >> 9) & (~FileMasks[7]);
 }
+unsigned long long** initializePawnSinglePushLookups(){
 
+    unsigned long long** lookups = new unsigned long long*[2];
+
+    //white pawns, one mask for each square
+    lookups[0] = new unsigned long long[64];
+    //black pawns, one mask for each square
+    lookups[1] = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+
+        unsigned long long setBit = 1ULL << i;
+
+        lookups[0][i] = generateWPawnSinglePushTarget(setBit);
+        lookups[1][i] = generateBPawnSinglePushTarget(setBit);
+    }
+
+
+
+    return lookups;
+}
+unsigned long long** initializePawnDoublePushLookups(){
+
+    unsigned long long** lookups = new unsigned long long*[2];
+
+    //white pawns, one mask for each square
+    lookups[0] = new unsigned long long[64];
+    //black pawns, one mask for each square
+    lookups[1] = new unsigned long long[64];
+
+    for(int i = 0; i <64; i++){
+
+        unsigned long long setBit = 1ULL << i;
+
+        lookups[0][i] = generateWPawnDoublePushTarget(setBit);
+        lookups[1][i] = generateBPawnDoublePushTarget(setBit);
+    }
+
+    return lookups;
+}
 unsigned long long** initializePawnAttackLookups(){
 
     unsigned long long** lookups = new unsigned long long*[2];
@@ -643,25 +683,27 @@ unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bishop
     return lookups;
 }
 
-unsigned long long getBishopTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks){
+unsigned long long getBishopTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** bMagicAttacks){
 
     int index = (int)((blockers * BishopMagics[square]) >> (64 - BishopTargetCount[square]));
 
-    return magicAttacks[square][index];
+    return bMagicAttacks[square][index];
 
 }
-unsigned long long getRookTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks){
+unsigned long long getRookTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** rMagicAttacks){
 
     int index = (int)((blockers * RookMagics[square]) >> (64 - RookTargetCount[square]));
 
-    return magicAttacks[square][index];
+    return rMagicAttacks[square][index];
 }
 
-unsigned long long getQueenTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** rookMagicA, unsigned long long ** bishopMagicA){
+unsigned long long getQueenTargetFromBlockers(int square, unsigned long long allPieces,TargetLibrary* t){
 
-    int rookIndex = (int)((blockers * RookMagics[square]) >> (64 - RookTargetCount[square]));
-    int bishopIndex = (int)((blockers * BishopMagics[square]) >> (64 - BishopTargetCount[square]));
+    unsigned long long rookBlockers = allPieces & t->rookTargetLookups[square];
+    unsigned long long bishopBlockers = allPieces & t->bishopTargetLookups[square];
+    int rookIndex = (int)((rookBlockers * RookMagics[square]) >> (64 - RookTargetCount[square]));
+    int bishopIndex = (int)((bishopBlockers * BishopMagics[square]) >> (64 - BishopTargetCount[square]));
 
-    return rookMagicA[square][rookIndex] | bishopMagicA[square][bishopIndex];
+    return t->rookMagicAttacks[square][rookIndex] | t->bishopMagicAttacks[square][bishopIndex];
 
 }

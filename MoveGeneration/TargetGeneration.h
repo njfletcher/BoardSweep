@@ -4,10 +4,14 @@
 
 #pragma once
 
-unsigned long long generateWPawnSinglePushTarget(unsigned long long whitePawns, unsigned long long allPieces);
-unsigned long long generateBPawnSinglePushTarget(unsigned long long blackPawns, unsigned long long allPieces);
-unsigned long long generateWPawnDoublePushTarget(unsigned long long whitePawns, unsigned long long allPieces);
-unsigned long long generateBPawnDoublePushTarget(unsigned long long blackPawns, unsigned long long allPieces);
+#include "../Representation/TargetLibrary.h"
+
+unsigned long long generateWPawnSinglePushTarget(unsigned long long whitePawns);
+unsigned long long generateBPawnSinglePushTarget(unsigned long long blackPawns);
+unsigned long long generateWPawnDoublePushTarget(unsigned long long whitePawns);
+unsigned long long generateBPawnDoublePushTarget(unsigned long long blackPawns);
+unsigned long long** initializePawnSinglePushLookups();
+unsigned long long** initializePawnDoublePushLookups();
 
 
 unsigned long long generateWPawnEastAttackTarget(unsigned long long whitePawns);
@@ -45,4 +49,4 @@ unsigned long long** initializeBishopMagicAttackTable(unsigned long long* bishop
 
 unsigned long long getBishopTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks);
 unsigned long long getRookTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** magicAttacks);
-unsigned long long getQueenTargetFromBlockers(int square, unsigned long long blockers, unsigned long long** rookMagicA, unsigned long long ** bishopMagicA);
+unsigned long long getQueenTargetFromBlockers(int square, unsigned long long allPieces,TargetLibrary* t);

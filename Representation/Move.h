@@ -10,7 +10,7 @@ class Move{
 public:
     int squareTo;
     int squareFrom;
-    Board * current;
+    //Board * current;
     bool capture;
     bool promotion;
     bool enPassant;
@@ -18,7 +18,7 @@ public:
     enumPiece movedPiece;
     enumPiece promotedTo;
     enumPiece capturedPiece;
-    enumColor turn;
+    //enumColor turn;
 
 
 

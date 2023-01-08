@@ -19,39 +19,39 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Target
     unsigned long long blackPieces = bitboards[1];
     unsigned long long allPieces = whitePieces | blackPieces;
 
-   unsigned long long pawns = bitboards[2+side];
+   unsigned long long pawns = bitboards[P+side];
    while(pawns){
 
         int square = popLSB(&pawns);
         attack |= t->pawnAttackLookups[side][square];
     }
 
-    unsigned long long knights = bitboards[4+side];
+    unsigned long long knights = bitboards[N+side];
     while(knights){
         int square = popLSB(&knights);
         attack |= t->knightMoveLookups[square];
     }
 
-    unsigned long long bishops = bitboards[6+side];
+    unsigned long long bishops = bitboards[B+side];
     while(bishops){
         int square = popLSB(&bishops);
         attack |= getBishopTargetFromBlockers(square,allPieces  & t->bishopTargetLookups[square],t->bishopMagicAttacks);
     }
 
-    unsigned long long rooks = bitboards[8+side];
+    unsigned long long rooks = bitboards[R+side];
     while(rooks){
         int square = popLSB(&rooks);
         attack |= getRookTargetFromBlockers(square,allPieces & t->rookTargetLookups[square],t->rookMagicAttacks);
     }
 
-    unsigned long long queens = bitboards[10+side];
+    unsigned long long queens = bitboards[Q+side];
     while(queens){
         int square = popLSB(&queens);
-        unsigned long long blockers = (allPieces & t->rookTargetLookups[square]) | (allPieces & t->bishopTargetLookups[square]);
-        attack |= getQueenTargetFromBlockers(square,blockers,t->rookMagicAttacks,t->bishopMagicAttacks);
+
+        attack |= getQueenTargetFromBlockers(square,allPieces,t);
     }
 
-    unsigned long long kings = bitboards[12+side];
+    unsigned long long kings = bitboards[K+side];
     while(kings){
         int square = popLSB(&kings);
         attack |= t->kingMoveLookups[square];
@@ -59,5 +59,92 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Target
 
 
     return attack;
+
+}
+
+
+void generateAllQuietMoves(bool side,unsigned long long* bitboards, TargetLibrary* t){
+
+
+    unsigned long long allPieces = bitboards[0] | bitboards[1];
+
+    unsigned long long pawns = bitboards[P+side];
+
+    while(pawns){
+        int fromSquare = popLSB(&pawns);
+
+        unsigned long long pawnSingle = t->pawnSinglePushLookups[side][fromSquare];
+        unsigned long long pawnDouble = t->pawnDoublePushLookups[side][fromSquare];
+
+
+        unsigned long long pawnMoveFirst = (pawnSingle & ~allPieces);
+        unsigned long long pawnMoveSecond = (pawnDouble & ~allPieces);
+        unsigned long long pawnAllMoves = pawnMoveFirst | ((pawnMoveFirst && pawnMoveSecond) * pawnMoveSecond);
+
+        while(pawnAllMoves){
+            int toSquare = popLSB(&pawnAllMoves);
+
+            cout<< "from: " << fromSquare << "to: " << toSquare << "pawn" << " side: " << side << endl;
+
+        }
+
+    }
+
+
+    unsigned long long knights = bitboards[N+side];
+    while(knights){
+        int fromSquare = popLSB(&knights);
+        unsigned long long knightAllMoves = t->knightMoveLookups[fromSquare] & ~allPieces;
+        while(knightAllMoves){
+            int toSquare = popLSB(&knightAllMoves);
+
+            cout<< "from: " << fromSquare << "to: " << toSquare << "knight" << " side: " << side << endl;
+        }
+    }
+
+
+    unsigned long long bishops = bitboards[B+side];
+    while(bishops){
+        int fromSquare = popLSB(&bishops);
+        unsigned long long bishopAllMoves =  getBishopTargetFromBlockers(fromSquare,allPieces  & t->bishopTargetLookups[fromSquare],t->bishopMagicAttacks) & ~allPieces;
+
+        while(bishopAllMoves){
+            int toSquare = popLSB(&bishopAllMoves);
+            cout<< "from: " << fromSquare << "to: " << toSquare << "bishop" << " side: " << side << endl;
+        }
+    }
+
+    unsigned long long rooks = bitboards[R+side];
+    while(rooks){
+        int fromSquare = popLSB(&rooks);
+        unsigned long long rookAllMoves =  getRookTargetFromBlockers(fromSquare,allPieces  & t->rookTargetLookups[fromSquare],t->rookMagicAttacks) & ~allPieces;
+
+        while(rookAllMoves){
+            int toSquare = popLSB(&rookAllMoves);
+            cout<< "from: " << fromSquare << "to: " << toSquare << "rook" << " side: " << side << endl;
+        }
+    }
+
+    unsigned long long queens = bitboards[Q+side];
+    while(queens){
+        int fromSquare = popLSB(&queens);
+        unsigned long long queenAllMoves = getQueenTargetFromBlockers(fromSquare,allPieces,t) & ~allPieces;
+
+        while(queenAllMoves){
+            int toSquare = popLSB(&queenAllMoves);
+            cout<< "from: " << fromSquare << "to: " << toSquare << "queen" << " side: " << side << endl;
+        }
+    }
+
+    unsigned long long kings = bitboards[K+side];
+    while(kings){
+        int fromSquare = popLSB(&kings);
+        unsigned long long kingAllMoves =  t->kingMoveLookups[fromSquare] & ~allPieces;
+        while(kingAllMoves){
+            int toSquare = popLSB(&kingAllMoves);
+            cout<< "from: " << fromSquare << "to: " << toSquare << "king" << " side: " << side << endl;
+        }
+    }
+
 
 }

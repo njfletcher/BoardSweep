@@ -9,6 +9,8 @@ class TargetLibrary {
 
 public:
 
+    unsigned long long ** pawnSinglePushLookups;
+    unsigned long long ** pawnDoublePushLookups;
     unsigned long long ** pawnAttackLookups;
     //unsigned long long* wPawnAttacks;
     //unsigned long long* bPawnAttacks;

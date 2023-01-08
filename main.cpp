@@ -13,7 +13,8 @@ using namespace std;
 int main() {
 
     TargetLibrary lookup;
-
+    lookup.pawnSinglePushLookups = initializePawnSinglePushLookups();
+    lookup.pawnDoublePushLookups = initializePawnDoublePushLookups();
     lookup.pawnAttackLookups = initializePawnAttackLookups();
     lookup.knightMoveLookups = initializeKnightMoveLookups();
     lookup.kingMoveLookups = initializeKingMoveLookups();
@@ -25,10 +26,19 @@ int main() {
 
 
     Board * board = initializeBoardFromFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b - h8 10 2");
-    displayBitboard(board->bitboards[1]);
+    displayBitboard(board->bitboards[0] | board->bitboards[1]);
+
+    generateAllQuietMoves(0,board->bitboards,&lookup);
 
 
-    displayBitboard(getAttackMask(true,board->bitboards,&lookup) & ~board->bitboards[1]);
+
+
+
+        /* for(int i =0;i<64;i++){
+             displayBitboard(lookup.pawnSinglePushLookups[0][i]);
+         }
+         */
+
 
 
     return 0;
