@@ -89,7 +89,7 @@ void generateAllQuietMoves(bool side,unsigned long long* bitboards, TargetLibrar
         }
 
     }
-
+    //for enpassant update in future, if double move, set enpassant square to square of single push target
 
     unsigned long long knights = bitboards[N+side];
     while(knights){
@@ -143,6 +143,100 @@ void generateAllQuietMoves(bool side,unsigned long long* bitboards, TargetLibrar
         while(kingAllMoves){
             int toSquare = popLSB(&kingAllMoves);
             cout<< "from: " << fromSquare << "to: " << toSquare << "king" << " side: " << side << endl;
+        }
+    }
+
+
+}
+
+void generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
+
+    unsigned long long* bitboards = board->bitboards;
+
+    unsigned long long enemyPieces = bitboards[!side];
+    unsigned long long friendlyPieces = bitboards[side];
+
+    unsigned long long allPieces = enemyPieces | friendlyPieces;
+
+
+    unsigned long long pawns = bitboards[P + side];
+
+    while (pawns) {
+        int fromSquare = popLSB(&pawns);
+
+        unsigned long long pawnAttackTargets = t->pawnAttackLookups[side][fromSquare];
+        unsigned long long pawnNormalCaptures =  pawnAttackTargets & enemyPieces;
+
+        unsigned long long enPassBit = 1ULL << board->enPassSquare;
+        unsigned long long enPassCap = pawnAttackTargets & enPassBit;
+
+        if(enPassCap){
+            cout << "from: " << fromSquare << "to: " << board->enPassSquare << "pawnEnPass" << " side: " << side << endl;
+        }
+
+        while (pawnNormalCaptures) {
+            int toSquare = popLSB(&pawnNormalCaptures);
+
+            cout << "from: " << fromSquare << "to: " << toSquare << "pawn" << " side: " << side << endl;
+
+        }
+
+    }
+
+    unsigned long long knights = bitboards[N + side];
+    while (knights) {
+        int fromSquare = popLSB(&knights);
+        unsigned long long knightAllCaptures = t->knightMoveLookups[fromSquare] & enemyPieces;
+        while (knightAllCaptures) {
+            int toSquare = popLSB(&knightAllCaptures);
+
+            cout << "from: " << fromSquare << "to: " << toSquare << "knight" << " side: " << side << endl;
+        }
+    }
+
+
+    unsigned long long bishops = bitboards[B + side];
+    while (bishops) {
+        int fromSquare = popLSB(&bishops);
+        unsigned long long bishopAllCaptures =
+                getBishopTargetFromBlockers(fromSquare, allPieces & t->bishopTargetLookups[fromSquare],
+                                            t->bishopMagicAttacks) & enemyPieces;
+        while (bishopAllCaptures) {
+            int toSquare = popLSB(&bishopAllCaptures);
+            cout << "from: " << fromSquare << "to: " << toSquare << "bishop" << " side: " << side << endl;
+        }
+    }
+
+    unsigned long long rooks = bitboards[R + side];
+    while (rooks) {
+        int fromSquare = popLSB(&rooks);
+        unsigned long long rookAllCaptures =
+                getRookTargetFromBlockers(fromSquare, allPieces & t->rookTargetLookups[fromSquare],
+                                          t->rookMagicAttacks) & ~enemyPieces;
+        while (rookAllCaptures) {
+            int toSquare = popLSB(&rookAllCaptures);
+            cout << "from: " << fromSquare << "to: " << toSquare << "rook" << " side: " << side << endl;
+        }
+    }
+
+    unsigned long long queens = bitboards[Q + side];
+    while (queens) {
+        int fromSquare = popLSB(&queens);
+        unsigned long long queenAllCaptures = getQueenTargetFromBlockers(fromSquare, allPieces, t) & enemyPieces;
+
+        while (queenAllCaptures) {
+            int toSquare = popLSB(&queenAllCaptures);
+            cout << "from: " << fromSquare << "to: " << toSquare << "queen" << " side: " << side << endl;
+        }
+    }
+
+    unsigned long long kings = bitboards[K + side];
+    while (kings) {
+        int fromSquare = popLSB(&kings);
+        unsigned long long kingAllCaptures = t->kingMoveLookups[fromSquare] & enemyPieces;
+        while (kingAllCaptures) {
+            int toSquare = popLSB(&kingAllCaptures);
+            cout << "from: " << fromSquare << "to: " << toSquare << "king" << " side: " << side << endl;
         }
     }
 

@@ -26,10 +26,12 @@ int main() {
 
 
     Board * board = initializeBoardFromFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b - h8 10 2");
-    displayBitboard(board->bitboards[0] | board->bitboards[1]);
+    //displayBitboard(board->bitboards[0] | board->bitboards[1]);
 
-    generateAllQuietMoves(0,board->bitboards,&lookup);
+    //generateAllQuietMoves(0,board->bitboards,&lookup);
 
+
+    displayBitboard((1ULL << 63));
 
 
 
