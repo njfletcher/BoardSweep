@@ -5,7 +5,11 @@
 #pragma once
 #include "../Representation/TargetLibrary.h"
 #include "../Representation/Board.h"
+#include "../Representation/Move.h"
+#include <vector>
 
 unsigned long long getAttackMask(bool side,unsigned long long* bitboards, TargetLibrary* t);
-void generateAllQuietMoves(bool side,Board* board, TargetLibrary* t);
-void generateAllAttackMoves(bool side,Board* board, TargetLibrary* t);
+std::vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t);
+std::vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t);
+void makeMove(Move m, Board* b);
+void unmakeMove(Move m, Board* b);

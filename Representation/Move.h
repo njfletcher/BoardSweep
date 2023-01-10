@@ -3,21 +3,24 @@
 //
 #pragma once
 
-#include "Board.h"
+
+#include "UsefulConstants.h"
 
 class Move{
 
 public:
+    Move(int from, int to, bool isCapture, bool isPromotion, bool isEnPassant, bool isCastle, int moved,
+               int captured, int promoted);
+
     int squareTo;
     int squareFrom;
-    //Board * current;
     bool capture;
     bool promotion;
     bool enPassant;
     bool castle;
-    enumPiece movedPiece;
-    enumPiece promotedTo;
-    enumPiece capturedPiece;
+    int movedPiece;
+    int promotedTo;
+    int capturedPiece;
     //enumColor turn;
 
 
