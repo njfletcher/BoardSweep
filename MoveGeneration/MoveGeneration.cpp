@@ -96,7 +96,6 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
         }
 
     }
-    //for enpassant update in future, if double move, set enpassant square to square of single push target
 
     unsigned long long knights = bitboards[N+side];
     while(knights){
@@ -106,7 +105,7 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
 
             int toSquare = popLSB(&knightAllMoves);
 
-            Move m(fromSquare,toSquare,0,0,0,0,K+side,0,0);
+            Move m(fromSquare,toSquare,0,0,0,0,N+side,0,0);
             moveList.push_back(m);
             cout<< "from: " << fromSquare << "to: " << toSquare << "knight" << " side: " << side << endl;
         }
@@ -172,12 +171,6 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
     bool sideHasQueenSideCastle = board->castleRights & (1ULL<<(0+(side * 2))) && 1;
     bool sideHasKingSideCastle = board->castleRights & (1ULL<<(1+(side * 2))) && 1;
 
-    //kingside rook before castle is always 3 bits left of king,
-    int kingRookSquare = kingSquare +3;
-
-    //queenside rook before castle is always 4 bits right of king
-    int queenRookSquare = kingSquare -4;
-
     if(sideHasKingSideCastle){
 
         //shift king left 2 and shift kingSideRook right 2
@@ -189,9 +182,9 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
     }
     if(sideHasQueenSideCastle){
 
-        //shift king right 3 and shift queenSideRook left 3
+        //shift king right 2 and shift queenSideRook left 3
 
-        Move m(kingSquare,kingSquare-3,0,0,0,1,K+side,0,0);
+        Move m(kingSquare,kingSquare-2,0,0,0,1,K+side,0,0);
         moveList.push_back(m);
         cout<< "from: " << kingSquare << "to: " << kingSquare-3 << "kingCastle" << " side: " << side << endl;
     }
@@ -225,7 +218,7 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
         while (pawnNormalCaptures) {
             int toSquare = popLSB(&pawnNormalCaptures);
             unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece;
+            int capturedPiece = -1;
 
             //find out which piece is getting captured
             for(int piece = (2+(!side)); piece <13;piece+=2){
@@ -267,8 +260,6 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
     }
 
 
-
-
     unsigned long long knights = bitboards[N + side];
     while (knights) {
         int fromSquare = popLSB(&knights);
@@ -277,7 +268,7 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
 
             int toSquare = popLSB(&knightAllCaptures);
             unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece;
+            int capturedPiece = -1;
 
             //find out which piece is getting captured
             for(int piece = (2+(!side)); piece <13;piece+=2){
@@ -311,7 +302,7 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
             int toSquare = popLSB(&bishopAllCaptures);
 
             unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece;
+            int capturedPiece = -1;
 
             //find out which piece is getting captured
             for(int piece = (2+(!side)); piece <13;piece+=2){
@@ -340,7 +331,7 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
             int toSquare = popLSB(&rookAllCaptures);
 
             unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece;
+            int capturedPiece = -1;
 
             //find out which piece is getting captured
             for(int piece = (2+(!side)); piece <13;piece+=2){
@@ -367,7 +358,7 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
             int toSquare = popLSB(&queenAllCaptures);
 
             unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece;
+            int capturedPiece = -1;
 
             //find out which piece is getting captured
             for(int piece = (2+(!side)); piece <13;piece+=2){
@@ -396,7 +387,7 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
         int toSquare = popLSB(&kingAllCaptures);
 
         unsigned long long toBit = 1ULL << toSquare;
-        int capturedPiece;
+        int capturedPiece = -1;
 
         //find out which piece is getting captured
         for(int piece = (2+(!side)); piece <13;piece+=2){
@@ -422,25 +413,99 @@ void makeMove(Move m, Board* b){
     int squareTo = m.squareTo;
 
     unsigned long long movedPieceBitboard = b->bitboards[m.movedPiece];
-    b->bitboards[m.movedPiece] = movedPieceBitboard ^= 1ULL << squareFrom;
+    b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareFrom;
 
     if(m.capture){
-        b->bitboards[m.movedPiece] = movedPieceBitboard ^= 1ULL << squareTo;
+        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
         unsigned long long capturedPieceBitboard = b->bitboards[m.capturedPiece];
-        b->bitboards[m.capturedPiece] = capturedPieceBitboard ^= 1ULL << squareTo;
+
+        if(m.enPassant){
+
+            b->bitboards[m.capturedPiece] = capturedPieceBitboard ^ 1ULL << (squareTo +8 *((!b->sideToMove) *-1));
+        }
+        else{
+            b->bitboards[m.capturedPiece] = capturedPieceBitboard ^ 1ULL << squareTo;
+        }
+        return;
     }
 
     if(m.promotion) {
         unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
-        b->bitboards[m.promotedTo] = promotedPieceBitboard ^= 1ULL << squareTo;
+        b->bitboards[m.promotedTo] = promotedPieceBitboard | 1ULL << squareTo;
+        return;
     }
 
+    if(m.castle){
+        int squareDifference = squareTo - squareFrom;
+        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
 
+        //queenside castle
+        if(squareDifference ==-2){
+            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo-2);
+            b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom-1);
+        }
+        //kingside castle
+        else{
+            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo+1);
+            b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom+1);
+        }
 
+        return;
+    }
+    b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
 
 }
+
 void unmakeMove(Move m, Board* b){
 
+    int squareFrom = m.squareFrom;
+    int squareTo = m.squareTo;
 
+    unsigned long long movedPieceBitboard = b->bitboards[m.movedPiece];
+    b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
+
+    if(m.capture){
+        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+        unsigned long long capturedPieceBitboard = b->bitboards[m.capturedPiece];
+
+        if(m.enPassant){
+
+            b->bitboards[m.capturedPiece] = capturedPieceBitboard | 1ULL << (squareTo +8 *((!b->sideToMove) *-1));
+        }
+        else{
+            b->bitboards[m.capturedPiece] = capturedPieceBitboard | 1ULL << squareTo;
+        }
+        return;
+    }
+
+    if(m.promotion) {
+
+
+        unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
+        b->bitboards[m.promotedTo] = promotedPieceBitboard ^ 1ULL << squareTo;
+        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+        return;
+    }
+
+    if(m.castle){
+        int squareDifference = squareTo - squareFrom;
+        b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
+        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+
+        //queenside castle
+        if(squareDifference ==-2){
+            b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo-2);
+            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom-1);
+        }
+            //kingside castle
+        else{
+            b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo+1);
+            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom+1);
+        }
+
+        return;
+    }
+
+    b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
 
 }
