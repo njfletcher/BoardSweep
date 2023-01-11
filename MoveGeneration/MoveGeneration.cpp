@@ -89,13 +89,35 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
         while(pawnAllMoves){
             int toSquare = popLSB(&pawnAllMoves);
 
-            Move m(fromSquare,toSquare,0,0,0,0,P+side,0,0);
-            moveList.push_back(m);
-            cout<< "from: " << fromSquare << "to: " << toSquare << "pawn" << " side: " << side << endl;
+            //check for any promotions
+            unsigned long long relevantRank = RankMasks[7+(-7*side)];
+
+            if((1ULL<<toSquare) & relevantRank){
+                Move m(fromSquare,toSquare,0,1,0,0,P+side,0,N+side);
+                moveList.push_back(m);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+                Move m1(fromSquare,toSquare,0,1,0,0,P+side,0,B+side);
+                moveList.push_back(m1);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+                Move m2(fromSquare,toSquare,0,1,0,0,P+side,0,R+side);
+                moveList.push_back(m2);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+                Move m3(fromSquare,toSquare,0,1,0,0,P+side,0,Q+side);
+                moveList.push_back(m3);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+
+            }
+            else{
+                Move m(fromSquare,toSquare,0,0,0,0,P+side,0,0);
+                moveList.push_back(m);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawn" << " side: " << side << endl;
+            }
+
 
         }
 
     }
+
 
     unsigned long long knights = bitboards[N+side];
     while(knights){
@@ -230,9 +252,31 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
 
             }
 
-            Move m(fromSquare,toSquare,1,0,0,0,P+side,capturedPiece,0);
-            moveList.push_back(m);
-            cout << "from: " << fromSquare << "to: " << toSquare << "pawn" << " side: " << side << endl;
+            //check for any promotions
+            unsigned long long relevantRank = RankMasks[7+(-7*side)];
+
+            if((1ULL<<toSquare) & relevantRank){
+                Move m(fromSquare,toSquare,1,1,0,0,P+side,0,N+side);
+                moveList.push_back(m);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+                Move m1(fromSquare,toSquare,1,1,0,0,P+side,0,B+side);
+                moveList.push_back(m1);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+                Move m2(fromSquare,toSquare,1,1,0,0,P+side,0,R+side);
+                moveList.push_back(m2);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+                Move m3(fromSquare,toSquare,1,1,0,0,P+side,0,Q+side);
+                moveList.push_back(m3);
+                cout<< "from: " << fromSquare << "to: " << toSquare << "pawnPromo" << " side: " << side << endl;
+
+            }
+            else{
+                Move m(fromSquare,toSquare,1,0,0,0,P+side,capturedPiece,0);
+                moveList.push_back(m);
+                cout << "from: " << fromSquare << "to: " << toSquare << "pawn" << " side: " << side << endl;
+            }
+
+
 
         }
 
@@ -416,43 +460,61 @@ void makeMove(Move m, Board* b){
     b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareFrom;
 
     if(m.capture){
-        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
+
         unsigned long long capturedPieceBitboard = b->bitboards[m.capturedPiece];
 
         if(m.enPassant){
 
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
             b->bitboards[m.capturedPiece] = capturedPieceBitboard ^ 1ULL << (squareTo +8 *((!b->sideToMove) *-1));
+            return;
         }
-        else{
+        if(m.promotion){
+
             b->bitboards[m.capturedPiece] = capturedPieceBitboard ^ 1ULL << squareTo;
+            unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
+            b->bitboards[m.promotedTo] = promotedPieceBitboard | 1ULL << squareTo;
+            return;
         }
-        return;
-    }
-
-    if(m.promotion) {
-        unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
-        b->bitboards[m.promotedTo] = promotedPieceBitboard | 1ULL << squareTo;
-        return;
-    }
-
-    if(m.castle){
-        int squareDifference = squareTo - squareFrom;
-        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
-
-        //queenside castle
-        if(squareDifference ==-2){
-            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo-2);
-            b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom-1);
-        }
-        //kingside castle
+        //normal captures
         else{
-            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo+1);
-            b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom+1);
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
+            b->bitboards[m.capturedPiece] = capturedPieceBitboard ^ 1ULL << squareTo;
+            return;
         }
 
-        return;
     }
-    b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
+    //non capture moves
+    else{
+
+        if(m.castle){
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
+            int squareDifference = squareTo - squareFrom;
+
+            //queenside castle
+            if(squareDifference ==-2){
+                b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo-2);
+                b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom-1);
+            }
+                //kingside castle
+            else{
+                b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo+1);
+                b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom+1);
+            }
+
+            return;
+        }
+        if(m.promotion){
+            unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
+            b->bitboards[m.promotedTo] = promotedPieceBitboard | 1ULL << squareTo;
+            return;
+        }
+        //normal moves
+        else{
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareTo;
+        }
+    }
+
 
 }
 
@@ -462,50 +524,68 @@ void unmakeMove(Move m, Board* b){
     int squareTo = m.squareTo;
 
     unsigned long long movedPieceBitboard = b->bitboards[m.movedPiece];
-    b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
 
     if(m.capture){
-        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+
         unsigned long long capturedPieceBitboard = b->bitboards[m.capturedPiece];
 
         if(m.enPassant){
 
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+            b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
             b->bitboards[m.capturedPiece] = capturedPieceBitboard | 1ULL << (squareTo +8 *((!b->sideToMove) *-1));
+            return;
         }
-        else{
+        if(m.promotion){
+
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
             b->bitboards[m.capturedPiece] = capturedPieceBitboard | 1ULL << squareTo;
+            unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
+            b->bitboards[m.promotedTo] = promotedPieceBitboard ^ 1ULL << squareTo;
+            return;
         }
-        return;
-    }
-
-    if(m.promotion) {
-
-
-        unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
-        b->bitboards[m.promotedTo] = promotedPieceBitboard ^ 1ULL << squareTo;
-        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
-        return;
-    }
-
-    if(m.castle){
-        int squareDifference = squareTo - squareFrom;
-        b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
-        b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
-
-        //queenside castle
-        if(squareDifference ==-2){
-            b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo-2);
-            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom-1);
-        }
-            //kingside castle
+            //normal captures
         else{
-            b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo+1);
-            b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom+1);
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+            b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
+            b->bitboards[m.capturedPiece] = capturedPieceBitboard | 1ULL << squareTo;
+            return;
         }
 
-        return;
     }
+        //non capture moves
+    else{
 
-    b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+        if(m.castle){
 
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+            b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
+            int squareDifference = squareTo - squareFrom;
+
+            //queenside castle
+            if(squareDifference ==-2){
+                b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo-2);
+                b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom-1);
+            }
+                //kingside castle
+            else{
+                b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo+1);
+                b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom+1);
+            }
+
+            return;
+        }
+        if(m.promotion){
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+            unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
+            b->bitboards[m.promotedTo] = promotedPieceBitboard ^ 1ULL << squareTo;
+            return;
+        }
+            //normal moves
+        else{
+
+            b->bitboards[m.movedPiece] = movedPieceBitboard | 1ULL << squareFrom;
+            b->bitboards[m.movedPiece] = movedPieceBitboard ^ 1ULL << squareTo;
+        }
+    }
 }
