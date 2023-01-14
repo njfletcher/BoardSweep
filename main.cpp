@@ -31,7 +31,8 @@ int main() {
     //generateAllQuietMoves(0,board->bitboards,&lookup);
 
 
-    displayBitboard((1ULL << 64));
+    displayBitboard(0x7C00000000000000);
+    displayBitboard(0x7C);
 
 
 

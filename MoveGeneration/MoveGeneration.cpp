@@ -201,22 +201,29 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
     bool sideHasQueenSideCastle = castleRights & (1ULL<<(0+(side * 2))) && 1;
     bool sideHasKingSideCastle = castleRights & (1ULL<<(1+(side * 2))) && 1;
 
+    unsigned long long enemyAttack = getAttackMask(!side,bitboards,t);
+
     if(sideHasKingSideCastle){
 
-        //shift king left 2 and shift kingSideRook right 2
+        //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
+        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
+            Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
+            moveList.push_back(m);
+            cout<< "from: " << kingSquare << "to: " << kingSquare+2 << "kingCastle" << " side: " << side << endl;
+        }
 
-        Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
-        moveList.push_back(m);
-        cout<< "from: " << kingSquare << "to: " << kingSquare+2 << "kingCastle" << " side: " << side << endl;
+
 
     }
     if(sideHasQueenSideCastle){
 
-        //shift king right 2 and shift queenSideRook left 3
+        //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
+        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
+            Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
+            moveList.push_back(m);
+            cout<< "from: " << kingSquare << "to: " << kingSquare-3 << "kingCastle" << " side: " << side << endl;
+        }
 
-        Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
-        moveList.push_back(m);
-        cout<< "from: " << kingSquare << "to: " << kingSquare-3 << "kingCastle" << " side: " << side << endl;
     }
 
 
@@ -503,6 +510,21 @@ void makeMove(Move m, Board* b){
 
     if(m.capture){
 
+        if(capturedPiece == R || capturedPiece == r){
+
+            //take away kingside castle since hfile rook captured
+            if(1ULL<<squareTo & RankMasks[7]){
+                castleRights &= ~(1ULL<<(1+((!b->sideToMove) * 2)));
+                b->castleRights.push_back(castleRights);
+            }
+            //take away queenside castle since afile rook captured
+            if(1ULL<<squareTo & RankMasks[0]){
+                castleRights &= ~(1ULL<<(0+((!b->sideToMove) * 2)));
+                b->castleRights.push_back(castleRights);
+            }
+
+        }
+
         //capture makes enPassant unavailable and resets 50 move rule count
         b->enPassSquares.push_back(64);
         b->fiftyMoveRuleHalfMoves.push_back(0);
@@ -533,6 +555,9 @@ void makeMove(Move m, Board* b){
         //any type of pawn move resets 50 move rule count
         if(movedPiece == P || movedPiece == p){
             b->fiftyMoveRuleHalfMoves.push_back(0);
+        }
+        else{
+            b->fiftyMoveRuleHalfMoves.push_back(b->fiftyMoveRuleHalfMoves.back()+1);
         }
 
         if(m.doublePush){
