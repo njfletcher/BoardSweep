@@ -126,31 +126,33 @@ Board*  initializeBoardFromFen(const char fen[]){
     else board->sideToMove = black;
     charCount+=2;
 
+    unsigned int tempRights = 0;
     while(!(fen[charCount] == ' ')){
         char castleChar = fen[charCount];
         switch(castleChar){
 
             case 'K':
-                board->castleRights |= 1L <<3;
+                tempRights |= 1L <<3;
                 break;
             case 'Q':
-                board->castleRights |= 1L<<2;
+                tempRights |= 1L<<2;
                 break;
             case 'k':
-                board->castleRights |= 1L <<1;
+                tempRights |= 1L <<1;
                 break;
             case 'q':
-                board->castleRights |= 1L;
+                tempRights |= 1L;
                 break;
             default:
                 break;
         }
+        board->castleRights.push_back(tempRights);
         charCount++;
     }
     charCount++;
 
     if(fen[charCount] == '-'){
-        board->enPassSquare = 64;
+        board->enPassSquares.push_back(64);
         charCount++;
     }
     else{
@@ -158,7 +160,7 @@ Board*  initializeBoardFromFen(const char fen[]){
         charCount++;
         char rank = fen[charCount];
 
-        board->enPassSquare = ((rank - '0')*8)+ (file - '`'-9);
+        board->enPassSquares.push_back(((rank - '0')*8)+ (file - '`'-9));
         charCount++;
 
     }
@@ -183,7 +185,7 @@ Board*  initializeBoardFromFen(const char fen[]){
         charCount++;
     }
 
-    board->halfMoveCount = halfMoveCount;
+    board->fiftyMoveRuleHalfMoves.push_back(halfMoveCount);
     charCount++;
 
     int decimalCountFull =0;

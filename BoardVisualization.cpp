@@ -33,9 +33,9 @@ void displayBitboard(unsigned long long binary){
 void displayWholeBoard(Board * board){
 
     cout<< "Side to move: " <<board->sideToMove <<endl;
-    cout<< "EnPassant Square: " << board->enPassSquare<<endl;
-    cout<< "Castle Rights: " << board->castleRights << endl;
-    cout <<"Half move count: " << board->halfMoveCount << endl;
+    cout<< "EnPassant Square: " << board->enPassSquares.back()<<endl;
+    cout<< "Castle Rights: " << board->castleRights.back()<< endl;
+    cout <<"Half move count: " << board->fiftyMoveRuleHalfMoves.back() << endl;
     cout << "Full move count: " << board-> fullMoveCount << endl;
     cout << endl;
     cout << "----------------All Pieces----------------------" << endl;

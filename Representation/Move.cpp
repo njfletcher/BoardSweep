@@ -4,11 +4,12 @@
 
 #include "Move.h"
 
-Move::Move(int from, int to, bool isCapture, bool isPromotion, bool isEnPassant, bool isCastle, int moved,
+Move::Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion, bool isEnPassant, bool isCastle, int moved,
      int captured, int promoted){
 
     squareFrom = from;
     squareTo = to;
+    doublePush = isDoublePush;
     capture = isCapture;
     promotion = isPromotion;
     enPassant = isEnPassant;
