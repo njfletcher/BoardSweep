@@ -13,3 +13,5 @@ std::vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t
 std::vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t);
 void makeMove(Move m, Board* b);
 void unmakeMove(Move m, Board* b);
+
+void generateAllMovesCertainDepth(int depth,Board* board, TargetLibrary* t);

@@ -5,8 +5,10 @@
 #include "MoveGeneration/TargetGeneration.h"
 #include "MoveGeneration/MoveGeneration.h"
 #include "Representation/UsefulConstants.h"
+#include "Representation/Move.h"
 #include "Representation/TargetLibrary.h"
 #include "BitUtil.h"
+#include <vector>
 #include <iomanip>
 
 using namespace std;
@@ -31,9 +33,30 @@ int main() {
     //generateAllQuietMoves(0,board->bitboards,&lookup);
 
 
-    displayBitboard(0x7C00000000000000);
-    displayBitboard(0x7C);
+    //displayBitboard(0x7C00000000000000);
+    //displayBitboard(0x7C);
 
+
+    //displayWholeBoard(board);
+    //generateAllMovesCertainDepth(10,board,&lookup);
+
+
+    displayWholeBoard(board);
+    Move m(34,26,0,0,0,0,0,3,0,0);
+    makeMove(m,board);
+    displayWholeBoard(board);
+    //vector<Move> moves = generateAllQuietMoves(board->sideToMove,board,&lookup);
+
+    /*for(Move m: moves){
+
+        displayWholeBoard(board);
+        makeMove(m,board);
+        displayWholeBoard(board);
+        unmakeMove(m,board);
+        displayWholeBoard(board);
+
+    }
+     */
 
 
 
