@@ -65,13 +65,16 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Target
 }
 
 
-vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
+vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
 
     vector<Move> moveList;
 
     unsigned long long* bitboards = board->bitboards;
 
-    unsigned long long allPieces = bitboards[0] | bitboards[1];
+    unsigned long long enemyPieces = bitboards[!side];
+    unsigned long long friendlyPieces = bitboards[side];
+
+    unsigned long long allPieces = enemyPieces | friendlyPieces;
 
     unsigned long long pawns = bitboards[P+side];
 
@@ -85,6 +88,9 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
         unsigned long long pawnMoveFirst = (pawnSingle & ~allPieces);
         unsigned long long pawnMoveSecond = (pawnDouble & ~allPieces);
         unsigned long long pawnMoveSecondLegal = pawnMoveSecond * (pawnMoveFirst && pawnMoveSecond);
+
+        unsigned long long pawnAttackTargets = t->pawnAttackLookups[side][fromSquare];
+        unsigned long long pawnNormalCaptures =  pawnAttackTargets & enemyPieces;
         //unsigned long long pawnAllMoves = pawnMoveFirst | ((pawnMoveFirst && pawnMoveSecond) * pawnMoveSecond);
 
         while(pawnMoveFirst){
@@ -120,131 +126,6 @@ vector<Move> generateAllQuietMoves(bool side,Board* board, TargetLibrary* t){
             Move m(fromSquare,toSquare,1,0,0,0,0,P+side,0,0);
             moveList.push_back(m);
         }
-
-    }
-
-
-    unsigned long long knights = bitboards[N+side];
-    while(knights){
-        int fromSquare = popLSB(&knights);
-        unsigned long long knightAllMoves = t->knightMoveLookups[fromSquare] & ~allPieces;
-        while(knightAllMoves){
-
-            int toSquare = popLSB(&knightAllMoves);
-
-            Move m(fromSquare,toSquare,0,0,0,0,0,N+side,0,0);
-            moveList.push_back(m);
-        }
-    }
-
-
-    unsigned long long bishops = bitboards[B+side];
-    while(bishops){
-        int fromSquare = popLSB(&bishops);
-        unsigned long long bishopAllMoves =  getBishopTargetFromBlockers(fromSquare,allPieces  & t->bishopTargetLookups[fromSquare],t->bishopMagicAttacks) & ~allPieces;
-
-        while(bishopAllMoves){
-
-            int toSquare = popLSB(&bishopAllMoves);
-            Move m(fromSquare,toSquare,0,0,0,0,0,B+side,0,0);
-            moveList.push_back(m);
-        }
-    }
-
-    unsigned long long rooks = bitboards[R+side];
-    while(rooks){
-        int fromSquare = popLSB(&rooks);
-        unsigned long long rookAllMoves =  getRookTargetFromBlockers(fromSquare,allPieces  & t->rookTargetLookups[fromSquare],t->rookMagicAttacks) & ~allPieces;
-
-        while(rookAllMoves){
-            int toSquare = popLSB(&rookAllMoves);
-
-            Move m(fromSquare,toSquare,0,0,0,0,0,R+side,0,0);
-            moveList.push_back(m);
-        }
-    }
-
-    unsigned long long queens = bitboards[Q+side];
-    while(queens){
-        int fromSquare = popLSB(&queens);
-        unsigned long long queenAllMoves = getQueenTargetFromBlockers(fromSquare,allPieces,t) & ~allPieces;
-
-        while(queenAllMoves){
-
-            int toSquare = popLSB(&queenAllMoves);
-            Move m(fromSquare,toSquare,0,0,0,0,0,Q+side,0,0);
-            moveList.push_back(m);
-        }
-    }
-
-    unsigned long long king = bitboards[K+side];
-
-    //assumption is that there will always have to be a single king on the board for each side
-    int kingSquare = popLSB(&king);
-    unsigned long long kingAllMoves =  t->kingMoveLookups[kingSquare] & ~allPieces;
-    while(kingAllMoves){
-
-        int toSquare = popLSB(&kingAllMoves);
-        Move m(kingSquare,toSquare,0,0,0,0,0,K+side,0,0);
-        moveList.push_back(m);
-
-    }
-
-    unsigned int castleRights = board->castleRights.back();
-
-    bool sideHasQueenSideCastle = castleRights & (1ULL<<(0+(side * 2))) && 1;
-    bool sideHasKingSideCastle = castleRights & (1ULL<<(1+(side * 2))) && 1;
-
-    unsigned long long enemyAttack = getAttackMask(!side,bitboards,t);
-
-    if(sideHasKingSideCastle){
-
-        //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
-            Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
-            moveList.push_back(m);
-
-        }
-
-
-
-    }
-    if(sideHasQueenSideCastle){
-
-        //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
-            Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
-            moveList.push_back(m);
-
-        }
-
-    }
-
-
-    return moveList;
-
-}
-
-vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
-
-    vector<Move> moveList;
-
-    unsigned long long* bitboards = board->bitboards;
-
-    unsigned long long enemyPieces = bitboards[!side];
-    unsigned long long friendlyPieces = bitboards[side];
-
-    unsigned long long allPieces = enemyPieces | friendlyPieces;
-
-
-    unsigned long long pawns = bitboards[P + side];
-
-    while (pawns) {
-        int fromSquare = popLSB(&pawns);
-
-        unsigned long long pawnAttackTargets = t->pawnAttackLookups[side][fromSquare];
-        unsigned long long pawnNormalCaptures =  pawnAttackTargets & enemyPieces;
-
 
         while (pawnNormalCaptures) {
             int toSquare = popLSB(&pawnNormalCaptures);
@@ -294,32 +175,46 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
     //if a current side pawn is there, that means it can attack the enPassant target square, so add it to moves
     int enPassSquare = board->enPassSquares.back();
 
-    //if enPassSquare = 64(enPassant not available) this is 0
-    unsigned long long enPassBit = 1ULL << enPassSquare;
+    //enpass square of 64 means enpass is not available
+    if(enPassSquare !=64){
+        unsigned long long enPassBit = 1ULL << enPassSquare;
 
-    int diagonalOne = enPassSquare + 9 * ((!side) *-1);
-    int diagonalTwo = enPassSquare + 7 * ((!side) *-1);
-    unsigned long long optionOne = (1ULL << diagonalOne) & FileMasks[7-(7*side)];
-    unsigned long long optionTwo = (1ULL << diagonalTwo) & FileMasks[7-(7*(!side))];
+        int diagonalOne = enPassSquare + 9 * ((!side) *-1);
+        int diagonalTwo = enPassSquare + 7 * ((!side) *-1);
+        unsigned long long optionOne = (1ULL << diagonalOne) & FileMasks[7-(7*side)];
+        unsigned long long optionTwo = (1ULL << diagonalTwo) & FileMasks[7-(7*(!side))];
 
-    if(optionOne && enPassBit){
+        if(optionOne && enPassBit){
 
-        Move m(diagonalOne,enPassSquare,0,1,0,1,0,P+side,P+(!side),0);
-        moveList.push_back(m);
+            Move m(diagonalOne,enPassSquare,0,1,0,1,0,P+side,P+(!side),0);
+            moveList.push_back(m);
+        }
+        if(optionTwo && enPassBit){
+            Move m(diagonalTwo,enPassSquare,0,1,0,1,0,P+side,P+(!side),0);
+            moveList.push_back(m);
+        }
     }
-    if(optionTwo && enPassBit){
-        Move m(diagonalTwo,enPassSquare,0,1,0,1,0,P+side,P+(!side),0);
-        moveList.push_back(m);
-    }
 
 
-    unsigned long long knights = bitboards[N + side];
-    while (knights) {
+
+    unsigned long long knights = bitboards[N+side];
+    while(knights){
         int fromSquare = popLSB(&knights);
-        unsigned long long knightAllCaptures = t->knightMoveLookups[fromSquare] & enemyPieces;
-        while (knightAllCaptures) {
 
-            int toSquare = popLSB(&knightAllCaptures);
+        unsigned long long knightAll = t->knightMoveLookups[fromSquare];
+        unsigned long long knightQuietMoves = knightAll & ~allPieces;
+        unsigned long long knightCaptureMoves = knightAll & enemyPieces;
+        while(knightQuietMoves){
+
+            int toSquare = popLSB(&knightQuietMoves);
+
+            Move m(fromSquare,toSquare,0,0,0,0,0,N+side,0,0);
+            moveList.push_back(m);
+        }
+        while(knightCaptureMoves){
+
+            int toSquare = popLSB(&knightCaptureMoves);
+
             unsigned long long toBit = 1ULL << toSquare;
             int capturedPiece = -1;
 
@@ -339,18 +234,23 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
     }
 
 
-    unsigned long long bishops = bitboards[B + side];
-    while (bishops) {
-
+    unsigned long long bishops = bitboards[B+side];
+    while(bishops){
         int fromSquare = popLSB(&bishops);
 
+        unsigned long long bishopAll = getBishopTargetFromBlockers(fromSquare,allPieces  & t->bishopTargetLookups[fromSquare],t->bishopMagicAttacks);
+        unsigned long long bishopQuietMoves = bishopAll  & ~allPieces;
+        unsigned long long bishopCaptureMoves = bishopAll  & enemyPieces;
 
-        unsigned long long bishopAllCaptures =
-                getBishopTargetFromBlockers(fromSquare, allPieces & t->bishopTargetLookups[fromSquare],
-                                            t->bishopMagicAttacks) & enemyPieces;
-        while (bishopAllCaptures) {
+        while(bishopQuietMoves){
 
-            int toSquare = popLSB(&bishopAllCaptures);
+            int toSquare = popLSB(&bishopQuietMoves);
+            Move m(fromSquare,toSquare,0,0,0,0,0,B+side,0,0);
+            moveList.push_back(m);
+        }
+        while (bishopCaptureMoves) {
+
+            int toSquare = popLSB(&bishopCaptureMoves);
 
             unsigned long long toBit = 1ULL << toSquare;
             int capturedPiece = -1;
@@ -368,16 +268,26 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
             Move m(fromSquare,toSquare,0,1,0,0,0,B+side,capturedPiece,0);
             moveList.push_back(m);
         }
+
     }
 
-    unsigned long long rooks = bitboards[R + side];
-    while (rooks) {
+
+    unsigned long long rooks = bitboards[R+side];
+    while(rooks){
         int fromSquare = popLSB(&rooks);
-        unsigned long long rookAllCaptures =
-                getRookTargetFromBlockers(fromSquare, allPieces & t->rookTargetLookups[fromSquare],
-                                          t->rookMagicAttacks) & enemyPieces;
-        while (rookAllCaptures) {
-            int toSquare = popLSB(&rookAllCaptures);
+
+        unsigned long long rookAll = getRookTargetFromBlockers(fromSquare,allPieces  & t->rookTargetLookups[fromSquare],t->rookMagicAttacks);
+        unsigned long long rookQuietMoves = rookAll  & ~allPieces;
+        unsigned long long rookCaptureMoves = rookAll & enemyPieces;
+
+        while(rookQuietMoves){
+            int toSquare = popLSB(&rookQuietMoves);
+
+            Move m(fromSquare,toSquare,0,0,0,0,0,R+side,0,0);
+            moveList.push_back(m);
+        }
+        while (rookCaptureMoves) {
+            int toSquare = popLSB(&rookCaptureMoves);
 
             unsigned long long toBit = 1ULL << toSquare;
             int capturedPiece = -1;
@@ -397,13 +307,22 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
         }
     }
 
-    unsigned long long queens = bitboards[Q + side];
-    while (queens) {
+    unsigned long long queens = bitboards[Q+side];
+    while(queens){
         int fromSquare = popLSB(&queens);
-        unsigned long long queenAllCaptures = getQueenTargetFromBlockers(fromSquare, allPieces, t) & enemyPieces;
 
-        while (queenAllCaptures) {
-            int toSquare = popLSB(&queenAllCaptures);
+        unsigned long long queenAll = getQueenTargetFromBlockers(fromSquare,allPieces,t);
+        unsigned long long queenQuietMoves = queenAll & ~allPieces;
+        unsigned long long queenCaptureMoves = queenAll & enemyPieces;
+
+        while(queenQuietMoves){
+
+            int toSquare = popLSB(&queenQuietMoves);
+            Move m(fromSquare,toSquare,0,0,0,0,0,Q+side,0,0);
+            moveList.push_back(m);
+        }
+        while (queenCaptureMoves) {
+            int toSquare = popLSB(&queenCaptureMoves);
 
             unsigned long long toBit = 1ULL << toSquare;
             int capturedPiece = -1;
@@ -423,15 +342,25 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
         }
     }
 
-
-    unsigned long long king = bitboards[K + side];
+    unsigned long long king = bitboards[K+side];
 
     //assumption is that there will always have to be a single king on the board for each side
-    int fromSquare = popLSB(&king);
-    unsigned long long kingAllCaptures = t->kingMoveLookups[fromSquare] & enemyPieces;
-    while (kingAllCaptures) {
+    int kingSquare = popLSB(&king);
 
-        int toSquare = popLSB(&kingAllCaptures);
+    unsigned long long kingAll = t->kingMoveLookups[kingSquare];
+    unsigned long long kingQuietMoves =  kingAll & ~allPieces;
+    unsigned long long kingCaptureMoves = kingAll & enemyPieces;
+
+    while(kingQuietMoves){
+
+        int toSquare = popLSB(&kingQuietMoves);
+        Move m(kingSquare,toSquare,0,0,0,0,0,K+side,0,0);
+        moveList.push_back(m);
+
+    }
+    while (kingCaptureMoves) {
+
+        int toSquare = popLSB(&kingCaptureMoves);
 
         unsigned long long toBit = 1ULL << toSquare;
         int capturedPiece = -1;
@@ -446,13 +375,47 @@ vector<Move> generateAllAttackMoves(bool side,Board* board, TargetLibrary* t) {
 
         }
 
-        Move m(fromSquare,toSquare,0,1,0,0,0,K+side,capturedPiece,0);
+        Move m(kingSquare,toSquare,0,1,0,0,0,K+side,capturedPiece,0);
         moveList.push_back(m);
     }
+
+
+    unsigned int castleRights = board->castleRights.back();
+
+    bool sideHasQueenSideCastle = castleRights & (1ULL<<(0+(side * 2))) && 1;
+    bool sideHasKingSideCastle = castleRights & (1ULL<<(1+(side * 2))) && 1;
+
+    unsigned long long enemyAttack = getAttackMask(!side,bitboards,t);
+
+    if(sideHasKingSideCastle){
+
+        //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
+        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
+            Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
+            moveList.push_back(m);
+
+        }
+
+
+
+    }
+    if(sideHasQueenSideCastle){
+
+        //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
+        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
+            Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
+            moveList.push_back(m);
+
+        }
+
+    }
+
 
     return moveList;
 
 }
+
+
 void makeMove(Move m, Board* b){
 
     int squareFrom = m.squareFrom;
@@ -460,9 +423,7 @@ void makeMove(Move m, Board* b){
     int movedPiece = m.movedPiece;
     int capturedPiece = m.capturedPiece;
 
-    cout<<squareFrom << " " << squareTo << " " << movedPiece << " " << capturedPiece << endl;
-
-    unsigned long long movedPieceBitboard = b->bitboards[movedPiece];
+    cout<<squareFrom << " " << squareTo << " " << m.doublePush << m.capture << m.promotion << m.enPassant << m.castle << " " << movedPiece << " " << capturedPiece << endl;
 
     b->bitboards[movedPiece] ^= (1ULL << squareFrom);
 
@@ -477,6 +438,7 @@ void makeMove(Move m, Board* b){
         //take away queenside castle since afile rook moved
         if(1ULL<<squareFrom & RankMasks[0]){
             castleRights &= ~(1ULL<<(0+(b->sideToMove * 2)));
+
             b->castleRights.push_back(castleRights);
         }
 
@@ -494,6 +456,11 @@ void makeMove(Move m, Board* b){
 
     if(m.capture){
 
+        //capture makes enPassant unavailable and resets 50 move rule count
+        b->enPassSquares.push_back(64);
+        b->fiftyMoveRuleHalfMoves.push_back(0);
+
+
         if(capturedPiece == R || capturedPiece == r){
 
             //take away kingside castle since hfile rook captured
@@ -508,10 +475,6 @@ void makeMove(Move m, Board* b){
             }
 
         }
-
-        //capture makes enPassant unavailable and resets 50 move rule count
-        b->enPassSquares.push_back(64);
-        b->fiftyMoveRuleHalfMoves.push_back(0);
 
         if(m.enPassant){
 
@@ -549,9 +512,6 @@ void makeMove(Move m, Board* b){
         }
         else{
             b->enPassSquares.push_back(64);
-
-            displayBitboard( b->bitboards[movedPiece]);
-
 
             if(m.castle){
 
@@ -592,7 +552,7 @@ void makeMove(Move m, Board* b){
     b->sideToMove = !b->sideToMove;
     //update allWhite bitboard
     b->bitboards[0] = 0ULL;
-    for(int piece = 2; piece <13;piece+=2){
+    for(int piece = 2; piece <14;piece+=2){
 
         b->bitboards[0] |= b->bitboards[piece];
 
@@ -600,7 +560,7 @@ void makeMove(Move m, Board* b){
 
     //update allBlack bitboard
     b->bitboards[1] = 0ULL;
-    for(int piece = 3; piece <13;piece+=2){
+    for(int piece = 3; piece <14;piece+=2){
 
         b->bitboards[1] |= b->bitboards[piece];
 
@@ -675,7 +635,7 @@ void unmakeMove(Move m, Board* b){
 
     //update allWhite bitboard
     b->bitboards[0] = 0ULL;
-    for(int piece = 2; piece <13;piece+=2){
+    for(int piece = 2; piece <14;piece+=2){
 
         b->bitboards[0] |= b->bitboards[piece];
 
@@ -683,7 +643,7 @@ void unmakeMove(Move m, Board* b){
 
     //update allBlack bitboard
     b->bitboards[1] = 0ULL;
-    for(int piece = 3; piece <13;piece+=2){
+    for(int piece = 3; piece <14;piece+=2){
 
         b->bitboards[1] |= b->bitboards[piece];
 
@@ -696,20 +656,9 @@ void unmakeMove(Move m, Board* b){
 
 }
 
-void generateAllMovesCertainDepth(int depth, Board* board, TargetLibrary* t){
+void generateAllMovesCertainDepth(int depth, Board* board, TargetLibrary* t,bool side){
 
-    if(depth ==0){
-        cout<< "done" <<endl;
-    }
-    else{
-        vector<Move> moves = generateAllQuietMoves(board->sideToMove,board,t);
 
-        for(Move m : moves){
-            makeMove(m,board);
-            generateAllMovesCertainDepth(depth-1,board,t);
-            unmakeMove(m,board);
-        }
-    }
 
 
 }

@@ -38,13 +38,33 @@ int main() {
 
 
     //displayWholeBoard(board);
-    //generateAllMovesCertainDepth(10,board,&lookup);
+   /* vector<Move> ms = generateAllQuietMoves(board->sideToMove,board,&lookup);
+
+    for(Move m : ms){
+
+        cout << "BEFORE=======================================" << endl;
+        displayBitboard(board->bitboards[0] | board->bitboards[1]);
+
+        cout << "MAKE____________________________________________________" << endl;
+        makeMove(m,board);
+        displayBitboard(board->bitboards[0] | board->bitboards[1]);
+
+        cout << "UNMAKE+++++++++++++++++++++++++++++++++++++++++++++++++++" <<endl;
+        unmakeMove(m,board);
+        displayBitboard(board->bitboards[0] | board->bitboards[1]);
+    }*/
+    generateAllMovesCertainDepth(10,board,&lookup,board->sideToMove);
 
 
-    displayWholeBoard(board);
+    /*displayWholeBoard(board);
     Move m(34,26,0,0,0,0,0,3,0,0);
     makeMove(m,board);
     displayWholeBoard(board);
+    unmakeMove(m,board);
+    cout << " -----------------------" << endl;
+    displayWholeBoard(board);
+     */
+
     //vector<Move> moves = generateAllQuietMoves(board->sideToMove,board,&lookup);
 
     /*for(Move m: moves){
