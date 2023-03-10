@@ -56,7 +56,7 @@ unsigned long long generateBPawnEastAttackTarget(unsigned long long blackPawns){
 unsigned long long generateBPawnWestAttackTarget(unsigned long long blackPawns){
     return (blackPawns >> 9) & (~FileMasks[7]);
 }
-unsigned long long** initializePawnSinglePushLookups(){
+unsigned long long** initializePawnSinglePushTargetLookups(){
 
     unsigned long long** lookups = new unsigned long long*[2];
 
@@ -77,7 +77,7 @@ unsigned long long** initializePawnSinglePushLookups(){
 
     return lookups;
 }
-unsigned long long** initializePawnDoublePushLookups(){
+unsigned long long** initializePawnDoublePushTargetLookups(){
 
     unsigned long long** lookups = new unsigned long long*[2];
 
@@ -96,7 +96,7 @@ unsigned long long** initializePawnDoublePushLookups(){
 
     return lookups;
 }
-unsigned long long** initializePawnAttackLookups(){
+unsigned long long** initializePawnAttackTargetLookups(){
 
     unsigned long long** lookups = new unsigned long long*[2];
 
@@ -154,7 +154,7 @@ unsigned long long generateKnightTarget(int knightSquare){
 
 }
 
-unsigned long long* initializeKnightMoveLookups(){
+unsigned long long* initializeKnightTargetLookups(){
 
     unsigned long long* lookups = new unsigned long long[64];
 
@@ -199,7 +199,7 @@ unsigned long long generateKingTarget(int kingSquare){
 
 }
 
-unsigned long long* initializeKingMoveLookups(){
+unsigned long long* initializeKingTargetLookups(){
 
     unsigned long long* lookups = new unsigned long long[64];
 

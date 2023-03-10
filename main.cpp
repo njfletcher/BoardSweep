@@ -15,11 +15,11 @@ using namespace std;
 int main() {
 
     TargetLibrary lookup;
-    lookup.pawnSinglePushLookups = initializePawnSinglePushLookups();
-    lookup.pawnDoublePushLookups = initializePawnDoublePushLookups();
-    lookup.pawnAttackLookups = initializePawnAttackLookups();
-    lookup.knightMoveLookups = initializeKnightMoveLookups();
-    lookup.kingMoveLookups = initializeKingMoveLookups();
+    lookup.pawnSinglePushLookups = initializePawnSinglePushTargetLookups();
+    lookup.pawnDoublePushLookups = initializePawnDoublePushTargetLookups();
+    lookup.pawnAttackLookups = initializePawnAttackTargetLookups();
+    lookup.knightMoveLookups = initializeKnightTargetLookups();
+    lookup.kingMoveLookups = initializeKingTargetLookups();
     lookup.bishopTargetLookups = initializeBishopTargetLookups();
     lookup.rookTargetLookups = initializeRookTargetLookups();
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
