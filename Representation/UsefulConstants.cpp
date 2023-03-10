@@ -3,6 +3,23 @@
 //
 #include "UsefulConstants.h"
 
+extern const char PieceChars[12] = {
+
+        'P',
+        'p',
+        'N',
+        'n',
+        'B',
+        'b',
+        'R',
+        'r',
+        'Q',
+        'q',
+        'K',
+        'k'
+
+};
+
 extern const unsigned long long FileMasks[8] = {
 
         0x101010101010101,

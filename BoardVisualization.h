@@ -8,4 +8,6 @@
 
 void displayBitboard(unsigned long long bitboard);
 
+void displayChessboard(Board *board);
+
 void displayWholeBoard(Board * board);

@@ -32,6 +32,7 @@ int main() {
 
     //generateAllQuietMoves(0,board->bitboards,&lookup);
 
+    displayChessboard(board);
 
     //displayBitboard(0x7C00000000000000);
     //displayBitboard(0x7C);
@@ -53,7 +54,7 @@ int main() {
         unmakeMove(m,board);
         displayBitboard(board->bitboards[0] | board->bitboards[1]);
     }*/
-    generateAllMovesCertainDepth(10,board,&lookup,board->sideToMove);
+    //generateAllMovesCertainDepth(10,board,&lookup,board->sideToMove);
 
 
     /*displayWholeBoard(board);
