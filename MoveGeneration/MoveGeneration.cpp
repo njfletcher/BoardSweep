@@ -423,7 +423,7 @@ void makeMove(Move m, Board* b){
     int movedPiece = m.movedPiece;
     int capturedPiece = m.capturedPiece;
 
-    cout<<squareFrom << " " << squareTo << " " << m.doublePush << m.capture << m.promotion << m.enPassant << m.castle << " " << movedPiece << " " << capturedPiece << endl;
+    //cout<<squareFrom << " " << squareTo << " " << m.doublePush << m.capture << m.promotion << m.enPassant << m.castle << " " << movedPiece << " " << capturedPiece << endl;
 
     b->bitboards[movedPiece] ^= (1ULL << squareFrom);
 
@@ -567,6 +567,31 @@ void makeMove(Move m, Board* b){
     }
 
 
+}
+
+//make each move, check if the moving side's king is in check. If it is, then the move is illegal.
+vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, TargetLibrary* t){
+
+    vector<Move> legalMoveList;
+    unsigned long long kingBit = board->bitboards[K+side];
+
+    for(int i = 0; i<allMoves.size(); i++){
+
+        Move currMove = allMoves[i];
+
+        makeMove(currMove,board);
+
+        unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
+
+        if(!(attackMask & kingBit)){
+            legalMoveList.push_back(currMove);
+        }
+
+        unmakeMove(currMove,board);
+
+    }
+
+    return legalMoveList;
 }
 
 void unmakeMove(Move m, Board* b){

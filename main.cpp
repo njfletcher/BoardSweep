@@ -25,66 +25,33 @@ int main() {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
+    Board * board = initializeBoardFromFen("2bb4/7p/3P3k/p1pNp2p/PpP1B2P/1P2P1P1/5K2/8 w - - 3 41");
 
-
-    Board * board = initializeBoardFromFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b - h8 10 2");
-    //displayBitboard(board->bitboards[0] | board->bitboards[1]);
-
-    //generateAllQuietMoves(0,board->bitboards,&lookup);
-
+    displayBitboard(getBishopTargetFromBlockers(28,1Ull << 55, lookup.bishopMagicAttacks));
     displayChessboard(board);
 
-    //displayBitboard(0x7C00000000000000);
-    //displayBitboard(0x7C);
+    vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
 
+    cout<< ms.size() << endl;
 
-    //displayWholeBoard(board);
-   /* vector<Move> ms = generateAllQuietMoves(board->sideToMove,board,&lookup);
+    vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
+    cout<< legals.size() << endl;
 
     for(Move m : ms){
 
         cout << "BEFORE=======================================" << endl;
-        displayBitboard(board->bitboards[0] | board->bitboards[1]);
+        displayChessboard(board);
 
         cout << "MAKE____________________________________________________" << endl;
         makeMove(m,board);
-        displayBitboard(board->bitboards[0] | board->bitboards[1]);
+        displayChessboard(board);
 
         cout << "UNMAKE+++++++++++++++++++++++++++++++++++++++++++++++++++" <<endl;
         unmakeMove(m,board);
-        displayBitboard(board->bitboards[0] | board->bitboards[1]);
-    }*/
-    //generateAllMovesCertainDepth(10,board,&lookup,board->sideToMove);
-
-
-    /*displayWholeBoard(board);
-    Move m(34,26,0,0,0,0,0,3,0,0);
-    makeMove(m,board);
-    displayWholeBoard(board);
-    unmakeMove(m,board);
-    cout << " -----------------------" << endl;
-    displayWholeBoard(board);
-     */
-
-    //vector<Move> moves = generateAllQuietMoves(board->sideToMove,board,&lookup);
-
-    /*for(Move m: moves){
-
-        displayWholeBoard(board);
-        makeMove(m,board);
-        displayWholeBoard(board);
-        unmakeMove(m,board);
-        displayWholeBoard(board);
-
+        displayChessboard(board);
     }
-     */
 
 
-
-        /* for(int i =0;i<64;i++){
-             displayBitboard(lookup.pawnSinglePushLookups[0][i]);
-         }
-         */
 
 
 
