@@ -10,6 +10,7 @@
 #include "BitUtil.h"
 #include <vector>
 #include <iomanip>
+#include <chrono>
 
 using namespace std;
 int main() {
@@ -25,16 +26,16 @@ int main() {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
-    Board * board = initializeBoardFromFen("2bb4/7p/3P3k/p1pNp2p/PpPKB2P/1P2P1P1/8/8 w - - 3 41");
+    Board * board = initializeBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
     displayChessboard(board);
 
-    vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
+    //vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
 
-    cout<< ms.size() << endl;
+    //cout<< ms.size() << endl;
 
-    vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
-    cout<< legals.size() << endl;
+    //vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
+    //cout<< legals.size() << endl;
 
     /*for(Move m : ms){
 
@@ -51,6 +52,8 @@ int main() {
     }
      */
 
+
+    //cout << Perft(2,board,&lookup,board->sideToMove) << endl;
 
 
 

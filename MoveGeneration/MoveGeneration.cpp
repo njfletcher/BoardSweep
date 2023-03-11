@@ -433,13 +433,11 @@ void makeMove(Move m, Board* b){
         //take away kingside castle since hfile rook moved
         if(1ULL<<squareFrom & RankMasks[7]){
             castleRights &= ~(1ULL<<(1+(b->sideToMove * 2)));
-            b->castleRights.push_back(castleRights);
         }
         //take away queenside castle since afile rook moved
         if(1ULL<<squareFrom & RankMasks[0]){
             castleRights &= ~(1ULL<<(0+(b->sideToMove * 2)));
 
-            b->castleRights.push_back(castleRights);
         }
 
 
@@ -449,8 +447,6 @@ void makeMove(Move m, Board* b){
 
         castleRights &= ~(1ULL<<(0+(b->sideToMove * 2)));
         castleRights &= ~(1ULL<<(1+(b->sideToMove * 2)));
-
-        b->castleRights.push_back(castleRights);
     }
 
 
@@ -466,12 +462,10 @@ void makeMove(Move m, Board* b){
             //take away kingside castle since hfile rook captured
             if(1ULL<<squareTo & RankMasks[7]){
                 castleRights &= ~(1ULL<<(1+((!b->sideToMove) * 2)));
-                b->castleRights.push_back(castleRights);
             }
             //take away queenside castle since afile rook captured
             if(1ULL<<squareTo & RankMasks[0]){
                 castleRights &= ~(1ULL<<(0+((!b->sideToMove) * 2)));
-                b->castleRights.push_back(castleRights);
             }
 
         }
@@ -549,7 +543,10 @@ void makeMove(Move m, Board* b){
 
     }
 
-    b->sideToMove = !b->sideToMove;
+    b->castleRights.push_back(castleRights);
+
+
+    //b->sideToMove = !b->sideToMove;
     //update allWhite bitboard
     b->bitboards[0] = 0ULL;
     for(int piece = 2; piece <14;piece+=2){
@@ -676,16 +673,50 @@ void unmakeMove(Move m, Board* b){
 
     }
 
-    b->sideToMove = !b->sideToMove;
+    //b->sideToMove = !b->sideToMove;
     b->enPassSquares.pop_back();
     b->castleRights.pop_back();
     b->fiftyMoveRuleHalfMoves.pop_back();
 
 }
 
-void generateAllMovesCertainDepth(int depth, Board* board, TargetLibrary* t,bool side){
+unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side){
+
+    unsigned long long moveCount = 0;
+
+    if(depth == 0){
+        return 1ULL;
+    }
+
+    vector<Move> ms = generateAllMoves(side,board,t);
+    vector<Move> legals = findLegalMoves(side,board,ms,t);
+
+    for(Move m : legals){
+
+        makeMove(m,board);
+        moveCount += Perft(depth - 1,board,t,!side);
+        unmakeMove(m,board);
+    }
+
+    return moveCount;
 
 
+}
+void generateMovesCertainDepth(int depth,Board* board, TargetLibrary* t,bool side){
 
+    if(depth ==0){
+        return;
+    }
 
+    vector<Move> ms = generateAllMoves(side,board,t);
+    vector<Move> legals = findLegalMoves(side,board,ms,t);
+
+    for(Move m : legals){
+
+        makeMove(m,board);
+        generateMovesCertainDepth(depth-1,board,t,!side);
+        unmakeMove(m,board);
+    }
+
+    return;
 }
