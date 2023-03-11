@@ -25,9 +25,8 @@ int main() {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
-    Board * board = initializeBoardFromFen("2bb4/7p/3P3k/p1pNp2p/PpP1B2P/1P2P1P1/5K2/8 w - - 3 41");
+    Board * board = initializeBoardFromFen("2bb4/7p/3P3k/p1pNp2p/PpPKB2P/1P2P1P1/8/8 w - - 3 41");
 
-    displayBitboard(getBishopTargetFromBlockers(28,1Ull << 55, lookup.bishopMagicAttacks));
     displayChessboard(board);
 
     vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
@@ -37,7 +36,7 @@ int main() {
     vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
     cout<< legals.size() << endl;
 
-    for(Move m : ms){
+    /*for(Move m : ms){
 
         cout << "BEFORE=======================================" << endl;
         displayChessboard(board);
@@ -50,6 +49,7 @@ int main() {
         unmakeMove(m,board);
         displayChessboard(board);
     }
+     */
 
 
 

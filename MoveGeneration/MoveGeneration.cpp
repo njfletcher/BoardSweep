@@ -573,7 +573,7 @@ void makeMove(Move m, Board* b){
 vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, TargetLibrary* t){
 
     vector<Move> legalMoveList;
-    unsigned long long kingBit = board->bitboards[K+side];
+
 
     for(int i = 0; i<allMoves.size(); i++){
 
@@ -582,6 +582,8 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Targ
         makeMove(currMove,board);
 
         unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
+
+        unsigned long long kingBit = board->bitboards[K+side];
 
         if(!(attackMask & kingBit)){
             legalMoveList.push_back(currMove);
