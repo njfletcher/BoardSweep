@@ -93,6 +93,20 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
         unsigned long long pawnNormalCaptures =  pawnAttackTargets & enemyPieces;
         //unsigned long long pawnAllMoves = pawnMoveFirst | ((pawnMoveFirst && pawnMoveSecond) * pawnMoveSecond);
 
+        int enPassSquare = board->enPassSquares.back();
+
+        //enpass square of 64 means enpass is not available
+        if(enPassSquare !=64){
+            unsigned long long enPassBit = 1ULL << enPassSquare;
+
+            if(pawnAttackTargets & enPassBit){
+                Move m3(fromSquare,enPassSquare,0,1,0,1,0,P+side,P+!side,0);
+                moveList.push_back(m3);
+            }
+
+
+        }
+
         while(pawnMoveFirst){
             int toSquare = popLSB(&pawnMoveFirst);
 
@@ -169,33 +183,6 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
         }
 
     }
-
-    //take enPassant square and check if any pawns are diagonally left or diagonally right of it
-    //up or down direction depends on the side
-    //if a current side pawn is there, that means it can attack the enPassant target square, so add it to moves
-    int enPassSquare = board->enPassSquares.back();
-
-    //enpass square of 64 means enpass is not available
-    if(enPassSquare !=64){
-        unsigned long long enPassBit = 1ULL << enPassSquare;
-
-        int diagonalOne = enPassSquare + 9 * ((!side) *-1);
-        int diagonalTwo = enPassSquare + 7 * ((!side) *-1);
-        unsigned long long optionOne = (1ULL << diagonalOne) & FileMasks[7-(7*side)];
-        unsigned long long optionTwo = (1ULL << diagonalTwo) & FileMasks[7-(7*(!side))];
-
-        if(optionOne && enPassBit){
-
-            Move m(diagonalOne,enPassSquare,0,1,0,1,0,P+side,P+(!side),0);
-            moveList.push_back(m);
-        }
-        if(optionTwo && enPassBit){
-            Move m(diagonalTwo,enPassSquare,0,1,0,1,0,P+side,P+(!side),0);
-            moveList.push_back(m);
-        }
-    }
-
-
 
     unsigned long long knights = bitboards[N+side];
     while(knights){
@@ -416,14 +403,14 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
 }
 
 
-void makeMove(Move m, Board* b){
+void makeMove(bool side,Move m, Board* b){
 
     int squareFrom = m.squareFrom;
     int squareTo = m.squareTo;
     int movedPiece = m.movedPiece;
     int capturedPiece = m.capturedPiece;
 
-    //cout<<squareFrom << " " << squareTo << " " << m.doublePush << m.capture << m.promotion << m.enPassant << m.castle << " " << movedPiece << " " << capturedPiece << endl;
+
 
     b->bitboards[movedPiece] ^= (1ULL << squareFrom);
 
@@ -432,11 +419,11 @@ void makeMove(Move m, Board* b){
 
         //take away kingside castle since hfile rook moved
         if(1ULL<<squareFrom & RankMasks[7]){
-            castleRights &= ~(1ULL<<(1+(b->sideToMove * 2)));
+            castleRights &= ~(1ULL<<(1+(side * 2)));
         }
         //take away queenside castle since afile rook moved
         if(1ULL<<squareFrom & RankMasks[0]){
-            castleRights &= ~(1ULL<<(0+(b->sideToMove * 2)));
+            castleRights &= ~(1ULL<<(0+(side * 2)));
 
         }
 
@@ -445,8 +432,8 @@ void makeMove(Move m, Board* b){
     //moved king, so take away both of side's castle rights
     if((movedPiece == K || movedPiece == k)){
 
-        castleRights &= ~(1ULL<<(0+(b->sideToMove * 2)));
-        castleRights &= ~(1ULL<<(1+(b->sideToMove * 2)));
+        castleRights &= ~(1ULL<<(0+(side * 2)));
+        castleRights &= ~(1ULL<<(1+(side * 2)));
     }
 
 
@@ -461,11 +448,11 @@ void makeMove(Move m, Board* b){
 
             //take away kingside castle since hfile rook captured
             if(1ULL<<squareTo & RankMasks[7]){
-                castleRights &= ~(1ULL<<(1+((!b->sideToMove) * 2)));
+                castleRights &= ~(1ULL<<(1+((!side) * 2)));
             }
             //take away queenside castle since afile rook captured
             if(1ULL<<squareTo & RankMasks[0]){
-                castleRights &= ~(1ULL<<(0+((!b->sideToMove) * 2)));
+                castleRights &= ~(1ULL<<(0+((!side) * 2)));
             }
 
         }
@@ -473,7 +460,7 @@ void makeMove(Move m, Board* b){
         if(m.enPassant){
 
             b->bitboards[movedPiece] |=1ULL << squareTo;
-            b->bitboards[capturedPiece] ^= 1ULL << (squareTo +8 *((!b->sideToMove) *-1));
+            b->bitboards[capturedPiece] ^= 1ULL << (squareTo +8 *((!side) *-1));
         }
         if(m.promotion){
 
@@ -499,7 +486,7 @@ void makeMove(Move m, Board* b){
         }
 
         if(m.doublePush){
-            unsigned int enPass = squareTo + (8 * ((!b->sideToMove) *-1));
+            unsigned int enPass = squareTo + (8 + ((!side) * -16));
             b->enPassSquares.push_back(enPass);
             b->bitboards[movedPiece] |= 1ULL << squareTo;
 
@@ -514,13 +501,13 @@ void makeMove(Move m, Board* b){
 
                 //queenside castle
                 if(squareDifference ==-2){
-                    b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo-2);
-                    b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom-1);
+                    b->bitboards[R + side] ^= 1ULL << (squareTo-2);
+                    b->bitboards[R + side] |= 1ULL << (squareFrom-1);
                 }
                     //kingside castle
                 else{
-                    b->bitboards[R + b->sideToMove] ^= 1ULL << (squareTo+1);
-                    b->bitboards[R + b->sideToMove] |= 1ULL << (squareFrom+1);
+                    b->bitboards[R + side] ^= 1ULL << (squareTo+1);
+                    b->bitboards[R + side] |= 1ULL << (squareFrom+1);
                 }
 
             }
@@ -575,8 +562,7 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Targ
     for(int i = 0; i<allMoves.size(); i++){
 
         Move currMove = allMoves[i];
-
-        makeMove(currMove,board);
+        makeMove(side, currMove,board);
 
         unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
 
@@ -586,14 +572,14 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Targ
             legalMoveList.push_back(currMove);
         }
 
-        unmakeMove(currMove,board);
+        unmakeMove(side,currMove,board);
 
     }
 
     return legalMoveList;
 }
 
-void unmakeMove(Move m, Board* b){
+void unmakeMove(bool side, Move m, Board* b){
 
     int squareFrom = m.squareFrom;
     int squareTo = m.squareTo;
@@ -608,20 +594,23 @@ void unmakeMove(Move m, Board* b){
 
             b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
             b->bitboards[m.movedPiece] ^= 1ULL << squareTo;
-            b->bitboards[m.capturedPiece] |= 1ULL << (squareTo +8 *((!b->sideToMove) *-1));
+            b->bitboards[m.capturedPiece] |= 1ULL << (squareTo +8 *((!side) *-1));
         }
-        if(m.promotion){
-
-            b->bitboards[m.movedPiece]  |= 1ULL << squareFrom;
-            b->bitboards[m.capturedPiece] |= 1ULL << squareTo;
-            b->bitboards[m.promotedTo] ^= 1ULL << squareTo;
-        }
-            //normal captures
         else{
-            b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
-            b->bitboards[m.movedPiece] ^= 1ULL << squareTo;
-            b->bitboards[m.capturedPiece] |= 1ULL << squareTo;
+            if(m.promotion){
+
+                b->bitboards[m.movedPiece]  |= 1ULL << squareFrom;
+                b->bitboards[m.capturedPiece] |= 1ULL << squareTo;
+                b->bitboards[m.promotedTo] ^= 1ULL << squareTo;
+            }
+                //normal captures
+            else{
+                b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
+                b->bitboards[m.movedPiece] ^= 1ULL << squareTo;
+                b->bitboards[m.capturedPiece] |= 1ULL << squareTo;
+            }
         }
+
 
     }
         //non capture moves
@@ -643,18 +632,20 @@ void unmakeMove(Move m, Board* b){
                 b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo+1);
                 b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom+1);
             }
-        }
-        if(m.promotion){
-            b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
+        }else{
+            if(m.promotion){
+                b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
 
-            b->bitboards[m.promotedTo] ^= 1ULL << squareTo;
-        }
-            //normal moves
-        else{
+                b->bitboards[m.promotedTo] ^= 1ULL << squareTo;
+            }
+                //normal moves
+            else{
 
-            b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
-            b->bitboards[m.movedPiece] ^= 1ULL << squareTo;
+                b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
+                b->bitboards[m.movedPiece] ^= 1ULL << squareTo;
+            }
         }
+
     }
 
     //update allWhite bitboard
@@ -693,9 +684,9 @@ unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side){
 
     for(Move m : legals){
 
-        makeMove(m,board);
+        makeMove(side,m,board);
         moveCount += Perft(depth - 1,board,t,!side);
-        unmakeMove(m,board);
+        unmakeMove(side,m,board);
     }
 
     return moveCount;
@@ -710,12 +701,15 @@ void generateMovesCertainDepth(int depth,Board* board, TargetLibrary* t,bool sid
 
     vector<Move> ms = generateAllMoves(side,board,t);
     vector<Move> legals = findLegalMoves(side,board,ms,t);
+    displayWholeBoard(board);
 
     for(Move m : legals){
 
-        makeMove(m,board);
+        makeMove(side,m,board);
+        displayWholeBoard(board);
         generateMovesCertainDepth(depth-1,board,t,!side);
-        unmakeMove(m,board);
+        unmakeMove(side,m,board);
+        displayWholeBoard(board);
     }
 
     return;

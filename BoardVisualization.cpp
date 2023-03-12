@@ -69,56 +69,13 @@ void displayChessboard(Board *board){
 
 void displayWholeBoard(Board * board){
 
-    cout<< "Side to move: " <<board->sideToMove <<endl;
+    //cout<< "Side to move: " <<board->sideToMove <<endl;
     cout<< "EnPassant Square: " << board->enPassSquares.back()<<endl;
     cout<< "Castle Rights: " << board->castleRights.back()<< endl;
     cout <<"Half move count: " << board->fiftyMoveRuleHalfMoves.back() << endl;
     cout << "Full move count: " << board-> fullMoveCount << endl;
     cout << endl;
-    cout << "----------------All Pieces----------------------" << endl;
-    displayBitboard(board->bitboards[allBlack] | board->bitboards[allWhite] );
-
-    cout << "----------------White Pieces----------------------" << endl;
-    displayBitboard(board->bitboards[allWhite] );
-
-    cout << "----------------Black Pieces----------------------" << endl;
-    displayBitboard(board->bitboards[allBlack] );
-
-    cout << "----------------White Pawns----------------------" << endl;
-    displayBitboard(board->bitboards[P] );
-
-    cout << "----------------Black Pawns----------------------" << endl;
-    displayBitboard(board->bitboards[p] );
-
-    cout << "----------------White Bishops----------------------" << endl;
-    displayBitboard(board->bitboards[B] );
-
-    cout << "----------------Black Bishops----------------------" << endl;
-    displayBitboard(board->bitboards[b] );
-    cout << "----------------White Knights----------------------" << endl;
-    displayBitboard(board->bitboards[N] );
-
-    cout << "----------------Black Knights----------------------" << endl;
-    displayBitboard(board->bitboards[n] );
-
-    cout << "----------------White Rooks----------------------" << endl;
-    displayBitboard(board->bitboards[R] );
-
-    cout << "----------------Black Rooks----------------------" << endl;
-    displayBitboard(board->bitboards[r] );
-
-    cout << "----------------White Queens----------------------" << endl;
-    displayBitboard(board->bitboards[Q] );
-
-    cout << "----------------Black Queens----------------------" << endl;
-    displayBitboard(board->bitboards[q] );
-
-    cout << "----------------White King----------------------" << endl;
-    displayBitboard(board->bitboards[K] );
-
-    cout << "----------------Black King----------------------" << endl;
-    displayBitboard(board->bitboards[k] );
-
+    displayChessboard(board);
     cout << endl;
 
 

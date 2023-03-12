@@ -12,6 +12,7 @@ public:
     Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion, bool isEnPassant, bool isCastle, int moved,
                int captured, int promoted);
 
+    void toString();
 
     int squareTo;
     int squareFrom;

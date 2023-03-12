@@ -11,8 +11,8 @@
 unsigned long long getAttackMask(bool side,unsigned long long* bitboards, TargetLibrary* t);
 std::vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t);
 std::vector<Move> findLegalMoves(bool side, Board* board, std::vector<Move> allMoves, TargetLibrary* t);
-void makeMove(Move m, Board* b);
-void unmakeMove(Move m, Board* b);
+void makeMove(bool side,Move m, Board* b);
+void unmakeMove(bool side,Move m, Board* b);
 
 unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side);
 

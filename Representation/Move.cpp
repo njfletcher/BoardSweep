@@ -3,6 +3,7 @@
 //
 
 #include "Move.h"
+#include <iostream>
 
 Move::Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion, bool isEnPassant, bool isCastle, int moved,
      int captured, int promoted){
@@ -20,5 +21,7 @@ Move::Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion
 
 }
 
-
+void Move::toString(){
+    std::cout <<squareFrom << " " << squareTo << " " << doublePush << capture << promotion << enPassant << castle << " " << movedPiece << " " << capturedPiece << std::endl;
+}
 

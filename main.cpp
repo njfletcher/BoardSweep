@@ -26,34 +26,37 @@ int main() {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
-    Board * board = initializeBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    Board * board = initializeBoardFromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ");
 
-    displayChessboard(board);
+    vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
 
-    //vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
+    vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
 
-    //cout<< ms.size() << endl;
 
-    //vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
-    //cout<< legals.size() << endl;
+    for(Move m : ms){
 
-    /*for(Move m : ms){
-
-        cout << "BEFORE=======================================" << endl;
-        displayChessboard(board);
+        m.toString();
+        /*cout << "BEFORE=======================================" << endl;
+        displayWholeBoard(board);
 
         cout << "MAKE____________________________________________________" << endl;
-        makeMove(m,board);
-        displayChessboard(board);
+        makeMove(board->sideToMove,m,board);
+        displayWholeBoard(board);
 
         cout << "UNMAKE+++++++++++++++++++++++++++++++++++++++++++++++++++" <<endl;
-        unmakeMove(m,board);
-        displayChessboard(board);
+        unmakeMove(board->sideToMove,m,board);
+        displayWholeBoard(board);
+         */
+
+
     }
-     */
 
 
-    //cout << Perft(2,board,&lookup,board->sideToMove) << endl;
+
+
+
+    //cout << Perft(1,board,&lookup,board->sideToMove) << endl;
+    //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
 
 
