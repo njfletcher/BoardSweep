@@ -206,9 +206,11 @@ extern const unsigned long long RookMagics[64] = {
         1153207390808580418
 };
 
-// 0 for white, 1 for black
-extern const unsigned long long CastleSquares[2] = {
-        0x7C,
-        0x7C00000000000000
+// 0 for white king, 1 for white queen, 2 for black king, 3 for black queen
+extern const unsigned long long CastleSquares[4] = {
+        0x70,
+        0x1C,
+        0x7000000000000000,
+        0x1C00000000000000
 
 };

@@ -131,16 +131,16 @@ Board*  initializeBoardFromFen(const char fen[]){
         char castleChar = fen[charCount];
         switch(castleChar){
 
-            case 'K':
+            case 'k':
                 tempRights |= 1L <<3;
                 break;
-            case 'Q':
+            case 'q':
                 tempRights |= 1L<<2;
                 break;
-            case 'k':
+            case 'K':
                 tempRights |= 1L <<1;
                 break;
-            case 'q':
+            case 'Q':
                 tempRights |= 1L;
                 break;
             default:

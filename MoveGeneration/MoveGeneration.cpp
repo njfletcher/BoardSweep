@@ -377,7 +377,7 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
     if(sideHasKingSideCastle){
 
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
+        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & (allPieces ^ (1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
             moveList.push_back(m);
 
@@ -389,7 +389,7 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
     if(sideHasQueenSideCastle){
 
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & allPieces)) ){
+        if(!((enemyAttack & CastleSquares[side+1]) || ( CastleSquares[side+1] & (allPieces ^ (1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
             moveList.push_back(m);
 
