@@ -26,7 +26,7 @@ int main() {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
-    Board * board = initializeBoardFromFen("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8");
+    Board * board = initializeBoardFromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1");
 
     vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
 
@@ -35,8 +35,32 @@ int main() {
     displayWholeBoard(board);
     for(Move m : ms){
 
+        //vector<Move> ms1 = generateAllMoves(!board->sideToMove,board,&lookup);
+
+        //vector<Move> legals1 = findLegalMoves(!board->sideToMove,board,ms1,&lookup);
+
+        //displayWholeBoard(board);
+
+        /*for(Move m1:ms1){
+
+            cout << "BEFORE=======================================" << endl;
+            displayWholeBoard(board);
+
+            cout << "MAKE____________________________________________________" << endl;
+            m1.toString();
+            makeMove(!board->sideToMove,m1,board);
+            displayWholeBoard(board);
+
+            cout << "UNMAKE+++++++++++++++++++++++++++++++++++++++++++++++++++" <<endl;
+            unmakeMove(!board->sideToMove,m1,board);
+            displayWholeBoard(board);
+
+
+        }
+         */
+
         m.toString();
-        /*cout << "BEFORE=======================================" << endl;
+        cout << "BEFORE=======================================" << endl;
         displayWholeBoard(board);
 
         cout << "MAKE____________________________________________________" << endl;
@@ -46,16 +70,14 @@ int main() {
         cout << "UNMAKE+++++++++++++++++++++++++++++++++++++++++++++++++++" <<endl;
         unmakeMove(board->sideToMove,m,board);
         displayWholeBoard(board);
-         */
+
 
 
     }
 
 
 
-
-
-    cout << Perft(1,board,&lookup,board->sideToMove) << endl;
+    //cout << Perft(2,board,&lookup,board->sideToMove) << endl;
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
 

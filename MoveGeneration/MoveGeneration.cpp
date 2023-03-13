@@ -376,8 +376,10 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
 
     if(sideHasKingSideCastle){
 
+
+        int castleIndex = side * 2;
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[side]) || ( CastleSquares[side] & (allPieces ^ (1ULL<<kingSquare)))) ){
+        if(!((enemyAttack & CastleSquares[castleIndex]) || ( CastleSquares[castleIndex] & (allPieces ^ (1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
             moveList.push_back(m);
 
@@ -388,8 +390,9 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
     }
     if(sideHasQueenSideCastle){
 
+        int castleIndex = side * 2 + 1;
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[side+1]) || ( CastleSquares[side+1] & (allPieces ^ (1ULL<<kingSquare)))) ){
+        if(!((enemyAttack & CastleSquares[castleIndex]) || ( CastleSquares[castleIndex] & (allPieces ^ (1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
             moveList.push_back(m);
 
@@ -682,11 +685,15 @@ unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side){
     vector<Move> ms = generateAllMoves(side,board,t);
     vector<Move> legals = findLegalMoves(side,board,ms,t);
 
+
     for(Move m : legals){
 
+
         makeMove(side,m,board);
+
         moveCount += Perft(depth - 1,board,t,!side);
         unmakeMove(side,m,board);
+
     }
 
     return moveCount;
