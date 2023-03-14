@@ -463,7 +463,7 @@ void makeMove(bool side,Move m, Board* b){
         if(m.enPassant){
 
             b->bitboards[movedPiece] |=1ULL << squareTo;
-            b->bitboards[capturedPiece] ^= 1ULL << (squareTo +8 *((!side) *-1));
+            b->bitboards[capturedPiece] ^= 1ULL << (squareTo + (8 + ((!side) * -16)));
         }
         if(m.promotion){
 
@@ -564,8 +564,15 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Targ
 
     for(int i = 0; i<allMoves.size(); i++){
 
+        //cout<< "before" << endl;
+        //displayWholeBoard(board);
         Move currMove = allMoves[i];
         makeMove(side, currMove,board);
+
+        //currMove.toString();
+        //cout<< "make" << endl;
+        //displayWholeBoard(board);
+
 
         unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
 
@@ -576,6 +583,9 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Targ
         }
 
         unmakeMove(side,currMove,board);
+        //cout<< "unmake" << endl;
+        //displayWholeBoard(board);
+
 
     }
 
@@ -597,7 +607,7 @@ void unmakeMove(bool side, Move m, Board* b){
 
             b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
             b->bitboards[m.movedPiece] ^= 1ULL << squareTo;
-            b->bitboards[m.capturedPiece] |= 1ULL << (squareTo +8 *((!side) *-1));
+            b->bitboards[m.capturedPiece] |= 1ULL << (squareTo + (8 + ((!side) * -16)));
         }
         else{
             if(m.promotion){
@@ -627,13 +637,13 @@ void unmakeMove(bool side, Move m, Board* b){
 
             //queenside castle
             if(squareDifference ==-2){
-                b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo-2);
-                b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom-1);
+                b->bitboards[R + side] |= 1ULL << (squareTo-2);
+                b->bitboards[R + side] ^= 1ULL << (squareFrom-1);
             }
                 //kingside castle
             else{
-                b->bitboards[R + b->sideToMove] |= 1ULL << (squareTo+1);
-                b->bitboards[R + b->sideToMove] ^= 1ULL << (squareFrom+1);
+                b->bitboards[R + side] |= 1ULL << (squareTo+1);
+                b->bitboards[R + side] ^= 1ULL << (squareFrom+1);
             }
         }else{
             if(m.promotion){
