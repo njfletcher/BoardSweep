@@ -686,7 +686,7 @@ void unmakeMove(bool side, Move m, Board* b){
 
 unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side){
 
-    unsigned long long moveCount = 0;
+    unsigned long long moveCount =0;
 
     if(depth == 0){
         return 1ULL;
@@ -695,12 +695,10 @@ unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side){
     vector<Move> ms = generateAllMoves(side,board,t);
     vector<Move> legals = findLegalMoves(side,board,ms,t);
 
-
     for(Move m : legals){
 
 
         makeMove(side,m,board);
-
         moveCount += Perft(depth - 1,board,t,!side);
         unmakeMove(side,m,board);
 
