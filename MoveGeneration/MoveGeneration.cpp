@@ -418,19 +418,22 @@ void makeMove(bool side,Move m, Board* b){
     b->bitboards[movedPiece] ^= (1ULL << squareFrom);
 
     unsigned int castleRights = b->castleRights.back();
-    if(movedPiece == R || movedPiece == r){
 
-        //take away kingside castle since hfile rook moved
-        if(1ULL<<squareFrom & FileMasks[7]){
-            castleRights &= ~(1ULL<<(1+(side * 2)));
+    if(movedPiece == R){
+        if(squareFrom == 0){
+            castleRights &= ~(1ULL);
         }
-        //take away queenside castle since afile rook moved
-        if(1ULL<<squareFrom & FileMasks[0]){
-            castleRights &= ~(1ULL<<(0+(side * 2)));
-
+        if(squareFrom == 7){
+            castleRights &= ~(1ULL<<1);
         }
-
-
+    }
+    if(movedPiece ==r){
+        if(squareFrom == 56){
+            castleRights &= ~(1ULL<<2);
+        }
+        if(squareFrom == 63){
+            castleRights &= ~(1ULL<<3);
+        }
     }
     //moved king, so take away both of side's castle rights
     if((movedPiece == K || movedPiece == k)){
@@ -446,17 +449,21 @@ void makeMove(bool side,Move m, Board* b){
         b->enPassSquares.push_back(64);
         b->fiftyMoveRuleHalfMoves.push_back(0);
 
-        if(capturedPiece == R || capturedPiece == r){
-
-            //take away kingside castle since hfile rook captured
-            if(1ULL<<squareTo & FileMasks[7]){
-                castleRights &= ~(1ULL<<(1+((!side) * 2)));
+        if(capturedPiece == R){
+            if(squareTo == 0){
+                castleRights &= ~(1ULL);
             }
-            //take away queenside castle since afile rook captured
-            if(1ULL<<squareTo & FileMasks[0]){
-                castleRights &= ~(1ULL<<(0+((!side) * 2)));
+            if(squareTo == 7){
+                castleRights &= ~(1ULL<<1);
             }
-
+        }
+        if(capturedPiece ==r){
+            if(squareTo == 56){
+                castleRights &= ~(1ULL<<2);
+            }
+            if(squareTo == 63){
+                castleRights &= ~(1ULL<<3);
+            }
         }
 
         if(m.enPassant){

@@ -22,13 +22,15 @@ Move::Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion
 }
 
 void Move::toString(){
-    std::cout <<squareFrom << " " << squareTo << " " << doublePush << capture << promotion << enPassant << castle << " " << movedPiece << " " << capturedPiece << std::endl;
+    std::cout <<squareFrom << " " << squareTo << " " << doublePush << capture << promotion << enPassant << castle << " " << movedPiece << " " << capturedPiece << " " << promotedTo << std::endl;
 }
 void Move::toUCI() {
 
     char cap = ' ';
     if(promotion){
-        cap = PieceChars[promotedTo];
+
+        //subtract 2 from the index bc the bitboard piece index and piece char index are offset by two
+        cap = PieceChars[promotedTo-2];
     }
     std::cout << Squares[squareFrom] << Squares[squareTo] << cap <<std::endl;
 }
