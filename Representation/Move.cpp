@@ -24,4 +24,7 @@ Move::Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion
 void Move::toString(){
     std::cout <<squareFrom << " " << squareTo << " " << doublePush << capture << promotion << enPassant << castle << " " << movedPiece << " " << capturedPiece << std::endl;
 }
+void Move::toUCI() {
+    std::cout << Squares[squareFrom] << Squares[squareTo] << std::endl;
+}
 

@@ -13,6 +13,7 @@ public:
                int captured, int promoted);
 
     void toString();
+    void toUCI();
 
     int squareTo;
     int squareFrom;

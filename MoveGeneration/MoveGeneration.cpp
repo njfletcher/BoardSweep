@@ -684,11 +684,11 @@ void unmakeMove(bool side, Move m, Board* b){
 
 }
 
-unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side){
+unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLibrary* t,bool side){
 
     unsigned long long moveCount =0;
 
-    if(depth == 0){
+    if(finishDepth == 0){
         return 1ULL;
     }
 
@@ -697,11 +697,27 @@ unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side){
 
     for(Move m : legals){
 
+        //cout << "BEFORE==========================================" << endl;
+        //displayWholeBoard(board);
 
         makeMove(side,m,board);
-        moveCount += Perft(depth - 1,board,t,!side);
+
+        //cout << "MAKE============================================" << endl;
+        //m.toString();
+        //displayWholeBoard(board);
+
+
+        unsigned long ct = Perft(finishDepth - 1,printDepth, board,t,!side);
+        if(printDepth == finishDepth){
+            m.toString();
+            m.toUCI();
+            cout << ct << " nodes" << endl;
+        }
+        moveCount += ct;
         unmakeMove(side,m,board);
 
+        //cout << "UNMAKE==========================================" << endl;
+        //displayWholeBoard(board);
     }
 
     return moveCount;

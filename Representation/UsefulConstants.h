@@ -29,6 +29,8 @@ enum enumColor{
     black
 };
 extern const char PieceChars[];
+
+extern const char* Squares[];
 extern const unsigned long long FileMasks[];
 
 extern const unsigned long long RankMasks[];

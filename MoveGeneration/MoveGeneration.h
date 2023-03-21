@@ -14,6 +14,6 @@ std::vector<Move> findLegalMoves(bool side, Board* board, std::vector<Move> allM
 void makeMove(bool side,Move m, Board* b);
 void unmakeMove(bool side,Move m, Board* b);
 
-unsigned long long Perft(int depth,Board* board, TargetLibrary* t,bool side);
+unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLibrary* t,bool side);
 
 void generateMovesCertainDepth(int depth,Board* board, TargetLibrary* t,bool side);

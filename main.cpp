@@ -26,14 +26,16 @@ int main() {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
-    Board * board = initializeBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    Board * board = initializeBoardFromFen("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8");
 
     vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
 
     vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
 
 
-    cout << Perft(2,board,&lookup,board->sideToMove) << endl;
+    int enPass = 0;
+    cout << Perft(2,2,board,&lookup,board->sideToMove) << endl;
+
 
     return 0;
 
