@@ -25,6 +25,11 @@ void Move::toString(){
     std::cout <<squareFrom << " " << squareTo << " " << doublePush << capture << promotion << enPassant << castle << " " << movedPiece << " " << capturedPiece << std::endl;
 }
 void Move::toUCI() {
-    std::cout << Squares[squareFrom] << Squares[squareTo] << std::endl;
+
+    char cap = ' ';
+    if(promotion){
+        cap = PieceChars[promotedTo];
+    }
+    std::cout << Squares[squareFrom] << Squares[squareTo] << cap <<std::endl;
 }
 

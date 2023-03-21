@@ -160,16 +160,16 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
             unsigned long long relevantRank = RankMasks[7+(-7*side)];
 
             if((1ULL<<toSquare) & relevantRank){
-                Move m(fromSquare,toSquare,0,1,1,0,0,P+side,0,N+side);
+                Move m(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,N+side);
                 moveList.push_back(m);
 
-                Move m1(fromSquare,toSquare,0,1,1,0,0,P+side,0,B+side);
+                Move m1(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,B+side);
                 moveList.push_back(m1);
 
-                Move m2(fromSquare,toSquare,0,1,1,0,0,P+side,0,R+side);
+                Move m2(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,R+side);
                 moveList.push_back(m2);
 
-                Move m3(fromSquare,toSquare,0,1,1,0,0,P+side,0,Q+side);
+                Move m3(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,Q+side);
                 moveList.push_back(m3);
 
             }
@@ -421,11 +421,11 @@ void makeMove(bool side,Move m, Board* b){
     if(movedPiece == R || movedPiece == r){
 
         //take away kingside castle since hfile rook moved
-        if(1ULL<<squareFrom & RankMasks[7]){
+        if(1ULL<<squareFrom & FileMasks[7]){
             castleRights &= ~(1ULL<<(1+(side * 2)));
         }
         //take away queenside castle since afile rook moved
-        if(1ULL<<squareFrom & RankMasks[0]){
+        if(1ULL<<squareFrom & FileMasks[0]){
             castleRights &= ~(1ULL<<(0+(side * 2)));
 
         }
@@ -446,15 +446,14 @@ void makeMove(bool side,Move m, Board* b){
         b->enPassSquares.push_back(64);
         b->fiftyMoveRuleHalfMoves.push_back(0);
 
-
         if(capturedPiece == R || capturedPiece == r){
 
             //take away kingside castle since hfile rook captured
-            if(1ULL<<squareTo & RankMasks[7]){
+            if(1ULL<<squareTo & FileMasks[7]){
                 castleRights &= ~(1ULL<<(1+((!side) * 2)));
             }
             //take away queenside castle since afile rook captured
-            if(1ULL<<squareTo & RankMasks[0]){
+            if(1ULL<<squareTo & FileMasks[0]){
                 castleRights &= ~(1ULL<<(0+((!side) * 2)));
             }
 
@@ -697,15 +696,7 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLi
 
     for(Move m : legals){
 
-        //cout << "BEFORE==========================================" << endl;
-        //displayWholeBoard(board);
-
         makeMove(side,m,board);
-
-        //cout << "MAKE============================================" << endl;
-        //m.toString();
-        //displayWholeBoard(board);
-
 
         unsigned long ct = Perft(finishDepth - 1,printDepth, board,t,!side);
         if(printDepth == finishDepth){
@@ -716,8 +707,6 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLi
         moveCount += ct;
         unmakeMove(side,m,board);
 
-        //cout << "UNMAKE==========================================" << endl;
-        //displayWholeBoard(board);
     }
 
     return moveCount;
@@ -736,10 +725,19 @@ void generateMovesCertainDepth(int depth,Board* board, TargetLibrary* t,bool sid
 
     for(Move m : legals){
 
-        makeMove(side,m,board);
+        cout << "BEFORE==========================================" << endl;
         displayWholeBoard(board);
+
+        makeMove(side,m,board);
+        cout << "MAKE============================================" << endl;
+        m.toString();
+        m.toUCI();
+        displayWholeBoard(board);
+
         generateMovesCertainDepth(depth-1,board,t,!side);
+
         unmakeMove(side,m,board);
+        cout << "UNMAKE==========================================" << endl;
         displayWholeBoard(board);
     }
 
