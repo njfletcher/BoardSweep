@@ -7,6 +7,7 @@
 #include "Representation/UsefulConstants.h"
 #include "Representation/Move.h"
 #include "Representation/TargetLibrary.h"
+#include "Testing/Tester.h"
 #include "BitUtil.h"
 #include <vector>
 #include <iomanip>
@@ -35,8 +36,10 @@ int main() {
     //vector<Move> legals = findLegalMoves(board->sideToMove,board,ms,&lookup);
     //displayWholeBoard(board);
 
-    cout << Perft(4,0,board,&lookup,board->sideToMove) << endl;
+    //cout << Perft(4,0,board,&lookup,board->sideToMove) << endl;
     //generateMovesCertainDepth(1,board,&lookup,board->sideToMove);
+
+    testAll();
 
 
 

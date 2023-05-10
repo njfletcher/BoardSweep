@@ -713,8 +713,7 @@ void unmakeMove(bool side, Move m, Board* b){
 
 /*Perft-
  * given a finish depth, board, target library and side
- * counts the number of possible moves(leaf nodes) that can be made
- * starting from the side and going until that depth.
+ * counts the number of leaf nodes in move tree the side and going until that depth.
  */
 unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLibrary* t,bool side){
 
