@@ -22,20 +22,24 @@ unsigned int countSetBits(unsigned long long bitboard){
 
 
 
-//returns 0-63 if valid index, returns 64 if 0ULL
+//returns 0-63 given a valid set bitboard
+//assumes check for bitboard == 0ULL is done elsewhere
 unsigned int getIndexLSB(unsigned long long bitboard){
 
     return countSetBits((bitboard & -bitboard) -1);
 
 }
 
+//assumes index given is valid and is set.
 void popBit(unsigned long long* bitboardPtr, int index){
 
     unsigned long long indexBit = 1ULL <<index;
 
-    if((*bitboardPtr) & indexBit) *bitboardPtr ^= (indexBit);
+    *bitboardPtr &= ~(indexBit);
 
 }
+
+//pops lsb, returns the index
 unsigned int popLSB(unsigned long long* bitboardPtr){
 
     unsigned int index = getIndexLSB(*bitboardPtr);
@@ -55,9 +59,9 @@ unsigned long long generateRandomBitboard(){
 
     return first | (second << 16) | (third << 32) | (fourth << 48);
 
-
-
 }
+
+
 //Based on Tord Romstad's method
 unsigned long long generateSparseBitboard(){
 

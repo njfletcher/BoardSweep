@@ -3,6 +3,7 @@
 //
 #include "UsefulConstants.h"
 
+//maps piece ints to piece chars
 extern const char PieceChars[12] = {
 
         'P',
@@ -20,6 +21,7 @@ extern const char PieceChars[12] = {
 
 };
 
+//bitboard masks for file a-h(ascending)
 extern const unsigned long long FileMasks[8] = {
 
         0x101010101010101,
@@ -33,6 +35,7 @@ extern const unsigned long long FileMasks[8] = {
 
 };
 
+//bitboard masks for rank 1-8(ascending)
 extern const unsigned long long RankMasks[8] = {
         0xff,
         0xff00,
@@ -45,6 +48,8 @@ extern const unsigned long long RankMasks[8] = {
 };
 
 //generated from initializeBishopTargetCountLookup()
+/*maps the square index to the number of bits that will be in the
+ * magic target mask of a bishop on that square */
 extern const int BishopTargetCount[64] = {
         6, 5, 5, 5, 5, 5, 5, 6,
         5, 5, 5, 5, 5, 5, 5, 5,
@@ -57,6 +62,8 @@ extern const int BishopTargetCount[64] = {
 };
 
 //generated from initializeRookTargetCountLookup()
+/*maps the square index to the number of bits that will be in the
+ * magic target mask of a rook on that square */
 extern const int RookTargetCount[64] = {
         12, 11, 11, 11, 11, 11, 11, 12,
         11, 10, 10, 10, 10, 10, 10, 11,
@@ -69,6 +76,7 @@ extern const int RookTargetCount[64] = {
 };
 
 //generated from findMagicNumbers()
+//maps square index to bishop magic number for that square.
 extern const unsigned long long BishopMagics[64] = {
         1213929573326976,
         600113481890409472,
@@ -139,6 +147,7 @@ extern const unsigned long long BishopMagics[64] = {
 
 
 //generated from findMagicNumbers()
+//maps square index to rook magic number for that square.
 extern const unsigned long long RookMagics[64] = {
         36029071906791552,
         1171006272128950272,
@@ -207,6 +216,8 @@ extern const unsigned long long RookMagics[64] = {
 };
 
 // 0 for white king, 1 for white queen, 2 for black king, 3 for black queen
+/*gives bitboard mask for squares that need to be safe for a given
+ * castle situation*/
 extern const unsigned long long CastleSquares[4] = {
         0x70,
         0x1C,
@@ -215,6 +226,7 @@ extern const unsigned long long CastleSquares[4] = {
 
 };
 
+//maps square index to their string representations
 extern const char* Squares[64]{
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
         "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",

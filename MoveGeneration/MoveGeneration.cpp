@@ -12,6 +12,11 @@
 using namespace std;
 
 //white = 0 black =1;
+/*getAttackMask-
+ * given a side, bitboard array, and target library
+ * returns a bitboard with set bits representing all possible squares
+ * that side can pseudo-legally attack
+ */
 unsigned long long getAttackMask(bool side,unsigned long long* bitboards, TargetLibrary* t){
 
     unsigned long long attack = 0ULL;
@@ -64,7 +69,11 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Target
 
 }
 
-
+/* generateAllMoves-
+ * given a side, bitboard array, and target library
+ * returns vector of all psuedo-legal moves(attack,normal, and special)
+ * that a side can make
+ */
 vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
 
     vector<Move> moveList;
@@ -405,6 +414,10 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
 
 }
 
+/* makeMove-
+ * given a side, move, and board
+ * updates the board to reflect the move being made
+ */
 
 void makeMove(bool side,Move m, Board* b){
 
@@ -562,7 +575,10 @@ void makeMove(bool side,Move m, Board* b){
 
 }
 
-//make each move, check if the moving side's king is in check. If it is, then the move is illegal.
+/* findLegalMoves-
+ * given a side, board, pseudo-legal set of moves, and target library
+ * finds all legal moves from the set of pseudo legal moves.
+ */
 vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, TargetLibrary* t){
 
     vector<Move> legalMoveList;
@@ -597,6 +613,11 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Targ
 
     return legalMoveList;
 }
+
+/* unmakeMove-
+ * given a side, move, and board
+ * updates the board to reflect the move being taken back
+ */
 
 void unmakeMove(bool side, Move m, Board* b){
 
@@ -690,6 +711,11 @@ void unmakeMove(bool side, Move m, Board* b){
 
 }
 
+/*Perft-
+ * given a finish depth, board, target library and side
+ * counts the number of possible moves(leaf nodes) that can be made
+ * starting from the side and going until that depth.
+ */
 unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLibrary* t,bool side){
 
     unsigned long long moveCount =0;

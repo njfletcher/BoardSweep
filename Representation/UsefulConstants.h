@@ -22,8 +22,6 @@ enum enumPiece
     k = 13
 };
 
-
-
 enum enumColor{
     white,
     black
