@@ -6,7 +6,7 @@
 #define BOARDSWEEP_TESTER_H
 
 #endif //BOARDSWEEP_TESTER_H
+#include "../Representation/TargetLibrary.h"
 
-
-void testAll();
-void testPosition(const char fen[]);
+void testAll(TargetLibrary* t);
+void testPosition(const char fen[], unsigned int depth, unsigned long long nodes,TargetLibrary* t);

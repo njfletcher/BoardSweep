@@ -14,7 +14,7 @@
 #include <chrono>
 
 using namespace std;
-int main() {
+int main(int argc, char** argv) {
 
     TargetLibrary lookup;
     lookup.pawnSinglePushLookups = initializePawnSinglePushTargetLookups();
@@ -29,7 +29,7 @@ int main() {
 
     Board * board = initializeBoardFromFen("8/5k2/8/5N2/5Q2/2K5/8/8 w - - 0 1");
 
-
+    cout << argv[0] << endl;
 
     //vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
 
