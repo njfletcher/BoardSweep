@@ -388,7 +388,7 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
 
         int castleIndex = side * 2;
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[castleIndex]) || ( CastleSquares[castleIndex] & (allPieces ^ (1ULL<<kingSquare)))) ){
+        if(!((enemyAttack & CastleCheckSquares[castleIndex]) || ( CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
             moveList.push_back(m);
 
@@ -401,7 +401,7 @@ vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
 
         int castleIndex = side * 2 + 1;
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-        if(!((enemyAttack & CastleSquares[castleIndex]) || ( CastleSquares[castleIndex] & (allPieces ^ (1ULL<<kingSquare)))) ){
+        if(!((enemyAttack & CastleCheckSquares[castleIndex]) || ( CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
             moveList.push_back(m);
 
@@ -757,20 +757,22 @@ void generateMovesCertainDepth(int depth,Board* board, TargetLibrary* t,bool sid
 
     for(Move m : legals){
 
-        cout << "BEFORE==========================================" << endl;
-        displayWholeBoard(board);
 
-        makeMove(side,m,board);
-        cout << "MAKE============================================" << endl;
-        m.toString();
-        m.toUCI();
-        displayWholeBoard(board);
+            //cout << "BEFORE==========================================" << endl;
+            //displayWholeBoard(board);
 
-        generateMovesCertainDepth(depth-1,board,t,!side);
+            makeMove(side, m, board);
+            cout << "MAKE============================================" << endl;
+            m.toString();
+            m.toUCI();
+            displayWholeBoard(board);
 
-        unmakeMove(side,m,board);
-        cout << "UNMAKE==========================================" << endl;
-        displayWholeBoard(board);
+            generateMovesCertainDepth(depth - 1, board, t, !side);
+
+            unmakeMove(side, m, board);
+            //cout << "UNMAKE==========================================" << endl;
+            //displayWholeBoard(board);
+
     }
 
     return;

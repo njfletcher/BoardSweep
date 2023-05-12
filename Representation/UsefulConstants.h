@@ -39,4 +39,5 @@ extern const int RookTargetCount[];
 extern const unsigned long long BishopMagics[];
 extern const unsigned long long RookMagics[];
 
-extern const unsigned long long CastleSquares[];
+extern const unsigned long long CastleCheckSquares[];
+extern const unsigned long long CastleBlockSquares[];

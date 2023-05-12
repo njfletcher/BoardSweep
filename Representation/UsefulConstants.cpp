@@ -216,13 +216,24 @@ extern const unsigned long long RookMagics[64] = {
 };
 
 // 0 for white king, 1 for white queen, 2 for black king, 3 for black queen
-/*gives bitboard mask for squares that need to be safe for a given
+/*gives bitboard mask for squares that need to be safe from check for a given
  * castle situation*/
-extern const unsigned long long CastleSquares[4] = {
+extern const unsigned long long CastleCheckSquares[4] = {
         0x70,
         0x1C,
         0x7000000000000000,
         0x1C00000000000000
+
+};
+
+// 0 for white king, 1 for white queen, 2 for black king, 3 for black queen
+/*gives bitboard mask for squares that need to be clear of a piece for a given
+ * castle situation*/
+extern const unsigned long long CastleBlockSquares[4] = {
+        0x70,
+        0x1E,
+        0x7000000000000000,
+        0x1E00000000000000
 
 };
 
