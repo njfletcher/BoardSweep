@@ -13,7 +13,7 @@ using namespace std;
 
 void testAll(TargetLibrary* t){
 
-    ifstream file ("perft.txt");
+    ifstream file ("C:\\Users\\nflet\\CLionProjects\\BoardSweep\\perft.txt");
 
     string currLine;
 
@@ -24,23 +24,31 @@ void testAll(TargetLibrary* t){
             getline (file, currLine);
             if(currLine[0] == '#'){
 
+                cout << "Testing: ";
                 //get fen
                 int count = 0;
                 for(int i =1; currLine[i] != ','; i++) count++;
 
-                char fen[count];
+                char fen[count+1];
                 for(int i = 0; i<count;i++){
                     fen[i] = currLine[i+1];
                 }
+                fen[count] = 0;
+
+                cout << "fen " << fen;
 
                 //get depth
                 int count2 = 0;
                 unsigned int depth = 0;
                 for(int i =count + 2; currLine[i] != ','; i++) count2++;
+
                 for(int i =0; i<count2;i++){
 
-                    depth += pow(10,count2-i)* (fen[count + 2 + i]-'0');
+                    depth += pow(10,count2-i-1)* (currLine[count + 2 + i]-'0');
+
                 }
+
+                cout << " with depth: " << depth;
 
                 //get nodes
                 int count3 = 0;
@@ -48,9 +56,10 @@ void testAll(TargetLibrary* t){
                 for(int i =count + 2+count2 + 1; currLine[i] != ','; i++) count3++;
                 for(int i =0; i<count3;i++){
 
-                    nodes += pow(10,count3-i)* (fen[count + 2 + count2 +1 + i]-'0');
+                    nodes += pow(10,count3-i-1)* (currLine[count + 2 + count2 +1 + i]-'0');
                 }
 
+                cout << " expected nodes: " << nodes << endl;
                 testPosition(fen,depth,nodes,t);
             }
         }
@@ -66,7 +75,10 @@ void testPosition(const char fen[], unsigned int depth, unsigned long long nodes
 
     Board* board = initializeBoardFromFen(fen);
     unsigned long long nodeCount = Perft(depth,400,board,t,board->sideToMove);
-    if(nodeCount != nodes) cout <<"mismatch with position: " << fen << endl;
+    //cout << nodeCount <<endl;
+    if(nodeCount != nodes) cout <<"!!!!!!!!!!!!!!!mismatch with position: expected "<< nodes << " got " << nodeCount << "!!!!!!!!!!!!!!!!!!!!" << endl;
+    else cout << "position correct expected : " <<  nodes << " got: " << nodeCount <<endl;
+
 
     delete board;
 

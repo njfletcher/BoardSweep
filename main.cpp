@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
-    Board * board = initializeBoardFromFen("r3k2r/1b4bq/8/8/8/8/7B/R3K2R w KQkq - 0 1");
+    Board * board = initializeBoardFromFen("8/5bk1/8/2Pp4/8/1K6/8/8 w - d6 0 1");
 
     cout << argv[0] << endl;
 
@@ -37,14 +37,14 @@ int main(int argc, char** argv) {
     //displayWholeBoard(board);
 
 
-    cout << Perft(4,10,board,&lookup,board->sideToMove) << endl;
+    //cout << Perft(6,10,board,&lookup,board->sideToMove) << endl;
 
 
 
 
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
-    //testAll(&lookup);
+    testAll(&lookup);
 
 
 
