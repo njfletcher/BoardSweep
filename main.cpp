@@ -7,6 +7,7 @@
 #include "Representation/UsefulConstants.h"
 #include "Representation/Move.h"
 #include "Representation/TargetLibrary.h"
+#include "Search/Eval.h"
 #include "Testing/Tester.h"
 #include "BitUtil.h"
 #include <vector>
@@ -44,7 +45,10 @@ int main(int argc, char** argv) {
 
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
-    testAll(&lookup);
+    //testAll(&lookup);
+    displayWholeBoard(board);
+    int score = evaluatePosition(board,board->sideToMove);
+    cout << score <<endl;
 
 
 
