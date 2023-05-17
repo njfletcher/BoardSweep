@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 
     //testAll(&lookup);
     displayWholeBoard(board);
-    int score = evaluatePosition(board,board->sideToMove);
+    int score = evaluatePosition(board,board->sideToMove,&lookup);
     cout << score <<endl;
 
 
