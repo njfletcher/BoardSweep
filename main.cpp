@@ -51,7 +51,6 @@ int main(int argc, char** argv) {
     cout << score <<endl;
 
 
-
     return 0;
 
 

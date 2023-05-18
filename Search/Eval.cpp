@@ -10,21 +10,28 @@
 #include <iostream>
 using namespace std;
 
-void countAndScoreBits(int* score, unsigned long long bitboard, int piece, int* pieceCounts, bool sideToMove){
+void countAndScoreBits(int* score, unsigned long long bitboard, int piece, int* pieceCounts){
 
     int count = 0;
-    int maxSquare = 63;
     int mirrorFlag = 0;
-    if(!sideToMove)mirrorFlag = 1;
+    int scoreSign = -1;
+    //white piece int values will always be even
+    if((piece % 2) ==0){
+        mirrorFlag = 1;
+        scoreSign = 1;
+    }
 
 
     while(bitboard>0){
 
         int square = (int)popLSB(&bitboard);
 
-        square = ((maxSquare - square) * mirrorFlag) + (square * !mirrorFlag);
+        square = ((square ^ 63) * mirrorFlag) + (square * !mirrorFlag);
 
-        *score += MiddlePieceSquareTables[piece / 2][square];
+        //since both colors for a given piece map to the same pst table
+        int adjustedPiece = (piece/2)-1;
+
+        *score += scoreSign * MiddlePieceSquareTables[adjustedPiece][square];
         count++;
     }
     pieceCounts[piece-2] = count;
@@ -41,7 +48,7 @@ int evaluatePosition(Board* board, bool sideToMove,TargetLibrary* t){
     for(int i =2; i<14;i++){
 
         unsigned long long bitboard = board->bitboards[i];
-        countAndScoreBits(&score,bitboard,i,pieceCounts,sideToMove);
+        countAndScoreBits(&score,bitboard,i,pieceCounts);
 
     }
 
