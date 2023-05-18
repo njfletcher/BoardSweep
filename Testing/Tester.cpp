@@ -13,7 +13,7 @@ using namespace std;
 
 void testAll(TargetLibrary* t){
 
-    ifstream file ("C:\\Users\\nflet\\CLionProjects\\BoardSweep\\perft.txt");
+    ifstream file ("C:\\Users\\nflet\\CLionProjects\\BoardSweep\\Testing\\perft.txt");
 
     string currLine;
 

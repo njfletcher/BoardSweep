@@ -13,6 +13,7 @@
 #include <vector>
 #include <iomanip>
 #include <chrono>
+#include "Search/Search.h"
 
 using namespace std;
 int main(int argc, char** argv) {
@@ -28,7 +29,7 @@ int main(int argc, char** argv) {
     lookup.bishopMagicAttacks = initializeBishopMagicAttackTable(lookup.bishopTargetLookups);
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
 
-    Board * board = initializeBoardFromFen("8/5bk1/8/2Pp4/8/1K6/8/8 w - d6 0 1");
+    Board * board = initializeBoardFromFen("8/5bk1/8/2Pp4/8/1K6/8/8 b - d6 0 1");
 
     cout << argv[0] << endl;
 
@@ -46,9 +47,14 @@ int main(int argc, char** argv) {
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
     //testAll(&lookup);
-    displayWholeBoard(board);
-    int score = evaluatePosition(board,board->sideToMove,&lookup);
-    cout << score <<endl;
+    //displayWholeBoard(board);
+    //int score = evaluatePosition(board,board->sideToMove,&lookup);
+    //cout << score <<endl;
+
+    //cout << board->sideToMove << endl;
+    MovePair pair = startAB(7,&lookup,board,board->sideToMove);
+    pair.m.toUCI();
+
 
 
     return 0;

@@ -12,6 +12,8 @@ public:
     Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion, bool isEnPassant, bool isCastle, int moved,
                int captured, int promoted);
 
+    Move();
+
     void toString();
     void toUCI();
 
@@ -29,4 +31,12 @@ public:
 
 
 
+};
+
+class MovePair{
+
+public:
+    MovePair(Move move, int eval);
+    Move m;
+    int evalScore;
 };

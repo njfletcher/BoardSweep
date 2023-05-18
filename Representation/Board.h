@@ -18,6 +18,8 @@ class Board{
 public:
 
     unsigned long long bitboards[14];
+
+    //0 is white, 1 is black
     bool sideToMove;
 
     //4th bit: black kingside, 3rd bit: black queenside, 2nd bit:white kingside, 1st bit: white queenside
