@@ -3,21 +3,14 @@
 #include "GameStart.h"
 #include "Representation/Move.h"
 #include "MoveGeneration/TargetGeneration.h"
-#include "MoveGeneration/MoveGeneration.h"
-#include "Representation/UsefulConstants.h"
-#include "Representation/Move.h"
 #include "Representation/TargetLibrary.h"
-#include "Search/Eval.h"
 #include "Testing/Tester.h"
-#include "BitUtil.h"
-#include <vector>
-#include <iomanip>
-#include <chrono>
 #include "Search/Search.h"
 
 using namespace std;
 int main(int argc, char** argv) {
 
+    //hi
     TargetLibrary lookup;
     lookup.pawnSinglePushLookups = initializePawnSinglePushTargetLookups();
     lookup.pawnDoublePushLookups = initializePawnDoublePushTargetLookups();
