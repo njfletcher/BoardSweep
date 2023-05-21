@@ -2,6 +2,7 @@
 // Created by nflet on 12/19/2022.
 //
 #pragma once
+#include <string>
 
 //capital letter = white, lowercase = black
 enum enumPiece
@@ -28,7 +29,7 @@ enum enumColor{
 };
 extern const char PieceChars[];
 
-extern const char* Squares[];
+extern const std::string Squares[];
 extern const unsigned long long FileMasks[];
 
 extern const unsigned long long RankMasks[];

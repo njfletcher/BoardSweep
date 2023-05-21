@@ -4,6 +4,9 @@
 
 #include "Search.h"
 #include "Eval.h"
+#include "../GamePlay.h"
+#include "../BoardVisualization.h"
+#include "../Representation/Board.h"
 #include "../Representation/UsefulConstants.h"
 #include "../MoveGeneration/MoveGeneration.h"
 #include <limits.h>
@@ -18,10 +21,23 @@ MovePair startAB(int currentDepth, TargetLibrary* t,Board* board, bool side){
 
 MovePair searchAB(int currentDepth, int alpha, int beta, TargetLibrary* t,Board* board,bool side,Move m){
 
-    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,side,t));
+    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,side,t,false,false));
+
 
     vector<Move> moves = generateAllMoves(side,board,t);
     vector<Move> legals = findLegalMoves(side,board,moves,t);
+
+    if(legals.size() == 0){
+        unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
+
+        unsigned long long kingBit = board->bitboards[K+side];
+
+        if(attackMask & kingBit){
+            return MovePair(m,evaluatePosition(board,side,t,true,false));
+        }
+        else return MovePair(m,evaluatePosition(board,side,t,false,true));
+
+    }
 
     //minimizing player
     if(side == black){
@@ -76,4 +92,6 @@ MovePair searchAB(int currentDepth, int alpha, int beta, TargetLibrary* t,Board*
     }
 
 }
+
+
 

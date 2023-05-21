@@ -1,5 +1,5 @@
-boardsweep: main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GameStart.o
-	g++ -lstdc++ -o boardsweep main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GameStart.o
+boardsweep: main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o
+	g++ -lstdc++ -o boardsweep main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o
 main.o: main.cpp
 	g++ -c main.cpp
 MoveGeneration.o: MoveGeneration/MoveGeneration.cpp MoveGeneration/MoveGeneration.h
@@ -24,8 +24,8 @@ BitUtil.o: BitUtil.cpp BitUtil.h
 	g++ -c BitUtil.cpp
 BoardVisualization.o: BoardVisualization.cpp BoardVisualization.h
 	g++ -c BoardVisualization.cpp
-GameStart.o: GameStart.cpp GameStart.h
-	g++ -c GameStart.cpp
+GamePlay.o: GamePlay.cpp GamePlay.h
+	g++ -c GamePlay.cpp
 clean:
 	rm boardsweep; rm -f *.o
 

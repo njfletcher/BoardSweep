@@ -17,6 +17,7 @@ public:
     void toString();
     void toUCI();
 
+    bool isValid;
     int squareTo;
     int squareFrom;
     bool doublePush;

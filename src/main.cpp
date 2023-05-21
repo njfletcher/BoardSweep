@@ -1,6 +1,6 @@
 #include <iostream>
 #include "BoardVisualization.h"
-#include "GameStart.h"
+#include "GamePlay.h"
 #include "Representation/Move.h"
 #include "MoveGeneration/MoveGeneration.h"
 #include "MoveGeneration/TargetGeneration.h"
@@ -41,7 +41,8 @@ int main(int argc, char** argv) {
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
     //testAll(&lookup);
-    displayWholeBoard(board);
+    //displayWholeBoard(board);
+    simGame(&lookup);
     //int score = evaluatePosition(board,board->sideToMove,&lookup);
     //cout << score <<endl;
 

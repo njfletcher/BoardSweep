@@ -8,7 +8,7 @@
 #include <fstream>
 #include <string>
 #include <math.h>
-#include "../GameStart.h"
+#include "../GamePlay.h"
 using namespace std;
 
 void testAll(TargetLibrary* t){

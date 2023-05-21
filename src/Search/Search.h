@@ -10,3 +10,4 @@ MovePair startAB(int currentDepth, TargetLibrary* t, Board* board, bool side);
 MovePair searchAB(int currentDepth, int alpha, int beta, TargetLibrary* t, Board* board, bool side, Move m);
 
 
+

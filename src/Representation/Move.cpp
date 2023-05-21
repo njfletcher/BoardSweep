@@ -8,6 +8,7 @@
 Move::Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion, bool isEnPassant, bool isCastle, int moved,
      int captured, int promoted){
 
+    isValid = true;
     squareFrom = from;
     squareTo = to;
     doublePush = isDoublePush;
@@ -22,6 +23,7 @@ Move::Move(int from, int to, bool isDoublePush, bool isCapture, bool isPromotion
 }
 Move::Move(){
 
+    isValid = false;
     squareFrom = 0;
     squareTo = 0;
     doublePush = 0;
