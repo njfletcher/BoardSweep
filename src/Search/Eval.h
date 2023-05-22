@@ -7,4 +7,4 @@
 #include "../Representation/TargetLibrary.h"
 
 
-int evaluatePosition(Board* board, bool sideToMove,TargetLibrary* t,bool isCheckMate, bool isDraw);
+int evaluatePosition(Board* board, bool sideToMove,TargetLibrary* t,bool isCheckMate, bool isDraw, int depth);

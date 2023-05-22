@@ -10,6 +10,7 @@
 
 unsigned long long getAttackMask(bool side,unsigned long long* bitboards, TargetLibrary* t);
 std::vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t);
+void generateAllCaptures(bool side, Board* board, TargetLibrary* t, vector<Move>* moves);
 std::vector<Move> findLegalMoves(bool side, Board* board, std::vector<Move> allMoves, TargetLibrary* t);
 void makeMove(bool side,Move m, Board* b);
 void unmakeMove(bool side,Move m, Board* b);

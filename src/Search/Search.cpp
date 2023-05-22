@@ -12,6 +12,39 @@
 #include <limits.h>
 #include<algorithm>
 
+int quiescenceSearch(int alpha, int beta,Board* board,TargetLibrary* t,bool side, bool isCheckM, bool isDraw, int depth){
+
+
+    int standPat = evaluatePosition(board,side,t,isCheckM,isDraw,depth);
+
+    if( standPat >= beta )
+        return beta;
+    if( alpha < standPat )
+        alpha = standPat;
+
+    vector<Move> moveList;
+    generateAllCaptures(side,board,t,&moveList);
+    vector<Move> legals = findLegalMoves(side,board,moveList,t);
+    for(Move m : legals){
+
+        makeMove(side,m,board);
+        int score = quiescenceSearch(alpha,beta,board,t,!side,isCheckM,isDraw,depth);
+        unmakeMove(side,m,board);
+
+        if(score >= beta){
+            return beta;
+        }
+        if(score > alpha){
+            alpha = score;
+        }
+
+    }
+    return alpha;
+
+}
+
+
+
 //white will be maximizer, black will be minimizer
 MovePair startAB(int currentDepth, TargetLibrary* t,Board* board, bool side){
 
@@ -21,7 +54,7 @@ MovePair startAB(int currentDepth, TargetLibrary* t,Board* board, bool side){
 
 MovePair searchAB(int currentDepth, int alpha, int beta, TargetLibrary* t,Board* board,bool side,Move m){
 
-    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,side,t,false,false));
+    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,side,t,false,false,currentDepth));
 
 
     vector<Move> moves = generateAllMoves(side,board,t);
@@ -33,11 +66,12 @@ MovePair searchAB(int currentDepth, int alpha, int beta, TargetLibrary* t,Board*
         unsigned long long kingBit = board->bitboards[K+side];
 
         if(attackMask & kingBit){
-            return MovePair(m,evaluatePosition(board,side,t,true,false));
+            return MovePair(m,evaluatePosition(board,side,t,true,false,currentDepth));
         }
-        else return MovePair(m,evaluatePosition(board,side,t,false,true));
+        else return MovePair(m,evaluatePosition(board,side,t,false,true,currentDepth));
 
     }
+    if(board->fiftyMoveRuleHalfMoves.back() >=100)return MovePair(m,evaluatePosition(board,side,t,false,true,currentDepth));
 
     //minimizing player
     if(side == black){

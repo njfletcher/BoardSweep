@@ -1,12 +1,10 @@
 #include <iostream>
 #include "BoardVisualization.h"
 #include "GamePlay.h"
-#include "Representation/Move.h"
-#include "MoveGeneration/MoveGeneration.h"
 #include "MoveGeneration/TargetGeneration.h"
 #include "Representation/TargetLibrary.h"
 #include "Testing/Tester.h"
-#include "Search/Search.h"
+
 
 using namespace std;
 int main(int argc, char** argv) {
@@ -33,7 +31,7 @@ int main(int argc, char** argv) {
     //displayWholeBoard(board);
 
 
-    cout << Perft(6,10,board,&lookup,board->sideToMove) << endl;
+    //cout << Perft(6,10,board,&lookup,board->sideToMove) << endl;
 
 
 
@@ -42,7 +40,7 @@ int main(int argc, char** argv) {
 
     //testAll(&lookup);
     //displayWholeBoard(board);
-    simGame(&lookup);
+    simGame(&lookup,"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     //int score = evaluatePosition(board,board->sideToMove,&lookup);
     //cout << score <<endl;
 
