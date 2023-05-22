@@ -1,0 +1,3 @@
+C:/Users/nflet/Desktop/ChessEngine/cmake-build-debug/CMakeFiles/BoardSweep.dir
+C:/Users/nflet/Desktop/ChessEngine/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/nflet/Desktop/ChessEngine/cmake-build-debug/CMakeFiles/rebuild_cache.dir
