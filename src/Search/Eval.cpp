@@ -43,17 +43,25 @@ int evaluatePosition(Board* board, bool sideToMove,TargetLibrary* t, bool isChec
     int score = 0;
     int pieceCounts[12] = {};
 
-    //temp, draw could be good or bad based on situation
-    if(isDraw) return 0;
+    int scoreFlag = -1;
+    if(sideToMove) scoreFlag = 1;
 
 
-    if(isCheckMate)return (depth * 10000 * -1 * !sideToMove);
+
+    if(isCheckMate)return (depth* 10000 * scoreFlag);
 
     //start at 2 to skip the team bitboards
     for(int i =2; i<14;i++){
 
         unsigned long long bitboard = board->bitboards[i];
         countAndScoreBits(&score,bitboard,i,pieceCounts);
+
+    }
+
+
+    if(isDraw){
+
+        return depth * score *scoreFlag;
 
     }
 
