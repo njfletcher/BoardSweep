@@ -48,7 +48,6 @@ int evaluatePosition(Board* board, LookupLibrary* t, bool isCheckMate, bool isDr
     if(sideToMove) scoreFlag = 1;
 
 
-
     if(isCheckMate)return (depth* 10000 * scoreFlag);
 
     //start at 2 to skip the team bitboards

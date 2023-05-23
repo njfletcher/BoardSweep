@@ -30,9 +30,9 @@ int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t, bool isC
     vector<Move> legals = findLegalMoves(board,moveList,t);
     for(Move m : legals){
 
-        makeMove(m,board);
+        makeMove(m,board,t);
         int score = quiescenceSearch(alpha,beta,board,t,isCheckM,isDraw,depth);
-        unmakeMove(m,board);
+        unmakeMove(m,board,t);
 
         if(score >= beta){
             return beta;
@@ -57,12 +57,16 @@ MovePair startAB(int currentDepth, LookupLibrary* t,Board* board){
 
 MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board* board,Move m){
 
-    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,t,false,false,currentDepth));
-
-
     bool side = board->sideToMove;
     vector<Move> moves = generateAllMoves(board,t);
     vector<Move> legals = findLegalMoves(board,moves,t);
+
+    int repetitionCount =1;
+    unsigned long long currentPos = board->currentPosition;
+    for(int i =0;i<board->moveHistory.size()-1;i++){
+        if(board->moveHistory[i]== currentPos) repetitionCount++;
+        if(repetitionCount >=3)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth));
+    }
 
     if(legals.size() == 0){
         unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
@@ -77,6 +81,8 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
     }
     if(board->fiftyMoveRuleHalfMoves.back() >=100)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth));
 
+    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,t,false,false,currentDepth));
+
     //minimizing player
     if(side == black){
 
@@ -86,9 +92,9 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
 
         for(Move m : legals){
 
-            makeMove(m,board);
+            makeMove(m,board,t);
             int score = searchAB(currentDepth-1,alpha,beta,t,board,m).evalScore;
-            unmakeMove(m,board);
+            unmakeMove(m,board,t);
 
             if(score < minEval){
                 minMove.m = m;
@@ -111,9 +117,9 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
 
         for(Move m : legals){
 
-            makeMove(m,board);
+            makeMove(m,board,t);
             int score = searchAB(currentDepth-1,alpha,beta,t,board,m).evalScore;
-            unmakeMove(m,board);
+            unmakeMove(m,board,t);
 
             if(score > maxEval){
                 maxMove.m = m;
@@ -143,7 +149,7 @@ void initializeZobristArrays(LookupLibrary* t){
     }
 
     unsigned long long* enPasses = t->zobristEnPass;
-    for(int i =0; i<8;i++){
+    for(int i =0; i<65;i++){
         *enPasses = generateRandomBitboard();
         enPasses++;
     }

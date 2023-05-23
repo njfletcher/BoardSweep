@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
     initializeZobristArrays(&lookup);
 
-    Board * board = initializeBoardFromFen("8/5bk1/8/2Pp4/8/1K6/8/8 b - d6 0 1");
+    Board * board = initializeBoardFromFen("8/5bk1/8/2Pp4/8/1K6/8/8 b - d6 0 1",&lookup);
 
     cout << argv[0] << endl;
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 
     //cout << Perft(6,10,board,&lookup,board->sideToMove) << endl;
 
-
+    /*
     cout << lookup.zobristBlackTurn << endl;
 
     unsigned long long* castles = lookup.zobristCastles;
@@ -57,11 +57,12 @@ int main(int argc, char** argv) {
         pieces++;
     }
 
+    */
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
-    testAll(&lookup);
+    //testAll(&lookup);
     //displayWholeBoard(board);
-    //simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
+    simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
     //int score = evaluatePosition(board,board->sideToMove,&lookup);
     //cout << score <<endl;
 

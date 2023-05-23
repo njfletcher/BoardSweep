@@ -32,15 +32,10 @@ void initializeZobristPosition(Board* board, LookupLibrary* t){
     //use the castle right 4 bit value(0-16) as a direct index
     position ^= t->zobristCastles[board->castleRights.back()];
 
+    //returns 0-63 for valid, 64 if not available. use enPassSquare as direct index
     int enPassSquare = board->enPassSquares.back();
-    unsigned long long enPassBit = 1ULL << enPassSquare;
-    if(enPassSquare != 64){
+    position ^= t->zobristEnPass[enPassSquare];
 
-        for(int i =0; i<8;i++){
-            if(enPassBit & FileMasks[i]) position ^= t->zobristEnPass[i];
-        }
-
-    }
     if(board->sideToMove == black) position ^= t->zobristBlackTurn;
 
     board->currentPosition = position;
@@ -48,7 +43,7 @@ void initializeZobristPosition(Board* board, LookupLibrary* t){
 
 
 
-Board*  initializeBoardFromFen(const char fen[]){
+Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
     //"rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
 
     Board  * board = new Board;
@@ -247,13 +242,15 @@ Board*  initializeBoardFromFen(const char fen[]){
     board->fullMoveCount = fullMoveCount;
 
 
+    initializeZobristPosition(board,t);
+    board->moveHistory.push_back(board->currentPosition);
     return board;
 
 }
 
 void simGame(LookupLibrary* t,const char fen[]){
 
-    Board* board = initializeBoardFromFen(fen);
+    Board* board = initializeBoardFromFen(fen,t);
 
     displayWholeBoard(board);
 
@@ -262,8 +259,8 @@ void simGame(LookupLibrary* t,const char fen[]){
         Move m = startAB(5,t,board).m;
 
         if(!m.isValid) break;
-        makeMove(m,board);
-        board->sideToMove = !board->sideToMove;
+        makeMove(m,board,t);
+        //board->sideToMove = !board->sideToMove;
 
         displayWholeBoard(board);
 

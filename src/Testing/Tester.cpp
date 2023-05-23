@@ -73,7 +73,7 @@ void testAll(LookupLibrary* t){
 void testPosition(const char fen[], unsigned int depth, unsigned long long nodes,LookupLibrary* t){
 
 
-    Board* board = initializeBoardFromFen(fen);
+    Board* board = initializeBoardFromFen(fen,t);
     unsigned long long nodeCount = Perft(depth,400,board,t);
     //cout << nodeCount <<endl;
     if(nodeCount != nodes) cout <<"!!!!!!!!!!!!!!!mismatch with position: expected "<< nodes << " got " << nodeCount << "!!!!!!!!!!!!!!!!!!!!" << endl;

@@ -33,6 +33,6 @@ public:
     unsigned long long zobristCastles[16];
     unsigned long long zobristBlackTurn;
 
-    //one for each file enpassant could occur on
-    unsigned long long zobristEnPass[8];
+    //one for each square enpassant could occur on, 65th num for no enpass available
+    unsigned long long zobristEnPass[65];
 };
