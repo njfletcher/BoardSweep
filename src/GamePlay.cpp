@@ -34,7 +34,7 @@ void initializeZobristPosition(Board* board, LookupLibrary* t){
 
     int enPassSquare = board->enPassSquares.back();
     unsigned long long enPassBit = 1ULL << enPassSquare;
-    if(!enPassSquare != 64){
+    if(enPassSquare != 64){
 
         for(int i =0; i<8;i++){
             if(enPassBit & FileMasks[i]) position ^= t->zobristEnPass[i];
@@ -259,10 +259,10 @@ void simGame(LookupLibrary* t,const char fen[]){
 
     while(true){
 
-        Move m = startAB(5,t,board,board->sideToMove).m;
+        Move m = startAB(5,t,board).m;
 
         if(!m.isValid) break;
-        makeMove(board->sideToMove,m,board);
+        makeMove(m,board);
         board->sideToMove = !board->sideToMove;
 
         displayWholeBoard(board);

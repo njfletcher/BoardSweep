@@ -69,8 +69,10 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Lookup
 
 }
 
-void generateAllCaptures(bool side, Board* board, LookupLibrary* t, vector<Move>* moves){
+void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
 
+
+    bool side = board->sideToMove;
 
     unsigned long long* bitboards = board->bitboards;
 
@@ -299,11 +301,12 @@ void generateAllCaptures(bool side, Board* board, LookupLibrary* t, vector<Move>
  * returns vector of all psuedo-legal moves(attack,normal, and special)
  * that a side can make
  */
-vector<Move> generateAllMoves(bool side,Board* board, LookupLibrary* t){
+vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
 
+    bool side = board->sideToMove;
     vector<Move> moveList;
 
-    generateAllCaptures(side,board,t,&moveList);
+    generateAllCaptures(board,t,&moveList);
 
     unsigned long long* bitboards = board->bitboards;
 
@@ -659,7 +662,7 @@ vector<Move> generateAllMoves(bool side,Board* board, LookupLibrary* t){
  * updates the board to reflect the move being made
  */
 
-void makeMove(bool side,Move m, Board* b){
+void makeMove(Move m, Board* b){
 
     int squareFrom = m.squareFrom;
     int squareTo = m.squareTo;
@@ -667,6 +670,7 @@ void makeMove(bool side,Move m, Board* b){
     int capturedPiece = m.capturedPiece;
 
 
+    bool side = b->sideToMove;
 
     b->bitboards[movedPiece] ^= (1ULL << squareFrom);
 
@@ -792,6 +796,8 @@ void makeMove(bool side,Move m, Board* b){
 
     }
 
+    bool newSide = !b->sideToMove;
+    b->sideToMove = newSide;
     b->castleRights.push_back(castleRights);
 
 
@@ -819,15 +825,16 @@ void makeMove(bool side,Move m, Board* b){
  * given a side, board, pseudo-legal set of moves, and target library
  * finds all legal moves from the set of pseudo legal moves.
  */
-vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, LookupLibrary* t){
+vector<Move> findLegalMoves(Board* board, vector<Move> allMoves, LookupLibrary* t){
 
     vector<Move> legalMoveList;
 
+    bool side = board->sideToMove;
 
     for(int i = 0; i<allMoves.size(); i++){
 
         Move currMove = allMoves[i];
-        makeMove(side, currMove,board);
+        makeMove(currMove,board);
 
         unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
 
@@ -837,7 +844,7 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Look
             legalMoveList.push_back(currMove);
         }
 
-        unmakeMove(side,currMove,board);
+        unmakeMove(currMove,board);
 
     }
 
@@ -849,11 +856,12 @@ vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, Look
  * updates the board to reflect the move being taken back
  */
 
-void unmakeMove(bool side, Move m, Board* b){
+void unmakeMove(Move m, Board* b){
 
     int squareFrom = m.squareFrom;
     int squareTo = m.squareTo;
 
+    bool revertSide = !b->sideToMove;
     unsigned long long movedPieceBitboard = b->bitboards[m.movedPiece];
 
     if(m.capture){
@@ -864,7 +872,7 @@ void unmakeMove(bool side, Move m, Board* b){
 
             b->bitboards[m.movedPiece] |= 1ULL << squareFrom;
             b->bitboards[m.movedPiece] ^= 1ULL << squareTo;
-            b->bitboards[m.capturedPiece] |= 1ULL << (squareTo + (8 + ((!side) * -16)));
+            b->bitboards[m.capturedPiece] |= 1ULL << (squareTo + (8 + ((!revertSide) * -16)));
         }
         else{
             if(m.promotion){
@@ -894,13 +902,13 @@ void unmakeMove(bool side, Move m, Board* b){
 
             //queenside castle
             if(squareDifference ==-2){
-                b->bitboards[R + side] |= 1ULL << (squareTo-2);
-                b->bitboards[R + side] ^= 1ULL << (squareFrom-1);
+                b->bitboards[R + revertSide] |= 1ULL << (squareTo-2);
+                b->bitboards[R + revertSide] ^= 1ULL << (squareFrom-1);
             }
                 //kingside castle
             else{
-                b->bitboards[R + side] |= 1ULL << (squareTo+1);
-                b->bitboards[R + side] ^= 1ULL << (squareFrom+1);
+                b->bitboards[R + revertSide] |= 1ULL << (squareTo+1);
+                b->bitboards[R + revertSide] ^= 1ULL << (squareFrom+1);
             }
         }else{
             if(m.promotion){
@@ -934,7 +942,8 @@ void unmakeMove(bool side, Move m, Board* b){
 
     }
 
-    //b->sideToMove = !b->sideToMove;
+
+    b->sideToMove = revertSide;
     b->enPassSquares.pop_back();
     b->castleRights.pop_back();
     b->fiftyMoveRuleHalfMoves.pop_back();
@@ -945,7 +954,7 @@ void unmakeMove(bool side, Move m, Board* b){
  * given a finish depth, board, target library and side
  * counts the number of leaf nodes in move tree the side and going until that depth.
  */
-unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLibrary* t,bool side){
+unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLibrary* t){
 
     unsigned long long moveCount =0;
 
@@ -953,21 +962,23 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLi
         return 1ULL;
     }
 
-    vector<Move> ms = generateAllMoves(side,board,t);
-    vector<Move> legals = findLegalMoves(side,board,ms,t);
+    bool side = board->sideToMove;
+
+    vector<Move> ms = generateAllMoves(board,t);
+    vector<Move> legals = findLegalMoves(board,ms,t);
 
     for(Move m : legals){
 
-        makeMove(side,m,board);
+        makeMove(m,board);
 
-        unsigned long ct = Perft(finishDepth - 1,printDepth, board,t,!side);
+        unsigned long ct = Perft(finishDepth - 1,printDepth, board,t);
         if(printDepth == finishDepth){
             m.toString();
             m.toUCI();
             cout << ct << " nodes" << endl;
         }
         moveCount += ct;
-        unmakeMove(side,m,board);
+        unmakeMove(m,board);
 
     }
 
@@ -975,33 +986,34 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLi
 
 
 }
-void generateMovesCertainDepth(int depth,Board* board, LookupLibrary* t,bool side){
+void generateMovesCertainDepth(int depth,Board* board, LookupLibrary* t){
 
     if(depth ==0){
         return;
     }
 
-    vector<Move> ms = generateAllMoves(side,board,t);
-    vector<Move> legals = findLegalMoves(side,board,ms,t);
+    bool side = board->sideToMove;
+    vector<Move> ms = generateAllMoves(board,t);
+    vector<Move> legals = findLegalMoves(board,ms,t);
     displayWholeBoard(board);
 
     for(Move m : legals){
 
 
-            //cout << "BEFORE==========================================" << endl;
-            //displayWholeBoard(board);
+            cout << "BEFORE==========================================" << endl;
+            displayWholeBoard(board);
 
-            makeMove(side, m, board);
+            makeMove(m, board);
             cout << "MAKE============================================" << endl;
             m.toString();
             m.toUCI();
             displayWholeBoard(board);
 
-            generateMovesCertainDepth(depth - 1, board, t, !side);
+            generateMovesCertainDepth(depth - 1, board, t);
 
-            unmakeMove(side, m, board);
-            //cout << "UNMAKE==========================================" << endl;
-            //displayWholeBoard(board);
+            unmakeMove( m, board);
+            cout << "UNMAKE==========================================" << endl;
+            displayWholeBoard(board);
 
     }
 

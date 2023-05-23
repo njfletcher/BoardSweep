@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
-    //testAll(&lookup);
+    testAll(&lookup);
     //displayWholeBoard(board);
     //simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
     //int score = evaluatePosition(board,board->sideToMove,&lookup);

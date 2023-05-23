@@ -13,24 +13,26 @@
 #include <limits.h>
 #include<algorithm>
 
-int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t,bool side, bool isCheckM, bool isDraw, int depth){
+int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t, bool isCheckM, bool isDraw, int depth){
 
 
-    int standPat = evaluatePosition(board,side,t,isCheckM,isDraw,depth);
+    int standPat = evaluatePosition(board,t,isCheckM,isDraw,depth);
 
     if( standPat >= beta )
         return beta;
     if( alpha < standPat )
         alpha = standPat;
 
+    bool side = board->sideToMove;
+
     vector<Move> moveList;
-    generateAllCaptures(side,board,t,&moveList);
-    vector<Move> legals = findLegalMoves(side,board,moveList,t);
+    generateAllCaptures(board,t,&moveList);
+    vector<Move> legals = findLegalMoves(board,moveList,t);
     for(Move m : legals){
 
-        makeMove(side,m,board);
-        int score = quiescenceSearch(alpha,beta,board,t,!side,isCheckM,isDraw,depth);
-        unmakeMove(side,m,board);
+        makeMove(m,board);
+        int score = quiescenceSearch(alpha,beta,board,t,isCheckM,isDraw,depth);
+        unmakeMove(m,board);
 
         if(score >= beta){
             return beta;
@@ -47,19 +49,20 @@ int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t,bool side
 
 
 //white will be maximizer, black will be minimizer
-MovePair startAB(int currentDepth, LookupLibrary* t,Board* board, bool side){
+MovePair startAB(int currentDepth, LookupLibrary* t,Board* board){
 
-    return searchAB(currentDepth,INT_MIN,INT_MAX,t,board,side,Move());
+    return searchAB(currentDepth,INT_MIN,INT_MAX,t,board,Move());
 
 }
 
-MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board* board,bool side,Move m){
+MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board* board,Move m){
 
-    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,side,t,false,false,currentDepth));
+    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,t,false,false,currentDepth));
 
 
-    vector<Move> moves = generateAllMoves(side,board,t);
-    vector<Move> legals = findLegalMoves(side,board,moves,t);
+    bool side = board->sideToMove;
+    vector<Move> moves = generateAllMoves(board,t);
+    vector<Move> legals = findLegalMoves(board,moves,t);
 
     if(legals.size() == 0){
         unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
@@ -67,12 +70,12 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
         unsigned long long kingBit = board->bitboards[K+side];
 
         if(attackMask & kingBit){
-            return MovePair(m,evaluatePosition(board,side,t,true,false,currentDepth));
+            return MovePair(m,evaluatePosition(board,t,true,false,currentDepth));
         }
-        else return MovePair(m,evaluatePosition(board,side,t,false,true,currentDepth));
+        else return MovePair(m,evaluatePosition(board,t,false,true,currentDepth));
 
     }
-    if(board->fiftyMoveRuleHalfMoves.back() >=100)return MovePair(m,evaluatePosition(board,side,t,false,true,currentDepth));
+    if(board->fiftyMoveRuleHalfMoves.back() >=100)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth));
 
     //minimizing player
     if(side == black){
@@ -83,9 +86,9 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
 
         for(Move m : legals){
 
-            makeMove(side,m,board);
-            int score = searchAB(currentDepth-1,alpha,beta,t,board,!side,m).evalScore;
-            unmakeMove(side,m,board);
+            makeMove(m,board);
+            int score = searchAB(currentDepth-1,alpha,beta,t,board,m).evalScore;
+            unmakeMove(m,board);
 
             if(score < minEval){
                 minMove.m = m;
@@ -108,9 +111,9 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
 
         for(Move m : legals){
 
-            makeMove(side,m,board);
-            int score = searchAB(currentDepth-1,alpha,beta,t,board,!side,m).evalScore;
-            unmakeMove(side,m,board);
+            makeMove(m,board);
+            int score = searchAB(currentDepth-1,alpha,beta,t,board,m).evalScore;
+            unmakeMove(m,board);
 
             if(score > maxEval){
                 maxMove.m = m;

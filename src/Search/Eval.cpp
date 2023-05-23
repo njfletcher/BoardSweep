@@ -38,8 +38,9 @@ void countAndScoreBits(int* score, unsigned long long bitboard, int piece, int* 
 
 }
 
-int evaluatePosition(Board* board, bool sideToMove,LookupLibrary* t, bool isCheckMate, bool isDraw,int depth){
+int evaluatePosition(Board* board, LookupLibrary* t, bool isCheckMate, bool isDraw,int depth){
 
+    bool sideToMove= board->sideToMove;
     int score = 0;
     int pieceCounts[12] = {};
 
