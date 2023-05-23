@@ -6,12 +6,46 @@
 #include <math.h>
 #include <iostream>
 #include "BoardVisualization.h"
+#include "BitUtil.h"
 #include "Representation/Board.h"
 #include "Representation/UsefulConstants.h"
 #include "Representation/Move.h"
 #include "Search/Search.h"
 #include "MoveGeneration/MoveGeneration.h"
 using namespace std;
+
+void initializeZobristPosition(Board* board, LookupLibrary* t){
+
+    unsigned long long position;
+
+    for(int piece = 2; piece<15;piece++){
+
+        unsigned long long bitboard = board->bitboards[piece];
+        while(bitboard){
+
+            int square = popLSB(&bitboard);
+            position ^= t->zobristPieces[piece][square];
+
+        }
+    }
+
+    //use the castle right 4 bit value(0-16) as a direct index
+    position ^= t->zobristCastles[board->castleRights.back()];
+
+    int enPassSquare = board->enPassSquares.back();
+    unsigned long long enPassBit = 1ULL << enPassSquare;
+    if(!enPassSquare != 64){
+
+        for(int i =0; i<8;i++){
+            if(enPassBit & FileMasks[i]) position ^= t->zobristEnPass[i];
+        }
+
+    }
+    if(board->sideToMove == black) position ^= t->zobristBlackTurn;
+
+    board->currentPosition = position;
+}
+
 
 
 Board*  initializeBoardFromFen(const char fen[]){
@@ -217,7 +251,7 @@ Board*  initializeBoardFromFen(const char fen[]){
 
 }
 
-void simGame(TargetLibrary* t,const char fen[]){
+void simGame(LookupLibrary* t,const char fen[]){
 
     Board* board = initializeBoardFromFen(fen);
 

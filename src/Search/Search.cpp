@@ -4,6 +4,7 @@
 
 #include "Search.h"
 #include "Eval.h"
+#include "../BitUtil.h"
 #include "../GamePlay.h"
 #include "../BoardVisualization.h"
 #include "../Representation/Board.h"
@@ -12,7 +13,7 @@
 #include <limits.h>
 #include<algorithm>
 
-int quiescenceSearch(int alpha, int beta,Board* board,TargetLibrary* t,bool side, bool isCheckM, bool isDraw, int depth){
+int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t,bool side, bool isCheckM, bool isDraw, int depth){
 
 
     int standPat = evaluatePosition(board,side,t,isCheckM,isDraw,depth);
@@ -46,13 +47,13 @@ int quiescenceSearch(int alpha, int beta,Board* board,TargetLibrary* t,bool side
 
 
 //white will be maximizer, black will be minimizer
-MovePair startAB(int currentDepth, TargetLibrary* t,Board* board, bool side){
+MovePair startAB(int currentDepth, LookupLibrary* t,Board* board, bool side){
 
     return searchAB(currentDepth,INT_MIN,INT_MAX,t,board,side,Move());
 
 }
 
-MovePair searchAB(int currentDepth, int alpha, int beta, TargetLibrary* t,Board* board,bool side,Move m){
+MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board* board,bool side,Move m){
 
     if(currentDepth == 0) return MovePair(m,evaluatePosition(board,side,t,false,false,currentDepth));
 
@@ -123,6 +124,31 @@ MovePair searchAB(int currentDepth, int alpha, int beta, TargetLibrary* t,Board*
 
         return maxMove;
 
+    }
+
+}
+
+void initializeZobristArrays(LookupLibrary* t){
+
+    t->zobristBlackTurn = generateRandomBitboard();
+
+    unsigned long long* castles = t->zobristCastles;
+    for(int i =0;i<16;i++){
+
+       *castles = generateRandomBitboard();
+       castles++;
+    }
+
+    unsigned long long* enPasses = t->zobristEnPass;
+    for(int i =0; i<8;i++){
+        *enPasses = generateRandomBitboard();
+        enPasses++;
+    }
+
+    unsigned long long* pieces = *t->zobristPieces;
+    for(int i =0; i<12 * 64;i++){
+        *pieces = generateRandomBitboard();
+        pieces++;
     }
 
 }

@@ -5,7 +5,7 @@
 #pragma once
 
 
-class TargetLibrary {
+class LookupLibrary {
 
 public:
 
@@ -25,4 +25,14 @@ public:
 
     unsigned long long ** bishopMagicAttacks;
     unsigned long long ** rookMagicAttacks;
+
+    //one for each square, for each piece type
+    unsigned long long zobristPieces[12][64];
+
+    //one for each possible 4 bit castle rights
+    unsigned long long zobristCastles[16];
+    unsigned long long zobristBlackTurn;
+
+    //one for each file enpassant could occur on
+    unsigned long long zobristEnPass[8];
 };

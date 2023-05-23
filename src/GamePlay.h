@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Representation/Board.h"
-#include "Representation/TargetLibrary.h"
+#include "Representation/LookupLibrary.h"
 
 Board *  initializeBoardFromFen(const char fen[]);
-void simGame(TargetLibrary* t, const char fen[]);
+void simGame(LookupLibrary* t, const char fen[]);

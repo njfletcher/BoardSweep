@@ -40,5 +40,10 @@ public:
     /*"triple occurrence of position.[1] Two positions are by definition "the same" if the same types of pieces occupy the same squares,
      * the same player has the move, the remaining castling rights are the same and the possibility to capture en passant is the same"*/
 
+    //move history, using zobrist keys
+    vector<unsigned long long> moveHistory;
+
+    //zobrist key for current position
+    unsigned long long currentPosition;
 
 };

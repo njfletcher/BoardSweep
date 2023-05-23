@@ -6,7 +6,7 @@
 #include "../BoardVisualization.h"
 #include "../BitUtil.h"
 #include "../Representation/UsefulConstants.h"
-#include "../Representation/TargetLibrary.h"
+#include "../Representation/LookupLibrary.h"
 
 using namespace std;
 
@@ -697,7 +697,7 @@ unsigned long long getRookTargetFromBlockers(int square, unsigned long long bloc
     return rMagicAttacks[square][index];
 }
 
-unsigned long long getQueenTargetFromBlockers(int square, unsigned long long allPieces,TargetLibrary* t){
+unsigned long long getQueenTargetFromBlockers(int square, unsigned long long allPieces,LookupLibrary* t){
 
     unsigned long long rookBlockers = allPieces & t->rookTargetLookups[square];
     unsigned long long bishopBlockers = allPieces & t->bishopTargetLookups[square];

@@ -4,7 +4,7 @@
 
 #pragma once
 #include "../Representation/Board.h"
-#include "../Representation/TargetLibrary.h"
+#include "../Representation/LookupLibrary.h"
 
 
-int evaluatePosition(Board* board, bool sideToMove,TargetLibrary* t,bool isCheckMate, bool isDraw, int depth);
+int evaluatePosition(Board* board, bool sideToMove,LookupLibrary* t,bool isCheckMate, bool isDraw, int depth);

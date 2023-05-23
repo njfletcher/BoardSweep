@@ -38,7 +38,7 @@ void countAndScoreBits(int* score, unsigned long long bitboard, int piece, int* 
 
 }
 
-int evaluatePosition(Board* board, bool sideToMove,TargetLibrary* t, bool isCheckMate, bool isDraw,int depth){
+int evaluatePosition(Board* board, bool sideToMove,LookupLibrary* t, bool isCheckMate, bool isDraw,int depth){
 
     int score = 0;
     int pieceCounts[12] = {};
@@ -61,7 +61,7 @@ int evaluatePosition(Board* board, bool sideToMove,TargetLibrary* t, bool isChec
 
     if(isDraw){
 
-        return depth * score *scoreFlag;
+        return depth * score * -1;
 
     }
 

@@ -11,7 +11,7 @@
 #include "../GamePlay.h"
 using namespace std;
 
-void testAll(TargetLibrary* t){
+void testAll(LookupLibrary* t){
 
     ifstream file ("C:\\Users\\nflet\\Desktop\\ChessEngine\\src\\Testing\\perft.txt");
 
@@ -70,7 +70,7 @@ void testAll(TargetLibrary* t){
     file.close();
 }
 
-void testPosition(const char fen[], unsigned int depth, unsigned long long nodes,TargetLibrary* t){
+void testPosition(const char fen[], unsigned int depth, unsigned long long nodes,LookupLibrary* t){
 
 
     Board* board = initializeBoardFromFen(fen);

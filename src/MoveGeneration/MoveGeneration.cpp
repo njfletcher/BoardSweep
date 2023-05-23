@@ -4,7 +4,7 @@
 #include "MoveGeneration.h"
 #include "../BitUtil.h"
 #include "../Representation/UsefulConstants.h"
-#include "../Representation/TargetLibrary.h"
+#include "../Representation/LookupLibrary.h"
 #include "TargetGeneration.h"
 #include <iostream>
 #include "../BoardVisualization.h"
@@ -17,7 +17,7 @@ using namespace std;
  * returns a bitboard with set bits representing all possible squares
  * that side can pseudo-legally attack
  */
-unsigned long long getAttackMask(bool side,unsigned long long* bitboards, TargetLibrary* t){
+unsigned long long getAttackMask(bool side,unsigned long long* bitboards, LookupLibrary* t){
 
     unsigned long long attack = 0ULL;
 
@@ -69,7 +69,7 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Target
 
 }
 
-void generateAllCaptures(bool side, Board* board, TargetLibrary* t, vector<Move>* moves){
+void generateAllCaptures(bool side, Board* board, LookupLibrary* t, vector<Move>* moves){
 
 
     unsigned long long* bitboards = board->bitboards;
@@ -299,7 +299,7 @@ void generateAllCaptures(bool side, Board* board, TargetLibrary* t, vector<Move>
  * returns vector of all psuedo-legal moves(attack,normal, and special)
  * that a side can make
  */
-vector<Move> generateAllMoves(bool side,Board* board, TargetLibrary* t){
+vector<Move> generateAllMoves(bool side,Board* board, LookupLibrary* t){
 
     vector<Move> moveList;
 
@@ -819,7 +819,7 @@ void makeMove(bool side,Move m, Board* b){
  * given a side, board, pseudo-legal set of moves, and target library
  * finds all legal moves from the set of pseudo legal moves.
  */
-vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, TargetLibrary* t){
+vector<Move> findLegalMoves(bool side, Board* board, vector<Move> allMoves, LookupLibrary* t){
 
     vector<Move> legalMoveList;
 
@@ -945,7 +945,7 @@ void unmakeMove(bool side, Move m, Board* b){
  * given a finish depth, board, target library and side
  * counts the number of leaf nodes in move tree the side and going until that depth.
  */
-unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLibrary* t,bool side){
+unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLibrary* t,bool side){
 
     unsigned long long moveCount =0;
 
@@ -975,7 +975,7 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, TargetLi
 
 
 }
-void generateMovesCertainDepth(int depth,Board* board, TargetLibrary* t,bool side){
+void generateMovesCertainDepth(int depth,Board* board, LookupLibrary* t,bool side){
 
     if(depth ==0){
         return;
