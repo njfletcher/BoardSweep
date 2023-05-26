@@ -7,4 +7,4 @@
 #include "../Representation/LookupLibrary.h"
 
 
-int evaluatePosition(Board* board, LookupLibrary* t,bool isCheckMate, bool isDraw, int depth);
+int evaluatePosition(Board* board, LookupLibrary* t,bool isCheckMate, bool isDraw, int depth,int numMovesAvail);

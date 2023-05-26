@@ -256,13 +256,18 @@ void simGame(LookupLibrary* t,const char fen[]){
 
     while(true){
 
-        Move m = startAB(5,t,board).m;
+        MovePair movep = startAB(5,t,board);
+
+        Move m = movep.m;
+        int eval = movep.evalScore;
+
 
         if(!m.isValid) break;
         makeMove(m,board,t);
         //board->sideToMove = !board->sideToMove;
 
         displayWholeBoard(board);
+        cout << "Eval: " << eval << endl;
 
 
 

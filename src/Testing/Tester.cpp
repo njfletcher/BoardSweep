@@ -60,7 +60,7 @@ void testAll(LookupLibrary* t){
                 }
 
                 cout << " expected nodes: " << nodes << endl;
-                testPosition(fen,depth,nodes,t);
+                testPositionKnown(fen,depth,nodes,t);
             }
         }
 
@@ -70,7 +70,7 @@ void testAll(LookupLibrary* t){
     file.close();
 }
 
-void testPosition(const char fen[], unsigned int depth, unsigned long long nodes,LookupLibrary* t){
+void testPositionKnown(const char fen[], unsigned int depth, unsigned long long nodes,LookupLibrary* t){
 
 
     Board* board = initializeBoardFromFen(fen,t);
@@ -82,4 +82,12 @@ void testPosition(const char fen[], unsigned int depth, unsigned long long nodes
 
     delete board;
 
+}
+//r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq –
+void testPositionUnknown(const char fen[], unsigned int depth, LookupLibrary* t){
+    Board* board = initializeBoardFromFen(fen,t);
+    unsigned long long nodeCount = Perft(depth,400,board,t);
+
+    cout<< "got " << nodeCount << " nodes" << endl;
+    delete board;
 }

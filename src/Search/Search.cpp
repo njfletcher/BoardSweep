@@ -13,11 +13,13 @@
 #include <limits.h>
 #include<algorithm>
 
+/*
 int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t, bool isCheckM, bool isDraw, int depth){
 
 
-    int standPat = evaluatePosition(board,t,isCheckM,isDraw,depth);
+    int standPat = evaluatePosition(board,t,isCheckM,isDraw,depth,0);
 
+    if(depth ==0)return evaluatePosition(board,t,isCheckM,isDraw,depth,0);
     if( standPat >= beta )
         return beta;
     if( alpha < standPat )
@@ -31,7 +33,7 @@ int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t, bool isC
     for(Move m : legals){
 
         makeMove(m,board,t);
-        int score = quiescenceSearch(alpha,beta,board,t,isCheckM,isDraw,depth);
+        int score = quiescenceSearch(alpha,beta,board,t,isCheckM,isDraw,depth-1);
         unmakeMove(m,board,t);
 
         if(score >= beta){
@@ -45,6 +47,7 @@ int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t, bool isC
     return alpha;
 
 }
+ */
 
 
 
@@ -61,11 +64,12 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
     vector<Move> moves = generateAllMoves(board,t);
     vector<Move> legals = findLegalMoves(board,moves,t);
 
+    int movesAvail = legals.size();
     int repetitionCount =1;
     unsigned long long currentPos = board->currentPosition;
     for(int i =0;i<board->moveHistory.size()-1;i++){
         if(board->moveHistory[i]== currentPos) repetitionCount++;
-        if(repetitionCount >=3)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth));
+        if(repetitionCount >=3)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth,movesAvail));
     }
 
     if(legals.size() == 0){
@@ -74,14 +78,13 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
         unsigned long long kingBit = board->bitboards[K+side];
 
         if(attackMask & kingBit){
-            return MovePair(m,evaluatePosition(board,t,true,false,currentDepth));
+            return MovePair(m,evaluatePosition(board,t,true,false,currentDepth,movesAvail));
         }
-        else return MovePair(m,evaluatePosition(board,t,false,true,currentDepth));
+        else return MovePair(m,evaluatePosition(board,t,false,true,currentDepth,movesAvail));
 
     }
-    if(board->fiftyMoveRuleHalfMoves.back() >=100)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth));
-
-    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,t,false,false,currentDepth));
+    if(board->fiftyMoveRuleHalfMoves.back() >=100)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth,movesAvail));
+    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,t,false,false,currentDepth,movesAvail));
 
     //minimizing player
     if(side == black){

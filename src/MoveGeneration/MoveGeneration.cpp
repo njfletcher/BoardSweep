@@ -306,9 +306,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
     bool side = board->sideToMove;
     vector<Move> moveList;
 
-    generateAllCaptures(board,t,&moveList);
-
     unsigned long long* bitboards = board->bitboards;
+
+
+    generateAllCaptures(board,t,&moveList);
 
     unsigned long long enemyPieces = bitboards[!side];
     unsigned long long friendlyPieces = bitboards[side];
@@ -329,24 +330,7 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
         unsigned long long pawnMoveSecondLegal = pawnMoveSecond * (pawnMoveFirst && pawnMoveSecond);
 
         unsigned long long pawnAttackTargets = t->pawnAttackLookups[side][fromSquare];
-        //unsigned long long pawnNormalCaptures =  pawnAttackTargets & enemyPieces;
-        //unsigned long long pawnAllMoves = pawnMoveFirst | ((pawnMoveFirst && pawnMoveSecond) * pawnMoveSecond);
 
-        /*
-        int enPassSquare = board->enPassSquares.back();
-
-        //enpass square of 64 means enpass is not available
-        if(enPassSquare !=64){
-            unsigned long long enPassBit = 1ULL << enPassSquare;
-
-            if(pawnAttackTargets & enPassBit){
-                Move m3(fromSquare,enPassSquare,0,1,0,1,0,P+side,P+!side,0);
-                moveList.push_back(m3);
-            }
-
-
-        }
-*/
         while(pawnMoveFirst){
             int toSquare = popLSB(&pawnMoveFirst);
 
@@ -380,49 +364,6 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
             Move m(fromSquare,toSquare,1,0,0,0,0,P+side,0,0);
             moveList.push_back(m);
         }
-/*
-        while (pawnNormalCaptures) {
-            int toSquare = popLSB(&pawnNormalCaptures);
-            unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece = -1;
-
-            //find out which piece is getting captured
-            for(int piece = (2+(!side)); piece <13;piece+=2){
-
-                if(bitboards[piece] & toBit){
-                    capturedPiece = piece;
-                    break;
-                }
-
-            }
-
-            //check for any promotions
-            unsigned long long relevantRank = RankMasks[7+(-7*side)];
-
-            if((1ULL<<toSquare) & relevantRank){
-                Move m(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,N+side);
-                moveList.push_back(m);
-
-                Move m1(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,B+side);
-                moveList.push_back(m1);
-
-                Move m2(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,R+side);
-                moveList.push_back(m2);
-
-                Move m3(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,Q+side);
-                moveList.push_back(m3);
-
-            }
-            else{
-                Move m(fromSquare,toSquare,0,1,0,0,0,P+side,capturedPiece,0);
-                moveList.push_back(m);
-            }
-
-
-
-        }
-
-        */
 
     }
 
@@ -440,28 +381,7 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
             Move m(fromSquare,toSquare,0,0,0,0,0,N+side,0,0);
             moveList.push_back(m);
         }
-        /*
-        while(knightCaptureMoves){
 
-            int toSquare = popLSB(&knightCaptureMoves);
-
-            unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece = -1;
-
-            //find out which piece is getting captured
-            for(int piece = (2+(!side)); piece <13;piece+=2){
-
-                if(bitboards[piece] & toBit){
-                    capturedPiece = piece;
-                    break;
-                }
-
-            }
-
-            Move m(fromSquare,toSquare,0,1,0,0,0,N+side,capturedPiece,0);
-            moveList.push_back(m);
-        }
-         */
     }
 
 
@@ -479,28 +399,7 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
             Move m(fromSquare,toSquare,0,0,0,0,0,B+side,0,0);
             moveList.push_back(m);
         }
-        /*
-        while (bishopCaptureMoves) {
 
-            int toSquare = popLSB(&bishopCaptureMoves);
-
-            unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece = -1;
-
-            //find out which piece is getting captured
-            for(int piece = (2+(!side)); piece <13;piece+=2){
-
-                if(bitboards[piece] & toBit){
-                    capturedPiece = piece;
-                    break;
-                }
-
-            }
-
-            Move m(fromSquare,toSquare,0,1,0,0,0,B+side,capturedPiece,0);
-            moveList.push_back(m);
-        }
-         */
 
     }
 
@@ -519,27 +418,7 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
             Move m(fromSquare,toSquare,0,0,0,0,0,R+side,0,0);
             moveList.push_back(m);
         }
-        /*
-        while (rookCaptureMoves) {
-            int toSquare = popLSB(&rookCaptureMoves);
 
-            unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece = -1;
-
-            //find out which piece is getting captured
-            for(int piece = (2+(!side)); piece <13;piece+=2){
-
-                if(bitboards[piece] & toBit){
-                    capturedPiece = piece;
-                    break;
-                }
-
-            }
-
-            Move m(fromSquare,toSquare,0,1,0,0,0,R+side,capturedPiece,0);
-            moveList.push_back(m);
-        }
-         */
     }
 
     unsigned long long queens = bitboards[Q+side];
@@ -556,27 +435,7 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
             Move m(fromSquare,toSquare,0,0,0,0,0,Q+side,0,0);
             moveList.push_back(m);
         }
-        /*
-        while (queenCaptureMoves) {
-            int toSquare = popLSB(&queenCaptureMoves);
 
-            unsigned long long toBit = 1ULL << toSquare;
-            int capturedPiece = -1;
-
-            //find out which piece is getting captured
-            for(int piece = (2+(!side)); piece <13;piece+=2){
-
-                if(bitboards[piece] & toBit){
-                    capturedPiece = piece;
-                    break;
-                }
-
-            }
-
-            Move m(fromSquare,toSquare,0,1,0,0,0,Q+side,capturedPiece,0);
-            moveList.push_back(m);
-        }
-         */
     }
 
     unsigned long long king = bitboards[K+side];
@@ -595,28 +454,6 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
         moveList.push_back(m);
 
     }
-    /*
-    while (kingCaptureMoves) {
-
-        int toSquare = popLSB(&kingCaptureMoves);
-
-        unsigned long long toBit = 1ULL << toSquare;
-        int capturedPiece = -1;
-
-        //find out which piece is getting captured
-        for(int piece = (2+(!side)); piece <13;piece+=2){
-
-            if(bitboards[piece] & toBit){
-                capturedPiece = piece;
-                break;
-            }
-
-        }
-
-        Move m(kingSquare,toSquare,0,1,0,0,0,K+side,capturedPiece,0);
-        moveList.push_back(m);
-    }
-     */
 
 
     unsigned int castleRights = board->castleRights.back();
@@ -672,10 +509,15 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
     int capturedPiece = m.capturedPiece;
     int promotedPiece = m.promotedTo;
 
-
     bool side = b->sideToMove;
 
-    b->bitboards[movedPiece] ^= (1ULL << squareFrom);
+    int enemyIndex = 0 + !side;
+    int friendlyIndex = 0 + side;
+
+    unsigned long long squareFromBit = 1ULL << squareFrom;
+    b->bitboards[movedPiece] ^= squareFromBit;
+    b->bitboards[friendlyIndex] ^= squareFromBit;
+
     position^= t->zobristPieces[movedPiece][squareFrom];
 
     position^= t->zobristEnPass[b->enPassSquares.back()];
@@ -706,6 +548,7 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
         castleRights &= ~(1ULL<<(1+(side * 2)));
     }
 
+    unsigned long long squareToBit = 1ULL << squareTo;
 
     if(m.capture){
 
@@ -733,22 +576,30 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
         if(m.enPassant){
 
             int enPassCapSquare = (squareTo + (8 + ((!side) * -16)));
-            b->bitboards[movedPiece] |=1ULL << squareTo;
-            b->bitboards[capturedPiece] ^= 1ULL << enPassCapSquare;
+            unsigned long long enPassBit = 1ULL << enPassCapSquare;
+            b->bitboards[movedPiece] |= squareToBit;
+            b->bitboards[friendlyIndex] |= squareToBit;
+
+            b->bitboards[capturedPiece] ^= enPassBit;
+            b->bitboards[enemyIndex] ^= enPassBit;
             position^= t->zobristPieces[capturedPiece][enPassCapSquare];
             position^= t->zobristPieces[movedPiece][squareTo];
         }
         if(m.promotion){
 
-            b->bitboards[capturedPiece] ^= 1ULL << squareTo;
-            b->bitboards[promotedPiece] |= 1ULL << squareTo;
+            b->bitboards[capturedPiece] ^= squareToBit;
+            b->bitboards[enemyIndex] ^= squareToBit;
+            b->bitboards[promotedPiece] |= squareToBit;
+            b->bitboards[friendlyIndex] |= squareToBit;
             position^= t->zobristPieces[capturedPiece][squareTo];
             position^= t->zobristPieces[promotedPiece][squareTo];
         }
         //normal captures
         if(!m.promotion && !m.enPassant) {
-            b->bitboards[movedPiece] |= 1ULL << squareTo;
-            b->bitboards[capturedPiece] ^= 1ULL << squareTo;
+            b->bitboards[movedPiece] |= squareToBit;
+            b->bitboards[friendlyIndex] |= squareToBit;
+            b->bitboards[capturedPiece] ^= squareToBit;
+            b->bitboards[enemyIndex] ^= squareToBit;
             position^= t->zobristPieces[capturedPiece][squareTo];
             position^= t->zobristPieces[movedPiece][squareTo];
         }
@@ -768,7 +619,8 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
         if(m.doublePush){
             unsigned int enPass = squareTo + (8 + ((!side) * -16));
             b->enPassSquares.push_back(enPass);
-            b->bitboards[movedPiece] |= 1ULL << squareTo;
+            b->bitboards[movedPiece] |= squareToBit;
+            b->bitboards[friendlyIndex] |= squareToBit;
 
             position^= t->zobristPieces[movedPiece][squareTo];
 
@@ -778,7 +630,8 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
 
             if(m.castle){
 
-                b->bitboards[movedPiece] |= 1ULL << squareTo;
+                b->bitboards[movedPiece] |= squareToBit;
+                b->bitboards[friendlyIndex] |= squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
                 int squareDifference = squareTo - squareFrom;
                 int rook = R+side;
@@ -786,19 +639,27 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
                 //queenside castle
                 if(squareDifference ==-2){
                     int castleSquare1 = squareTo-2;
-                    b->bitboards[rook] ^= 1ULL << castleSquare1;
+                    unsigned long long cs1Bit = 1ULL << castleSquare1;
+                    b->bitboards[rook] ^= cs1Bit;
+                    b->bitboards[friendlyIndex] ^= cs1Bit;
                     position^= t->zobristPieces[rook][castleSquare1];
                     int castleSquare2 = squareFrom -1;
-                    b->bitboards[rook] |= 1ULL << castleSquare2;
+                    unsigned long long cs2Bit = 1ULL << castleSquare2;
+                    b->bitboards[rook] |= cs2Bit;
+                    b->bitboards[friendlyIndex] |= cs2Bit;
                     position^= t->zobristPieces[rook][castleSquare2];
                 }
                     //kingside castle
                 else{
                     int castleSquare1 = squareTo+1;
-                    b->bitboards[rook] ^= 1ULL << castleSquare1;
+                    unsigned long long cs1Bit = 1ULL << castleSquare1;
+                    b->bitboards[rook] ^= cs1Bit;
+                    b->bitboards[friendlyIndex] ^= cs1Bit;
                     position^= t->zobristPieces[rook][castleSquare1];
                     int castleSquare2 = squareFrom+1;
-                    b->bitboards[rook] |= 1ULL << castleSquare2;
+                    unsigned long long cs2Bit = 1ULL << castleSquare2;
+                    b->bitboards[rook] |= cs2Bit;
+                    b->bitboards[friendlyIndex] |= cs2Bit;
                     position^= t->zobristPieces[rook][castleSquare2];
                 }
 
@@ -807,14 +668,16 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
             if(m.promotion){
 
                 //unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
-                b->bitboards[promotedPiece] |= 1ULL << squareTo;
+                b->bitboards[promotedPiece] |= squareToBit;
+                b->bitboards[friendlyIndex] |= squareToBit;
                 position^= t->zobristPieces[promotedPiece][squareTo];
             }
 
                 //normal moves
             if(!m.promotion && !m.castle){
 
-                b->bitboards[movedPiece] |=  1ULL << squareTo;
+                b->bitboards[movedPiece] |=  squareToBit;
+                b->bitboards[friendlyIndex] |=  squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
             }
 
@@ -828,25 +691,8 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
     b->sideToMove = newSide;
     b->castleRights.push_back(castleRights);
 
-
     position^= t->zobristCastles[castleRights];
     position^= t->zobristEnPass[b->enPassSquares.back()];
-
-    //update allWhite bitboard
-    b->bitboards[0] = 0ULL;
-    for(int piece = 2; piece <14;piece+=2){
-
-        b->bitboards[0] |= b->bitboards[piece];
-
-    }
-
-    //update allBlack bitboard
-    b->bitboards[1] = 0ULL;
-    for(int piece = 3; piece <14;piece+=2){
-
-        b->bitboards[1] |= b->bitboards[piece];
-
-    }
     position ^= t->zobristBlackTurn;
 
     b->currentPosition = position;
@@ -904,9 +750,20 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
     position^= t->zobristEnPass[b->enPassSquares.back()];
     position^= t->zobristCastles[b->castleRights.back()];
 
+
+
     bool revertSide = !b->sideToMove;
+
+    int enemyIndex = 0 + !revertSide;
+    int friendlyIndex = 0 + revertSide;
     unsigned long long movedPieceBitboard = b->bitboards[movedPiece];
 
+    unsigned long long squareFromBit = 1ULL << squareFrom;
+    b->bitboards[movedPiece] |= squareFromBit;
+    position^= t->zobristPieces[movedPiece][squareFrom];
+    b->bitboards[friendlyIndex] |= squareFromBit;
+
+    unsigned long long squareToBit = 1ULL << squareTo;
     if(m.capture){
 
         unsigned long long capturedPieceBitboard = b->bitboards[m.capturedPiece];
@@ -914,31 +771,33 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
         if(m.enPassant){
 
             int enPassCapSquare = (squareTo + (8 + ((!revertSide) * -16)));
-            b->bitboards[movedPiece] |= 1ULL << squareFrom;
-            position^= t->zobristPieces[movedPiece][squareFrom];
-            b->bitboards[movedPiece] ^= 1ULL << squareTo;
+            unsigned long long enPassBit = 1ULL << enPassCapSquare;
+            b->bitboards[movedPiece] ^= squareToBit;
+            b->bitboards[friendlyIndex] ^= squareToBit;
             position^= t->zobristPieces[movedPiece][squareTo];
-            b->bitboards[capturedPiece] |= 1ULL << enPassCapSquare;
+            b->bitboards[capturedPiece] |= enPassBit;
+            b->bitboards[enemyIndex] |= enPassBit;
             position^= t->zobristPieces[capturedPiece][enPassCapSquare];
 
         }
         else{
             if(m.promotion){
 
-                b->bitboards[movedPiece]  |= 1ULL << squareFrom;
-                position^= t->zobristPieces[movedPiece][squareFrom];
-                b->bitboards[capturedPiece] |= 1ULL << squareTo;
+                b->bitboards[capturedPiece] |= squareToBit;
+                b->bitboards[enemyIndex] |= squareToBit;
                 position^= t->zobristPieces[capturedPiece][squareTo];
-                b->bitboards[promotedPiece] ^= 1ULL << squareTo;
+                b->bitboards[promotedPiece] ^= squareToBit;
+                b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[promotedPiece][squareTo];
             }
                 //normal captures
             else{
-                b->bitboards[movedPiece] |= 1ULL << squareFrom;
-                position^= t->zobristPieces[movedPiece][squareFrom];
-                b->bitboards[movedPiece] ^= 1ULL << squareTo;
+
+                b->bitboards[movedPiece] ^= squareToBit;
+                b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
-                b->bitboards[capturedPiece] |= 1ULL << squareTo;
+                b->bitboards[capturedPiece] |= squareToBit;
+                b->bitboards[enemyIndex] |= squareToBit;
                 position^= t->zobristPieces[capturedPiece][squareTo];
             }
         }
@@ -950,9 +809,8 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
 
         if(m.castle){
 
-            b->bitboards[movedPiece] |= 1ULL << squareFrom;
-            position^= t->zobristPieces[movedPiece][squareFrom];
-            b->bitboards[movedPiece] ^= 1ULL << squareTo;
+            b->bitboards[movedPiece] ^= squareToBit;
+            b->bitboards[friendlyIndex] ^= squareToBit;
             position^= t->zobristPieces[movedPiece][squareTo];
             int squareDifference = squareTo - squareFrom;
             int rook = R+revertSide;
@@ -961,57 +819,46 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
             if(squareDifference ==-2){
 
                 int castleSquare1 = squareTo-2;
-                b->bitboards[rook] |= 1ULL << castleSquare1;
+                unsigned long long cs1Bit = 1ULL << castleSquare1;
+                b->bitboards[rook] |= cs1Bit;
+                b->bitboards[friendlyIndex] |= cs1Bit;
                 position^= t->zobristPieces[rook][castleSquare1];
                 int castleSquare2 = squareFrom-1;
-                b->bitboards[rook] ^= 1ULL << castleSquare2;
+                unsigned long long cs2Bit = 1ULL << castleSquare2;
+                b->bitboards[rook] ^= cs2Bit;
+                b->bitboards[friendlyIndex] ^= cs2Bit;
                 position^= t->zobristPieces[rook][castleSquare2];
             }
                 //kingside castle
             else{
                 int castleSquare1 = squareTo+1;
-                b->bitboards[rook] |= 1ULL << castleSquare1;
+                unsigned long long cs1Bit = 1ULL << castleSquare1;
+                b->bitboards[rook] |= cs1Bit;
+                b->bitboards[friendlyIndex] |= cs1Bit;
                 position^= t->zobristPieces[rook][castleSquare1];
                 int castleSquare2 = squareFrom+1;
-                b->bitboards[rook] ^= 1ULL << castleSquare2;
+                unsigned long long cs2Bit = 1ULL << castleSquare2;
+                b->bitboards[rook] ^= cs2Bit;
+                b->bitboards[friendlyIndex] ^= cs2Bit;
                 position^= t->zobristPieces[rook][castleSquare2];
             }
         }else{
             if(m.promotion){
-                b->bitboards[movedPiece] |= 1ULL << squareFrom;
-                position^= t->zobristPieces[movedPiece][squareFrom];
 
-                b->bitboards[promotedPiece] ^= 1ULL << squareTo;
+                b->bitboards[promotedPiece] ^= squareToBit;
+                b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[promotedPiece][squareTo];
             }
                 //normal moves
             else{
 
-                b->bitboards[movedPiece] |= 1ULL << squareFrom;
-                position^= t->zobristPieces[movedPiece][squareFrom];
-                b->bitboards[movedPiece] ^= 1ULL << squareTo;
+                b->bitboards[movedPiece] ^= squareToBit;
+                b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
             }
         }
 
     }
-
-    //update allWhite bitboard
-    b->bitboards[0] = 0ULL;
-    for(int piece = 2; piece <14;piece+=2){
-
-        b->bitboards[0] |= b->bitboards[piece];
-
-    }
-
-    //update allBlack bitboard
-    b->bitboards[1] = 0ULL;
-    for(int piece = 3; piece <14;piece+=2){
-
-        b->bitboards[1] |= b->bitboards[piece];
-
-    }
-
 
     b->sideToMove = revertSide;
     b->enPassSquares.pop_back();

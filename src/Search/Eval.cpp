@@ -38,7 +38,7 @@ void countAndScoreBits(int* score, unsigned long long bitboard, int piece, int* 
 
 }
 
-int evaluatePosition(Board* board, LookupLibrary* t, bool isCheckMate, bool isDraw,int depth){
+int evaluatePosition(Board* board, LookupLibrary* t, bool isCheckMate, bool isDraw,int depth,int numMovesAvail){
 
     bool sideToMove= board->sideToMove;
     int score = 0;
@@ -48,8 +48,9 @@ int evaluatePosition(Board* board, LookupLibrary* t, bool isCheckMate, bool isDr
     if(sideToMove) scoreFlag = 1;
 
 
-    if(isCheckMate)return (depth* 10000 * scoreFlag);
+    if(isCheckMate)return ((depth+1) * 10000 * scoreFlag);
 
+    score+= (scoreFlag* -1 * numMovesAvail)/2;
     //start at 2 to skip the team bitboards
     for(int i =2; i<14;i++){
 
@@ -61,7 +62,7 @@ int evaluatePosition(Board* board, LookupLibrary* t, bool isCheckMate, bool isDr
 
     if(isDraw){
 
-        return depth * score * -1;
+        return score * -1;
 
     }
 
