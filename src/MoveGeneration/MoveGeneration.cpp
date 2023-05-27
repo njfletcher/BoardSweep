@@ -702,6 +702,48 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
 
 }
 
+bool checkIfInCheck(bool side, Board* board, LookupLibrary* t){
+
+    unsigned long long kingBitBoard = board->bitboards[K+side];
+    unsigned long long* bitboards = board->bitboards;
+    int kingSquare = popLSB(&kingBitBoard);
+    kingBitBoard = 1ULL << kingSquare;
+
+    bool flippedSide = !side;
+
+    unsigned long long whitePieces = bitboards[0];
+    unsigned long long blackPieces = bitboards[1];
+    unsigned long long allPieces = whitePieces | blackPieces;
+
+    unsigned long long enemyPawns = bitboards[P+flippedSide];
+    unsigned long long pAttack = t->pawnAttackLookups[side][kingSquare];
+    if(pAttack & enemyPawns)return true;
+
+    unsigned long long enemyKnights = bitboards[N+flippedSide];
+    unsigned long long nAttack = t->knightMoveLookups[kingSquare];
+    if(nAttack & enemyKnights) return true;
+
+    unsigned long long enemyBishops = bitboards[B+flippedSide];
+    unsigned long long bAttacks = getBishopTargetFromBlockers(kingSquare,allPieces  & t->bishopTargetLookups[kingSquare],t->bishopMagicAttacks);
+    if(bAttacks & enemyBishops) return true;
+
+    unsigned long long enemyRooks = bitboards[R+flippedSide];
+    unsigned long long rAttacks = getRookTargetFromBlockers(kingSquare,allPieces & t->rookTargetLookups[kingSquare],t->rookMagicAttacks);
+    if(rAttacks & enemyRooks) return true;
+
+    unsigned long long enemyQueens = bitboards[Q+flippedSide];
+    unsigned long long qAttacks = getQueenTargetFromBlockers(kingSquare,allPieces,t);
+    if(qAttacks & enemyQueens) return true;
+
+    unsigned long long enemyKing = bitboards[K+flippedSide];
+    unsigned long long kAttacks = t->kingMoveLookups[kingSquare];
+    if(kAttacks & enemyKing) return true;
+
+    return false;
+
+
+}
+
 /* findLegalMoves-
  * given a side, board, pseudo-legal set of moves, and target library
  * finds all legal moves from the set of pseudo legal moves.
@@ -717,11 +759,14 @@ vector<Move> findLegalMoves(Board* board, vector<Move> allMoves, LookupLibrary* 
         Move currMove = allMoves[i];
         makeMove(currMove,board,t);
 
-        unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
+        //unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
 
-        unsigned long long kingBit = board->bitboards[K+side];
+        //unsigned long long kingBit = board->bitboards[K+side];
 
-        if(!(attackMask & kingBit)){
+        //if(!(attackMask & kingBit)){
+            //legalMoveList.push_back(currMove);
+        //}
+        if(!checkIfInCheck(side,board,t)){
             legalMoveList.push_back(currMove);
         }
 
