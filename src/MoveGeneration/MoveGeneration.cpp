@@ -493,13 +493,53 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
     return moveList;
 
 }
+bool checkIfInCheck(bool side, Board* board, LookupLibrary* t){
 
+    unsigned long long kingBitBoard = board->bitboards[K+side];
+    unsigned long long* bitboards = board->bitboards;
+    int kingSquare = popLSB(&kingBitBoard);
+    kingBitBoard = 1ULL << kingSquare;
+
+    bool flippedSide = !side;
+
+    unsigned long long whitePieces = bitboards[0];
+    unsigned long long blackPieces = bitboards[1];
+    unsigned long long allPieces = whitePieces | blackPieces;
+
+    unsigned long long enemyPawns = bitboards[P+flippedSide];
+    unsigned long long pAttack = t->pawnAttackLookups[side][kingSquare];
+    if(pAttack & enemyPawns)return true;
+
+    unsigned long long enemyKnights = bitboards[N+flippedSide];
+    unsigned long long nAttack = t->knightMoveLookups[kingSquare];
+    if(nAttack & enemyKnights) return true;
+
+    unsigned long long enemyBishops = bitboards[B+flippedSide];
+    unsigned long long bAttacks = getBishopTargetFromBlockers(kingSquare,allPieces  & t->bishopTargetLookups[kingSquare],t->bishopMagicAttacks);
+    if(bAttacks & enemyBishops) return true;
+
+    unsigned long long enemyRooks = bitboards[R+flippedSide];
+    unsigned long long rAttacks = getRookTargetFromBlockers(kingSquare,allPieces & t->rookTargetLookups[kingSquare],t->rookMagicAttacks);
+    if(rAttacks & enemyRooks) return true;
+
+    unsigned long long enemyQueens = bitboards[Q+flippedSide];
+    unsigned long long qAttacks = getQueenTargetFromBlockers(kingSquare,allPieces,t);
+    if(qAttacks & enemyQueens) return true;
+
+    unsigned long long enemyKing = bitboards[K+flippedSide];
+    unsigned long long kAttacks = t->kingMoveLookups[kingSquare];
+    if(kAttacks & enemyKing) return true;
+
+    return false;
+
+
+}
 /* makeMove-
  * given a side, move, and board
  * updates the board to reflect the move being made
  */
 
-void makeMove(Move m, Board* b, LookupLibrary* t){
+bool makeMove(Move m, Board* b, LookupLibrary* t){
 
     unsigned long long position = b->currentPosition;
 
@@ -700,49 +740,14 @@ void makeMove(Move m, Board* b, LookupLibrary* t){
     b->moveHistory.push_back(position);
 
 
+    if(checkIfInCheck(side,b,t)){
+        unmakeMove(m,b,t);
+        return false;
+    }
+    else return true;
 }
 
-bool checkIfInCheck(bool side, Board* board, LookupLibrary* t){
 
-    unsigned long long kingBitBoard = board->bitboards[K+side];
-    unsigned long long* bitboards = board->bitboards;
-    int kingSquare = popLSB(&kingBitBoard);
-    kingBitBoard = 1ULL << kingSquare;
-
-    bool flippedSide = !side;
-
-    unsigned long long whitePieces = bitboards[0];
-    unsigned long long blackPieces = bitboards[1];
-    unsigned long long allPieces = whitePieces | blackPieces;
-
-    unsigned long long enemyPawns = bitboards[P+flippedSide];
-    unsigned long long pAttack = t->pawnAttackLookups[side][kingSquare];
-    if(pAttack & enemyPawns)return true;
-
-    unsigned long long enemyKnights = bitboards[N+flippedSide];
-    unsigned long long nAttack = t->knightMoveLookups[kingSquare];
-    if(nAttack & enemyKnights) return true;
-
-    unsigned long long enemyBishops = bitboards[B+flippedSide];
-    unsigned long long bAttacks = getBishopTargetFromBlockers(kingSquare,allPieces  & t->bishopTargetLookups[kingSquare],t->bishopMagicAttacks);
-    if(bAttacks & enemyBishops) return true;
-
-    unsigned long long enemyRooks = bitboards[R+flippedSide];
-    unsigned long long rAttacks = getRookTargetFromBlockers(kingSquare,allPieces & t->rookTargetLookups[kingSquare],t->rookMagicAttacks);
-    if(rAttacks & enemyRooks) return true;
-
-    unsigned long long enemyQueens = bitboards[Q+flippedSide];
-    unsigned long long qAttacks = getQueenTargetFromBlockers(kingSquare,allPieces,t);
-    if(qAttacks & enemyQueens) return true;
-
-    unsigned long long enemyKing = bitboards[K+flippedSide];
-    unsigned long long kAttacks = t->kingMoveLookups[kingSquare];
-    if(kAttacks & enemyKing) return true;
-
-    return false;
-
-
-}
 
 /* findLegalMoves-
  * given a side, board, pseudo-legal set of moves, and target library
@@ -934,20 +939,22 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLi
     bool side = board->sideToMove;
 
     vector<Move> ms = generateAllMoves(board,t);
-    vector<Move> legals = findLegalMoves(board,ms,t);
+    //vector<Move> legals = findLegalMoves(board,ms,t);
 
-    for(Move m : legals){
+    for(Move m : ms){
 
-        makeMove(m,board,t);
+        bool valid = makeMove(m,board,t);
 
-        unsigned long ct = Perft(finishDepth - 1,printDepth, board,t);
-        if(printDepth == finishDepth){
-            m.toString();
-            m.toUCI();
-            cout << ct << " nodes" << endl;
+        if(valid) {
+            unsigned long ct = Perft(finishDepth - 1, printDepth, board, t);
+            if (printDepth == finishDepth) {
+                m.toString();
+                m.toUCI();
+                cout << ct << " nodes" << endl;
+            }
+            moveCount += ct;
+            unmakeMove(m, board, t);
         }
-        moveCount += ct;
-        unmakeMove(m,board,t);
 
     }
 
