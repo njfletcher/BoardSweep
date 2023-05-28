@@ -9,12 +9,12 @@
 #include <vector>
 
 unsigned long long getAttackMask(bool side,unsigned long long* bitboards, LookupLibrary* t);
-std::vector<Move> generateAllMoves(Board* board, LookupLibrary* t);
-void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves);
+Move* generateAllMoves(Board* board, LookupLibrary* t, int* moveCount,Move* list);
+void generateAllCaptures(Board* board, LookupLibrary* t, Move** moves, Move* list, int* moveCount);
 std::vector<Move> findLegalMoves(Board* board, std::vector<Move> allMoves, LookupLibrary* t);
 bool makeMove(Move m, Board* b,LookupLibrary* t);
 void unmakeMove(Move m, Board* b,LookupLibrary* t);
 
 unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLibrary* t);
+unsigned long long PerftWrapper(int finishDepth, int printDepth, Board* board, LookupLibrary* t);
 
-void generateMovesCertainDepth(int depth,Board* board, LookupLibrary* t);

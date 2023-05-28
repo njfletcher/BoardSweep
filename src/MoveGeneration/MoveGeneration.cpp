@@ -9,6 +9,7 @@
 #include <iostream>
 #include "../BoardVisualization.h"
 #include <vector>
+#include <chrono>
 using namespace std;
 
 //white = 0 black =1;
@@ -69,7 +70,7 @@ unsigned long long getAttackMask(bool side,unsigned long long* bitboards, Lookup
 
 }
 
-void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
+void generateAllCaptures(Board* board, LookupLibrary* t, Move* list, int* moveCount){
 
 
     bool side = board->sideToMove;
@@ -105,7 +106,11 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
             }
 
             Move m(fromSquare,toSquare,0,1,0,0,0,Q+side,capturedPiece,0);
-            moves->push_back(m);
+            //moves->push_back(m);
+            //addToMoveList(start,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
+
         }
     }
 
@@ -133,7 +138,10 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
             }
 
             Move m(fromSquare,toSquare,0,1,0,0,0,R+side,capturedPiece,0);
-            moves->push_back(m);
+            //moves->push_back(m);
+            //addToMoveList(start,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
     }
     unsigned long long bishops = bitboards[B+side];
@@ -161,7 +169,10 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
             }
 
             Move m(fromSquare,toSquare,0,1,0,0,0,B+side,capturedPiece,0);
-            moves->push_back(m);
+            //moves->push_back(m);
+            //addToMoveList(start,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
 
     }
@@ -192,7 +203,10 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
             }
 
             Move m(fromSquare,toSquare,0,1,0,0,0,N+side,capturedPiece,0);
-            moves->push_back(m);
+            //moves->push_back(m);
+            //addToMoveList(start,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
 
 
@@ -224,7 +238,10 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
         }
 
         Move m(kingSquare,toSquare,0,1,0,0,0,K+side,capturedPiece,0);
-        moves->push_back(m);
+        //moves->push_back(m);
+        //addToMoveList(start,&m);
+        list[*moveCount] = m;
+        *moveCount = *moveCount + 1;
     }
 
     unsigned long long pawns = bitboards[P+side];
@@ -244,7 +261,10 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
 
             if(pawnAttackTargets & enPassBit){
                 Move m3(fromSquare,enPassSquare,0,1,0,1,0,P+side,P+!side,0);
-                moves->push_back(m3);
+                //moves->push_back(m3);
+                //addToMoveList(start,&m3);
+                list[*moveCount] = m3;
+                *moveCount = *moveCount + 1;
             }
 
 
@@ -270,21 +290,36 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
 
             if((1ULL<<toSquare) & relevantRank){
                 Move m(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,N+side);
-                moves->push_back(m);
+                //moves->push_back(m);
+                //addToMoveList(start,&m);
+                list[*moveCount] = m;
+                *moveCount = *moveCount + 1;
 
                 Move m1(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,B+side);
-                moves->push_back(m1);
+                //moves->push_back(m1);
+                //addToMoveList(start,&m1);
+                list[*moveCount] = m1;
+                *moveCount = *moveCount + 1;
 
                 Move m2(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,R+side);
-                moves->push_back(m2);
+                //moves->push_back(m2);
+                //addToMoveList(start,&m2);
+                list[*moveCount] = m2;
+                *moveCount = *moveCount + 1;
 
                 Move m3(fromSquare,toSquare,0,1,1,0,0,P+side,capturedPiece,Q+side);
-                moves->push_back(m3);
+                //moves->push_back(m3);
+                //addToMoveList(start,&m3);
+                list[*moveCount] = m3;
+                *moveCount = *moveCount + 1;
 
             }
             else{
                 Move m(fromSquare,toSquare,0,1,0,0,0,P+side,capturedPiece,0);
-                moves->push_back(m);
+                //moves->push_back(m);
+                //addToMoveList(start,&m);
+                list[*moveCount] = m;
+                *moveCount = *moveCount + 1;
             }
 
 
@@ -301,15 +336,21 @@ void generateAllCaptures(Board* board, LookupLibrary* t, vector<Move>* moves){
  * returns vector of all psuedo-legal moves(attack,normal, and special)
  * that a side can make
  */
-vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
+Move* generateAllMoves(Board* board, LookupLibrary* t, int* moveCount, Move* list){
 
     bool side = board->sideToMove;
-    vector<Move> moveList;
+    //Move** listStart = NULL;
+
+    //Move* list = new Move[256];
+    //vector<Move> moveList;
+
 
     unsigned long long* bitboards = board->bitboards;
 
 
-    generateAllCaptures(board,t,&moveList);
+    generateAllCaptures(board,t,list, moveCount);
+
+
 
     unsigned long long enemyPieces = bitboards[!side];
     unsigned long long friendlyPieces = bitboards[side];
@@ -339,22 +380,37 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
 
             if((1ULL<<toSquare) & relevantRank){
                 Move m(fromSquare,toSquare,0,0,1,0,0,P+side,0,N+side);
-                moveList.push_back(m);
+                //moveList.push_back(m);
+                //addToMoveList(listStart,&m);
+                list[*moveCount] = m;
+                *moveCount = *moveCount + 1;
 
                 Move m1(fromSquare,toSquare,0,0,1,0,0,P+side,0,B+side);
-                moveList.push_back(m1);
+                //moveList.push_back(m1);
+                //addToMoveList(listStart,&m1);
+                list[*moveCount] = m1;
+                *moveCount = *moveCount + 1;
 
                 Move m2(fromSquare,toSquare,0,0,1,0,0,P+side,0,R+side);
-                moveList.push_back(m2);
+                //moveList.push_back(m2);
+                //addToMoveList(listStart,&m2);
+                list[*moveCount] = m2;
+                *moveCount = *moveCount + 1;
 
                 Move m3(fromSquare,toSquare,0,0,1,0,0,P+side,0,Q+side);
-                moveList.push_back(m3);
+                //moveList.push_back(m3);
+                //addToMoveList(listStart,&m3);
+                list[*moveCount] = m3;
+                *moveCount = *moveCount + 1;
 
 
             }
             else{
                 Move m(fromSquare,toSquare,0,0,0,0,0,P+side,0,0);
-                moveList.push_back(m);
+                //moveList.push_back(m);
+                //addToMoveList(listStart,&m);
+                list[*moveCount] = m;
+                *moveCount = *moveCount + 1;
             }
 
 
@@ -362,7 +418,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
         while(pawnMoveSecondLegal){
             int toSquare = popLSB(&pawnMoveSecondLegal);
             Move m(fromSquare,toSquare,1,0,0,0,0,P+side,0,0);
-            moveList.push_back(m);
+            //moveList.push_back(m);
+            //addToMoveList(listStart,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
 
     }
@@ -379,7 +438,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
             int toSquare = popLSB(&knightQuietMoves);
 
             Move m(fromSquare,toSquare,0,0,0,0,0,N+side,0,0);
-            moveList.push_back(m);
+            //moveList.push_back(m);
+            //addToMoveList(listStart,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
 
     }
@@ -397,7 +459,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
 
             int toSquare = popLSB(&bishopQuietMoves);
             Move m(fromSquare,toSquare,0,0,0,0,0,B+side,0,0);
-            moveList.push_back(m);
+            //moveList.push_back(m);
+            //addToMoveList(listStart,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
 
 
@@ -416,7 +481,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
             int toSquare = popLSB(&rookQuietMoves);
 
             Move m(fromSquare,toSquare,0,0,0,0,0,R+side,0,0);
-            moveList.push_back(m);
+            //moveList.push_back(m);
+            //addToMoveList(listStart,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
 
     }
@@ -433,7 +501,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
 
             int toSquare = popLSB(&queenQuietMoves);
             Move m(fromSquare,toSquare,0,0,0,0,0,Q+side,0,0);
-            moveList.push_back(m);
+            //moveList.push_back(m);
+            //addToMoveList(listStart,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
         }
 
     }
@@ -451,7 +522,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
 
         int toSquare = popLSB(&kingQuietMoves);
         Move m(kingSquare,toSquare,0,0,0,0,0,K+side,0,0);
-        moveList.push_back(m);
+        //moveList.push_back(m);
+        //addToMoveList(listStart,&m);
+        list[*moveCount] = m;
+        *moveCount = *moveCount + 1;
 
     }
 
@@ -470,7 +544,10 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
         if(!((enemyAttack & CastleCheckSquares[castleIndex]) || ( CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare+2,0,0,0,0,1,K+side,0,0);
-            moveList.push_back(m);
+            //moveList.push_back(m);
+            //addToMoveList(listStart,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
 
         }
 
@@ -483,14 +560,17 @@ vector<Move> generateAllMoves(Board* board, LookupLibrary* t){
         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
         if(!((enemyAttack & CastleCheckSquares[castleIndex]) || ( CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL<<kingSquare)))) ){
             Move m(kingSquare,kingSquare-2,0,0,0,0,1,K+side,0,0);
-            moveList.push_back(m);
+            //moveList.push_back(m);
+            //addToMoveList(listStart,&m);
+            list[*moveCount] = m;
+            *moveCount = *moveCount + 1;
 
         }
 
     }
 
 
-    return moveList;
+    return list;
 
 }
 bool checkIfInCheck(bool side, Board* board, LookupLibrary* t){
@@ -551,12 +631,12 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
 
     bool side = b->sideToMove;
 
-    int enemyIndex = 0 + !side;
-    int friendlyIndex = 0 + side;
+    //int enemyIndex = 0 + !side;
+    //int friendlyIndex = 0 + side;
 
     unsigned long long squareFromBit = 1ULL << squareFrom;
     b->bitboards[movedPiece] ^= squareFromBit;
-    b->bitboards[friendlyIndex] ^= squareFromBit;
+    //b->bitboards[friendlyIndex] ^= squareFromBit;
 
     position^= t->zobristPieces[movedPiece][squareFrom];
 
@@ -618,28 +698,28 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
             int enPassCapSquare = (squareTo + (8 + ((!side) * -16)));
             unsigned long long enPassBit = 1ULL << enPassCapSquare;
             b->bitboards[movedPiece] |= squareToBit;
-            b->bitboards[friendlyIndex] |= squareToBit;
+            //b->bitboards[friendlyIndex] |= squareToBit;
 
             b->bitboards[capturedPiece] ^= enPassBit;
-            b->bitboards[enemyIndex] ^= enPassBit;
+            //b->bitboards[enemyIndex] ^= enPassBit;
             position^= t->zobristPieces[capturedPiece][enPassCapSquare];
             position^= t->zobristPieces[movedPiece][squareTo];
         }
         if(m.promotion){
 
             b->bitboards[capturedPiece] ^= squareToBit;
-            b->bitboards[enemyIndex] ^= squareToBit;
+            //b->bitboards[enemyIndex] ^= squareToBit;
             b->bitboards[promotedPiece] |= squareToBit;
-            b->bitboards[friendlyIndex] |= squareToBit;
+            //b->bitboards[friendlyIndex] |= squareToBit;
             position^= t->zobristPieces[capturedPiece][squareTo];
             position^= t->zobristPieces[promotedPiece][squareTo];
         }
         //normal captures
         if(!m.promotion && !m.enPassant) {
             b->bitboards[movedPiece] |= squareToBit;
-            b->bitboards[friendlyIndex] |= squareToBit;
+            //b->bitboards[friendlyIndex] |= squareToBit;
             b->bitboards[capturedPiece] ^= squareToBit;
-            b->bitboards[enemyIndex] ^= squareToBit;
+            //b->bitboards[enemyIndex] ^= squareToBit;
             position^= t->zobristPieces[capturedPiece][squareTo];
             position^= t->zobristPieces[movedPiece][squareTo];
         }
@@ -660,7 +740,7 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
             unsigned int enPass = squareTo + (8 + ((!side) * -16));
             b->enPassSquares.push_back(enPass);
             b->bitboards[movedPiece] |= squareToBit;
-            b->bitboards[friendlyIndex] |= squareToBit;
+            //b->bitboards[friendlyIndex] |= squareToBit;
 
             position^= t->zobristPieces[movedPiece][squareTo];
 
@@ -671,7 +751,7 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
             if(m.castle){
 
                 b->bitboards[movedPiece] |= squareToBit;
-                b->bitboards[friendlyIndex] |= squareToBit;
+                //b->bitboards[friendlyIndex] |= squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
                 int squareDifference = squareTo - squareFrom;
                 int rook = R+side;
@@ -681,12 +761,12 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
                     int castleSquare1 = squareTo-2;
                     unsigned long long cs1Bit = 1ULL << castleSquare1;
                     b->bitboards[rook] ^= cs1Bit;
-                    b->bitboards[friendlyIndex] ^= cs1Bit;
+                    //b->bitboards[friendlyIndex] ^= cs1Bit;
                     position^= t->zobristPieces[rook][castleSquare1];
                     int castleSquare2 = squareFrom -1;
                     unsigned long long cs2Bit = 1ULL << castleSquare2;
                     b->bitboards[rook] |= cs2Bit;
-                    b->bitboards[friendlyIndex] |= cs2Bit;
+                    //b->bitboards[friendlyIndex] |= cs2Bit;
                     position^= t->zobristPieces[rook][castleSquare2];
                 }
                     //kingside castle
@@ -694,12 +774,12 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
                     int castleSquare1 = squareTo+1;
                     unsigned long long cs1Bit = 1ULL << castleSquare1;
                     b->bitboards[rook] ^= cs1Bit;
-                    b->bitboards[friendlyIndex] ^= cs1Bit;
+                    //b->bitboards[friendlyIndex] ^= cs1Bit;
                     position^= t->zobristPieces[rook][castleSquare1];
                     int castleSquare2 = squareFrom+1;
                     unsigned long long cs2Bit = 1ULL << castleSquare2;
                     b->bitboards[rook] |= cs2Bit;
-                    b->bitboards[friendlyIndex] |= cs2Bit;
+                    //b->bitboards[friendlyIndex] |= cs2Bit;
                     position^= t->zobristPieces[rook][castleSquare2];
                 }
 
@@ -709,7 +789,7 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
 
                 //unsigned long long promotedPieceBitboard = b->bitboards[m.promotedTo];
                 b->bitboards[promotedPiece] |= squareToBit;
-                b->bitboards[friendlyIndex] |= squareToBit;
+                //b->bitboards[friendlyIndex] |= squareToBit;
                 position^= t->zobristPieces[promotedPiece][squareTo];
             }
 
@@ -717,13 +797,29 @@ bool makeMove(Move m, Board* b, LookupLibrary* t){
             if(!m.promotion && !m.castle){
 
                 b->bitboards[movedPiece] |=  squareToBit;
-                b->bitboards[friendlyIndex] |=  squareToBit;
+                //b->bitboards[friendlyIndex] |=  squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
             }
 
 
 
         }
+
+    }
+
+    //update allWhite bitboard
+    b->bitboards[0] = 0ULL;
+    for(int piece = 2; piece <14;piece+=2){
+
+        b->bitboards[0] |= b->bitboards[piece];
+
+    }
+
+    //update allBlack bitboard
+    b->bitboards[1] = 0ULL;
+    for(int piece = 3; piece <14;piece+=2){
+
+        b->bitboards[1] |= b->bitboards[piece];
 
     }
 
@@ -804,14 +900,14 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
 
     bool revertSide = !b->sideToMove;
 
-    int enemyIndex = 0 + !revertSide;
-    int friendlyIndex = 0 + revertSide;
-    unsigned long long movedPieceBitboard = b->bitboards[movedPiece];
+    //int enemyIndex = 0 + !revertSide;
+    //int friendlyIndex = 0 + revertSide;
+    //unsigned long long movedPieceBitboard = b->bitboards[movedPiece];
 
     unsigned long long squareFromBit = 1ULL << squareFrom;
     b->bitboards[movedPiece] |= squareFromBit;
     position^= t->zobristPieces[movedPiece][squareFrom];
-    b->bitboards[friendlyIndex] |= squareFromBit;
+    //b->bitboards[friendlyIndex] |= squareFromBit;
 
     unsigned long long squareToBit = 1ULL << squareTo;
     if(m.capture){
@@ -823,10 +919,10 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
             int enPassCapSquare = (squareTo + (8 + ((!revertSide) * -16)));
             unsigned long long enPassBit = 1ULL << enPassCapSquare;
             b->bitboards[movedPiece] ^= squareToBit;
-            b->bitboards[friendlyIndex] ^= squareToBit;
+            //b->bitboards[friendlyIndex] ^= squareToBit;
             position^= t->zobristPieces[movedPiece][squareTo];
             b->bitboards[capturedPiece] |= enPassBit;
-            b->bitboards[enemyIndex] |= enPassBit;
+            //b->bitboards[enemyIndex] |= enPassBit;
             position^= t->zobristPieces[capturedPiece][enPassCapSquare];
 
         }
@@ -834,20 +930,20 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
             if(m.promotion){
 
                 b->bitboards[capturedPiece] |= squareToBit;
-                b->bitboards[enemyIndex] |= squareToBit;
+                //b->bitboards[enemyIndex] |= squareToBit;
                 position^= t->zobristPieces[capturedPiece][squareTo];
                 b->bitboards[promotedPiece] ^= squareToBit;
-                b->bitboards[friendlyIndex] ^= squareToBit;
+                //b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[promotedPiece][squareTo];
             }
                 //normal captures
             else{
 
                 b->bitboards[movedPiece] ^= squareToBit;
-                b->bitboards[friendlyIndex] ^= squareToBit;
+                //b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
                 b->bitboards[capturedPiece] |= squareToBit;
-                b->bitboards[enemyIndex] |= squareToBit;
+                //b->bitboards[enemyIndex] |= squareToBit;
                 position^= t->zobristPieces[capturedPiece][squareTo];
             }
         }
@@ -860,7 +956,7 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
         if(m.castle){
 
             b->bitboards[movedPiece] ^= squareToBit;
-            b->bitboards[friendlyIndex] ^= squareToBit;
+            //b->bitboards[friendlyIndex] ^= squareToBit;
             position^= t->zobristPieces[movedPiece][squareTo];
             int squareDifference = squareTo - squareFrom;
             int rook = R+revertSide;
@@ -871,12 +967,12 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
                 int castleSquare1 = squareTo-2;
                 unsigned long long cs1Bit = 1ULL << castleSquare1;
                 b->bitboards[rook] |= cs1Bit;
-                b->bitboards[friendlyIndex] |= cs1Bit;
+                //b->bitboards[friendlyIndex] |= cs1Bit;
                 position^= t->zobristPieces[rook][castleSquare1];
                 int castleSquare2 = squareFrom-1;
                 unsigned long long cs2Bit = 1ULL << castleSquare2;
                 b->bitboards[rook] ^= cs2Bit;
-                b->bitboards[friendlyIndex] ^= cs2Bit;
+               // b->bitboards[friendlyIndex] ^= cs2Bit;
                 position^= t->zobristPieces[rook][castleSquare2];
             }
                 //kingside castle
@@ -884,32 +980,47 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
                 int castleSquare1 = squareTo+1;
                 unsigned long long cs1Bit = 1ULL << castleSquare1;
                 b->bitboards[rook] |= cs1Bit;
-                b->bitboards[friendlyIndex] |= cs1Bit;
+                //b->bitboards[friendlyIndex] |= cs1Bit;
                 position^= t->zobristPieces[rook][castleSquare1];
                 int castleSquare2 = squareFrom+1;
                 unsigned long long cs2Bit = 1ULL << castleSquare2;
                 b->bitboards[rook] ^= cs2Bit;
-                b->bitboards[friendlyIndex] ^= cs2Bit;
+                //b->bitboards[friendlyIndex] ^= cs2Bit;
                 position^= t->zobristPieces[rook][castleSquare2];
             }
         }else{
             if(m.promotion){
 
                 b->bitboards[promotedPiece] ^= squareToBit;
-                b->bitboards[friendlyIndex] ^= squareToBit;
+                //b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[promotedPiece][squareTo];
             }
                 //normal moves
             else{
 
                 b->bitboards[movedPiece] ^= squareToBit;
-                b->bitboards[friendlyIndex] ^= squareToBit;
+                //b->bitboards[friendlyIndex] ^= squareToBit;
                 position^= t->zobristPieces[movedPiece][squareTo];
             }
         }
 
     }
 
+    //update allWhite bitboard
+    b->bitboards[0] = 0ULL;
+    for(int piece = 2; piece <14;piece+=2){
+
+        b->bitboards[0] |= b->bitboards[piece];
+
+    }
+
+    //update allBlack bitboard
+    b->bitboards[1] = 0ULL;
+    for(int piece = 3; piece <14;piece+=2){
+
+        b->bitboards[1] |= b->bitboards[piece];
+
+    }
     b->sideToMove = revertSide;
     b->enPassSquares.pop_back();
     b->castleRights.pop_back();
@@ -924,6 +1035,22 @@ void unmakeMove(Move m, Board* b,LookupLibrary* t){
 
 }
 
+unsigned long long PerftWrapper(int finishDepth, int printDepth, Board* board, LookupLibrary* t){
+
+
+    auto start = chrono::high_resolution_clock::now();
+
+    unsigned long long nodes = Perft(finishDepth,printDepth,board,t);
+
+    auto stop = chrono::high_resolution_clock::now();
+
+    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+
+    cout << "Time: "  << duration.count() << " ms "  << endl;
+
+    return nodes;
+
+}
 /*Perft-
  * given a finish depth, board, target library and side
  * counts the number of leaf nodes in move tree the side and going until that depth.
@@ -938,60 +1065,32 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLi
 
     bool side = board->sideToMove;
 
-    vector<Move> ms = generateAllMoves(board,t);
+    int listLength = 0;
+
+    Move list[256];
+    generateAllMoves(board,t,&listLength, list);
     //vector<Move> legals = findLegalMoves(board,ms,t);
 
-    for(Move m : ms){
+    //cout << "dwjjdjw" <<endl;
 
-        bool valid = makeMove(m,board,t);
 
+    for(int i =0; i<listLength; i++){
+
+        bool valid = makeMove(list[i],board,t);
+
+        //cout << "blah" << endl;
         if(valid) {
             unsigned long ct = Perft(finishDepth - 1, printDepth, board, t);
-            if (printDepth == finishDepth) {
-                m.toString();
-                m.toUCI();
-                cout << ct << " nodes" << endl;
-            }
+
             moveCount += ct;
-            unmakeMove(m, board, t);
+            unmakeMove(list[i], board, t);
         }
 
     }
+
 
     return moveCount;
 
 
 }
-void generateMovesCertainDepth(int depth,Board* board, LookupLibrary* t){
 
-    if(depth ==0){
-        return;
-    }
-
-    bool side = board->sideToMove;
-    vector<Move> ms = generateAllMoves(board,t);
-    vector<Move> legals = findLegalMoves(board,ms,t);
-    displayWholeBoard(board);
-
-    for(Move m : legals){
-
-
-            cout << "BEFORE==========================================" << endl;
-            displayWholeBoard(board);
-
-            makeMove(m, board,t);
-            cout << "MAKE============================================" << endl;
-            m.toString();
-            m.toUCI();
-            displayWholeBoard(board);
-
-            generateMovesCertainDepth(depth - 1, board, t);
-
-            unmakeMove( m, board,t);
-            cout << "UNMAKE==========================================" << endl;
-            displayWholeBoard(board);
-
-    }
-
-    return;
-}

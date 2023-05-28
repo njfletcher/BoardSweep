@@ -28,11 +28,13 @@ public:
     int movedPiece;
     int promotedTo;
     int capturedPiece;
+    Move* nextMove;
+    Move* prevMove;
     //enumColor turn;
 
-
-
 };
+
+void addToMoveList(Move** start, Move*move);
 
 class MovePair{
 

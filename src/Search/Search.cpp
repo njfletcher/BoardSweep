@@ -59,7 +59,7 @@ MovePair startAB(int currentDepth, LookupLibrary* t,Board* board){
 }
 
 MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board* board,Move m){
-
+    /*
     bool side = board->sideToMove;
     vector<Move> moves = generateAllMoves(board,t);
     vector<Move> legals = findLegalMoves(board,moves,t);
@@ -137,8 +137,10 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
         return maxMove;
 
     }
-
+    */
+    return MovePair(Move(),0);
 }
+
 
 void initializeZobristArrays(LookupLibrary* t){
 

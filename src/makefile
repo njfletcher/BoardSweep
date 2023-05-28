@@ -1,5 +1,5 @@
 boardsweep: main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o
-	g++ -lstdc++ -o boardsweep main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o
+	g++ -Ofast -lstdc++ -o boardsweep main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o
 main.o: main.cpp
 	g++ -c main.cpp
 MoveGeneration.o: MoveGeneration/MoveGeneration.cpp MoveGeneration/MoveGeneration.h

@@ -3,7 +3,6 @@
 //
 #pragma once
 
-
 unsigned int countSetBits(unsigned long long bitboard);
 
 unsigned int getIndexLSB(unsigned long long bitboard);

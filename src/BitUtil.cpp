@@ -44,7 +44,8 @@ unsigned int popLSB(unsigned long long* bitboardPtr){
 
     unsigned int index = getIndexLSB(*bitboardPtr);
 
-    popBit(bitboardPtr,index);
+    //popBit(bitboardPtr,index);
+    *bitboardPtr = *bitboardPtr & (*bitboardPtr -1);
 
     return index;
 }

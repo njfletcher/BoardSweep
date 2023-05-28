@@ -2,6 +2,7 @@
 #include "BoardVisualization.h"
 #include "GamePlay.h"
 #include "MoveGeneration/TargetGeneration.h"
+#include "MoveGeneration/MoveGeneration.h"
 #include "Representation/LookupLibrary.h"
 #include "Testing/Tester.h"
 #include "Search/Search.h"
@@ -23,7 +24,7 @@ int main(int argc, char** argv) {
     lookup.rookMagicAttacks = initializeRookMagicAttackTable(lookup.rookTargetLookups);
     initializeZobristArrays(&lookup);
 
-    Board * board = initializeBoardFromFen("8/5bk1/8/2Pp4/8/1K6/8/8 b - d6 0 1",&lookup);
+    Board * board = initializeBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",&lookup);
 
     cout << argv[0] << endl;
 
@@ -61,7 +62,7 @@ int main(int argc, char** argv) {
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
     //testPositionUnknown("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",5,&lookup);
-    testAll(&lookup);
+    //testAll(&lookup);
     //displayWholeBoard(board);
     //simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
     //int score = evaluatePosition(board,board->sideToMove,&lookup);
@@ -70,7 +71,7 @@ int main(int argc, char** argv) {
     //cout << board->sideToMove << endl;
    // MovePair pair = startAB(7,&lookup,board,board->sideToMove);
    // pair.m.toUCI();
-
+    cout << "nodes: " << PerftWrapper(6,400,board,&lookup) << endl;
 
 
     return 0;
