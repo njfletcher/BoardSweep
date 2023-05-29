@@ -29,7 +29,7 @@ void testAll(LookupLibrary* t){
                 int count = 0;
                 for(int i =1; currLine[i] != ','; i++) count++;
 
-                char fen[count+1];
+                char* fen = new char[count+1];
                 for(int i = 0; i<count;i++){
                     fen[i] = currLine[i+1];
                 }
@@ -59,6 +59,7 @@ void testAll(LookupLibrary* t){
                     nodes += pow(10,count3-i-1)* (currLine[count + 2 + count2 +1 + i]-'0');
                 }
 
+
                 cout << " expected nodes: " << nodes << endl;
                 testPositionKnown(fen,depth,nodes,t);
             }
@@ -70,7 +71,7 @@ void testAll(LookupLibrary* t){
     file.close();
 }
 
-void testPositionKnown(const char fen[], unsigned int depth, unsigned long long nodes,LookupLibrary* t){
+void testPositionKnown(const char* fen, unsigned int depth, unsigned long long nodes,LookupLibrary* t){
 
 
     Board* board = initializeBoardFromFen(fen,t);
@@ -79,6 +80,7 @@ void testPositionKnown(const char fen[], unsigned int depth, unsigned long long 
     if(nodeCount != nodes) cout <<"!!!!!!!!!!!!!!!mismatch with position: expected "<< nodes << " got " << nodeCount << "!!!!!!!!!!!!!!!!!!!!" << endl;
     else cout << "position correct expected : " <<  nodes << " got: " << nodeCount <<endl;
 
+    delete fen;
 
     delete board;
 

@@ -35,4 +35,6 @@ public:
 
     //one for each square enpassant could occur on, 65th num for no enpass available
     unsigned long long zobristEnPass[65];
+
+    ~LookupLibrary();
 };

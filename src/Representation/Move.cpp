@@ -34,8 +34,7 @@ Move::Move(){
     movedPiece = 0;
     promotedTo = 0;
     capturedPiece = 0;
-    Move* nextMove = NULL;
-    Move* prevMove = NULL;
+
 }
 
 void Move::toString(){
@@ -52,19 +51,7 @@ void Move::toUCI() {
     std::cout << Squares[squareFrom] << Squares[squareTo] << cap <<std::endl;
 }
 
-void addToMoveList(Move** start, Move*move){
 
-    if(start == NULL){
-
-        move->nextMove = NULL;
-        move->prevMove = NULL;
-    }
-    else{
-        move->nextMove = *start;
-        (*start)->prevMove = move;
-    }
-    *start = move;
-}
 
 MovePair::MovePair(Move move, int eval) {
 
