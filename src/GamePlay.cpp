@@ -30,10 +30,12 @@ void initializeZobristPosition(Board* board, LookupLibrary* t){
     }
 
     //use the castle right 4 bit value(0-16) as a direct index
-    position ^= t->zobristCastles[board->castleRights.back()];
+    //position ^= t->zobristCastles[board->castleRights.back()];
+    position ^= t->zobristCastles[board->castleRights[0]];
 
     //returns 0-63 for valid, 64 if not available. use enPassSquare as direct index
-    int enPassSquare = board->enPassSquares.back();
+    //int enPassSquare = board->enPassSquares.back();
+    int enPassSquare = board->enPassSquares[0];
     position ^= t->zobristEnPass[enPassSquare];
 
     if(board->sideToMove == black) position ^= t->zobristBlackTurn;
@@ -181,13 +183,15 @@ Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
             default:
                 break;
         }
-        board->castleRights.push_back(tempRights);
+        //board->castleRights.push_back(tempRights);
+        board->castleRights[0] = tempRights;
         charCount++;
     }
     charCount++;
 
     if(fen[charCount] == '-'){
-        board->enPassSquares.push_back(64);
+        //board->enPassSquares.push_back(64);
+        board->enPassSquares[0]  = 64;
         charCount++;
     }
     else{
@@ -195,7 +199,8 @@ Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
         charCount++;
         char rank = fen[charCount];
 
-        board->enPassSquares.push_back(((rank - '0')*8)+ (file - '`'-9));
+        //board->enPassSquares.push_back(((rank - '0')*8)+ (file - '`'-9));
+        board->enPassSquares[0] = ((rank - '0')*8)+ (file - '`'-9);
         charCount++;
 
     }
@@ -220,7 +225,8 @@ Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
         charCount++;
     }
 
-    board->fiftyMoveRuleHalfMoves.push_back(halfMoveCount);
+    //board->fiftyMoveRuleHalfMoves.push_back(halfMoveCount);
+    board->fiftyMoveRuleHalfMoves[0] = halfMoveCount;
     charCount++;
 
     int decimalCountFull =0;
@@ -263,7 +269,7 @@ void simGame(LookupLibrary* t,const char fen[]){
 
 
         if(!m.isValid) break;
-        makeMove(m,board,t);
+        makeMove(m,board,t,0);
         //board->sideToMove = !board->sideToMove;
 
         displayWholeBoard(board);

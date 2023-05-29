@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
     Board * board = initializeBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",&lookup);
 
     cout << argv[0] << endl;
+    cout << "here" << endl;
 
     //vector<Move> ms = generateAllMoves(board->sideToMove,board,&lookup);
 
@@ -71,9 +72,11 @@ int main(int argc, char** argv) {
     //cout << board->sideToMove << endl;
    // MovePair pair = startAB(7,&lookup,board,board->sideToMove);
    // pair.m.toUCI();
-    cout << "nodes: " << PerftWrapper(4,400,board,&lookup) << endl;
+   board->currentSearchDepth = 6;
+    cout << "nodes: " << PerftWrapper(6,400,board,&lookup) << endl;
 
 
+    delete board;
     return 0;
 
 

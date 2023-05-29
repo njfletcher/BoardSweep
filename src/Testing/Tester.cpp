@@ -75,6 +75,7 @@ void testPositionKnown(const char* fen, unsigned int depth, unsigned long long n
 
 
     Board* board = initializeBoardFromFen(fen,t);
+    board->currentSearchDepth = depth;
     unsigned long long nodeCount = Perft(depth,400,board,t);
     //cout << nodeCount <<endl;
     if(nodeCount != nodes) cout <<"!!!!!!!!!!!!!!!mismatch with position: expected "<< nodes << " got " << nodeCount << "!!!!!!!!!!!!!!!!!!!!" << endl;
@@ -88,6 +89,7 @@ void testPositionKnown(const char* fen, unsigned int depth, unsigned long long n
 //r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq –
 void testPositionUnknown(const char fen[], unsigned int depth, LookupLibrary* t){
     Board* board = initializeBoardFromFen(fen,t);
+    board->currentSearchDepth = depth;
     unsigned long long nodeCount = Perft(depth,400,board,t);
 
     cout<< "got " << nodeCount << " nodes" << endl;
