@@ -75,6 +75,7 @@ void testPositionKnown(const char* fen, unsigned int depth, unsigned long long n
 
 
     Board* board = initializeBoardFromFen(fen,t);
+    board->currentDepth = 0;
     unsigned long long nodeCount = Perft(depth,400,board,t);
     //cout << nodeCount <<endl;
     if(nodeCount != nodes) cout <<"!!!!!!!!!!!!!!!mismatch with position: expected "<< nodes << " got " << nodeCount << "!!!!!!!!!!!!!!!!!!!!" << endl;

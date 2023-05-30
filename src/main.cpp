@@ -73,6 +73,8 @@ int main(int argc, char** argv) {
    // pair.m.toUCI();
    board->currentDepth = 0;
     cout << "nodes: " << PerftWrapper(4,400,board,&lookup) << endl;
+    //displayBitboard(0x70);
+    //displayBitboard(0x1E);
 
 
     return 0;
