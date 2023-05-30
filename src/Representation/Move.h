@@ -40,3 +40,5 @@ public:
     Move m;
     int evalScore;
 };
+
+unsigned long long packageMove(unsigned int from, unsigned int to, bool doubleP, bool cap, bool pro, bool enP, bool cas, unsigned int moved, unsigned int captured, unsigned int promoted);

@@ -60,3 +60,15 @@ MovePair::MovePair(Move move, int eval) {
 
 }
 
+unsigned long long packageMove(unsigned int from, unsigned int to, bool doubleP, bool cap, bool pro, bool enP, bool cas, unsigned int moved, unsigned int captured, unsigned int promoted){
+
+    unsigned long long move = 0;
+
+    move |= from;
+    move |= to << 6;
+    unsigned long long flags = doubleP | (cap <<1) | (pro << 2) | (enP << 3) | (cas << 4);
+    move |= flags << 12;
+    unsigned long long pieces = moved | (captured << 4) | (promoted << 8);
+    move |= pieces << 17;
+    return move;
+}

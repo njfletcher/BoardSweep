@@ -269,7 +269,7 @@ void simGame(LookupLibrary* t,const char fen[]){
 
 
         if(!m.isValid) break;
-        makeMove(m,board,t);
+        makeMove(0,board,t);
         //board->sideToMove = !board->sideToMove;
 
         displayWholeBoard(board);

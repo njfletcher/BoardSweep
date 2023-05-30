@@ -9,10 +9,10 @@
 #include <vector>
 
 unsigned long long getAttackMask(bool side,const unsigned long long* bitboards, LookupLibrary* t);
-Move* generateAllMoves(Board* board, LookupLibrary* t, int* moveCount,Move* list);
+unsigned long long* generateAllMoves(Board* board, LookupLibrary* t, int* moveCount,unsigned long long* list);
 void generateAllCaptures(Board* board, LookupLibrary* t, Move** moves, Move* list, int* moveCount);
-bool makeMove(Move m, Board* b,LookupLibrary* t);
-void unmakeMove(Move m, Board* b,LookupLibrary* t);
+bool makeMove(unsigned long long m, Board* b,LookupLibrary* t);
+void unmakeMove(unsigned long long m, Board* b,LookupLibrary* t);
 
 unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLibrary* t);
 unsigned long long PerftWrapper(int finishDepth, int printDepth, Board* board, LookupLibrary* t);
