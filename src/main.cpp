@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
     //cout << board->sideToMove << endl;
    // MovePair pair = startAB(7,&lookup,board,board->sideToMove);
    // pair.m.toUCI();
+   board->currentDepth = 0;
     cout << "nodes: " << PerftWrapper(4,400,board,&lookup) << endl;
 
 

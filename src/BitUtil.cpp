@@ -7,7 +7,7 @@
 
 
 //Based on Brian Kernighan's algorithm
-unsigned int countSetBits(unsigned long long bitboard){
+int countSetBits(unsigned long long bitboard){
 
     int count = 0;
 
@@ -24,7 +24,7 @@ unsigned int countSetBits(unsigned long long bitboard){
 
 //returns 0-63 given a valid set bitboard
 //assumes check for bitboard == 0ULL is done elsewhere
-unsigned int getIndexLSB(unsigned long long bitboard){
+int getIndexLSB(unsigned long long bitboard){
 
     return countSetBits((bitboard & -bitboard) -1);
 
@@ -40,7 +40,7 @@ void popBit(unsigned long long* bitboardPtr, int index){
 }
 
 //pops lsb, returns the index
-unsigned int popLSB(unsigned long long* bitboardPtr){
+int popLSB(unsigned long long* bitboardPtr){
 
     unsigned int index = getIndexLSB(*bitboardPtr);
 

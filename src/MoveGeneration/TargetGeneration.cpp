@@ -5,8 +5,6 @@
 #include "TargetGeneration.h"
 #include "../BoardVisualization.h"
 #include "../BitUtil.h"
-#include "../Representation/UsefulConstants.h"
-#include "../Representation/LookupLibrary.h"
 
 using namespace std;
 
