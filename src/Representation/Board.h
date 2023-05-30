@@ -17,7 +17,6 @@ class Board{
 
 public:
 
-    Board();
     unsigned long long bitboards[14];
 
     //0 is white, 1 is black
@@ -26,18 +25,15 @@ public:
     //4th bit: black kingside, 3rd bit: black queenside, 2nd bit:white kingside, 1st bit: white queenside
     //set bit means right to castle
     //unsigned int castleRights;
-    //vector<unsigned int> castleRights;
-    unsigned int castleRights[100];
+    vector<unsigned int> castleRights;
 
     //0-63 mean enPassant right exists on square, 64 means enPassant option does not exist
     //unsigned int enPassSquare;
-    //vector<unsigned int> enPassSquares;
-    unsigned int enPassSquares[100];
+    vector<unsigned int> enPassSquares;
 
     //when this reaches 100, a draw by the 50 rule move can happen
     //count gets reset to 0 when there is a pawn move or a capture from any piece
-    //vector<unsigned int> fiftyMoveRuleHalfMoves;
-    unsigned int fiftyMoveRuleHalfMoves[100];
+    vector<unsigned int> fiftyMoveRuleHalfMoves;
 
     unsigned int fullMoveCount;
 
@@ -49,7 +45,5 @@ public:
 
     //zobrist key for current position
     unsigned long long currentPosition;
-
-    int currentSearchDepth;
 
 };
