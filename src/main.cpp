@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
     //generateMovesCertainDepth(2,board,&lookup,board->sideToMove);
 
     //testPositionUnknown("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",5,&lookup);
-    //testAll(&lookup);
+    testAll(&lookup);
     //displayWholeBoard(board);
     //simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
     //int score = evaluatePosition(board,board->sideToMove,&lookup);
@@ -71,10 +71,10 @@ int main(int argc, char** argv) {
     //cout << board->sideToMove << endl;
    // MovePair pair = startAB(7,&lookup,board,board->sideToMove);
    // pair.m.toUCI();
-   board->currentDepth = 0;
-    cout << "nodes: " << PerftWrapper(4,400,board,&lookup) << endl;
-    //displayBitboard(0x70);
-    //displayBitboard(0x1E);
+   //board->currentDepth = 0;
+    //cout << "nodes: " << PerftWrapper(6,400,board,&lookup) << endl;
+    //displayBitboard(RankMasks[1]);
+    //displayBitboard(RankMasks[6]);
 
 
     return 0;

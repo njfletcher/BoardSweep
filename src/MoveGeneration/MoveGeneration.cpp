@@ -426,14 +426,37 @@ unsigned long long* generateAllMoves(Board* board, LookupLibrary* t, int* moveCo
 
     unsigned long long allPieces = enemyPieces | friendlyPieces;
 
+
+
     unsigned long long pawns = bitboards[P+side];
+
+    //int enPassSquare = board->enPassSquares.back();
+
+    unsigned int enPassSquare = board->enPassSquares[board->currentDepth];
+
+    //enpass square of 64 means enpass is not available
+    if(enPassSquare !=64){
+
+        unsigned long long reverseAttack = t->pawnAttackLookups[!side][enPassSquare];
+        unsigned long long enPassPawns = pawns & reverseAttack;
+        //pawns = pawns & ~enPassPawns;
+        while(enPassPawns){
+            unsigned int squareFrom = popLSB(&enPassPawns);
+            unsigned long long m3 = packageMove(squareFrom,enPassSquare,false,true,false,true,false,P+side,P+!side,0);
+            //moves->push_back(m3);
+            //addToMoveList(start,&m3);
+            list[*moveCount] = m3;
+            *moveCount = *moveCount + 1;
+        }
+
+    }
 
     while(pawns){
         unsigned int fromSquare = popLSB(&pawns);
+        unsigned long long fromSquareBit = 1ULL << fromSquare;
 
         unsigned long long pawnSingle = t->pawnSinglePushLookups[side][fromSquare];
         unsigned long long pawnDouble = t->pawnDoublePushLookups[side][fromSquare];
-
 
         unsigned long long pawnMoveFirst = (pawnSingle & ~allPieces);
         unsigned long long pawnMoveSecond = (pawnDouble & ~allPieces);
@@ -441,24 +464,6 @@ unsigned long long* generateAllMoves(Board* board, LookupLibrary* t, int* moveCo
         unsigned long long pawnAttackTargets = t->pawnAttackLookups[side][fromSquare];
         unsigned long long pawnNormalCaptures =  pawnAttackTargets & enemyPieces;
 
-        //int enPassSquare = board->enPassSquares.back();
-        unsigned int enPassSquare = board->enPassSquares[board->currentDepth];
-
-        //enpass square of 64 means enpass is not available
-        if(enPassSquare !=64){
-            unsigned long long enPassBit = 1ULL << enPassSquare;
-
-            if(pawnAttackTargets & enPassBit){
-                //Move m3(fromSquare,enPassSquare,false,true,false,true,false,P+side,P+!side,0);
-                unsigned long long m3 = packageMove(fromSquare,enPassSquare,false,true,false,true,false,P+side,P+!side,0);
-                //moves->push_back(m3);
-                //addToMoveList(start,&m3);
-                list[*moveCount] = m3;
-                *moveCount = *moveCount + 1;
-            }
-
-
-        }
 
         while (pawnNormalCaptures) {
             unsigned int toSquare = popLSB(&pawnNormalCaptures);
@@ -587,11 +592,13 @@ unsigned long long* generateAllMoves(Board* board, LookupLibrary* t, int* moveCo
 
         unsigned long long knightAll = t->knightMoveLookups[fromSquare];
         unsigned long long knightQuietMoves = knightAll & ~allPieces;
-        unsigned long long knightCaptureMoves = knightAll & enemyPieces;
+        unsigned long long knightAttackMoves = knightAll & enemyPieces;
 
-        while(knightCaptureMoves){
 
-            unsigned int toSquare = popLSB(&knightCaptureMoves);
+
+        while(knightAttackMoves){
+
+            unsigned int toSquare = popLSB(&knightAttackMoves);
 
             unsigned long long toBit = 1ULL << toSquare;
             int capturedPiece = -1;
@@ -1334,7 +1341,6 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLi
 
     //cout << "dwjjdjw" <<endl;
 
-
     for(int i =0; i<listLength; i++){
 
         bool valid = makeMove(list[i],board,t);
@@ -1342,16 +1348,19 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLi
         //cout << "blah" << endl;
         if(valid) {
 
+
             board->currentDepth++;
             unsigned long ct = Perft(finishDepth - 1, printDepth, board, t);
 
             moveCount += ct;
             unmakeMove(list[i], board, t);
             board->currentDepth--;
+
+
+
         }
 
     }
-
 
     return moveCount;
 

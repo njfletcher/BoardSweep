@@ -1,5 +1,5 @@
-boardsweep: main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o LookupLibrary.o
-	g++ -g -lstdc++ -o boardsweep main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o LookupLibrary.o
+boardsweep.exe: main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o LookupLibrary.o
+	g++ -g -lstdc++ -o boardsweep.exe main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o LookupLibrary.o
 main.o: main.cpp
 	g++ -c main.cpp
 MoveGeneration.o: MoveGeneration/MoveGeneration.cpp MoveGeneration/MoveGeneration.h
@@ -29,7 +29,7 @@ GamePlay.o: GamePlay.cpp GamePlay.h
 LookupLibrary.o: Representation/LookupLibrary.cpp Representation/LookupLibrary.h
 	g++ -c Representation/LookupLibrary.cpp
 clean:
-	rm boardsweep; rm -f *.o; rm valgrind-out.txt
+	rm boardsweep.exe; rm -f *.o; rm valgrind-out.txt
 memory: boardsweep
 	 valgrind --leak-check=full          --show-leak-kinds=all          --track-origins=yes          --verbose          --log-file=valgrind-out.txt  ./boardsweep
 perf: boardsweep
