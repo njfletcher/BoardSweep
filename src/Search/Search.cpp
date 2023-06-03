@@ -13,102 +13,90 @@
 #include <limits.h>
 #include<algorithm>
 
-/*
-int quiescenceSearch(int alpha, int beta,Board* board,LookupLibrary* t, bool isCheckM, bool isDraw, int depth){
-
-
-    int standPat = evaluatePosition(board,t,isCheckM,isDraw,depth,0);
-
-    if(depth ==0)return evaluatePosition(board,t,isCheckM,isDraw,depth,0);
-    if( standPat >= beta )
-        return beta;
-    if( alpha < standPat )
-        alpha = standPat;
-
-    bool side = board->sideToMove;
-
-    vector<Move> moveList;
-    generateAllCaptures(board,t,&moveList);
-    vector<Move> legals = findLegalMoves(board,moveList,t);
-    for(Move m : legals){
-
-        makeMove(m,board,t);
-        int score = quiescenceSearch(alpha,beta,board,t,isCheckM,isDraw,depth-1);
-        unmakeMove(m,board,t);
-
-        if(score >= beta){
-            return beta;
-        }
-        if(score > alpha){
-            alpha = score;
-        }
-
-    }
-    return alpha;
-
-}
- */
 
 
 
 //white will be maximizer, black will be minimizer
 MovePair startAB(int currentDepth, LookupLibrary* t,Board* board){
 
-    return searchAB(currentDepth,INT_MIN,INT_MAX,t,board,Move());
+    unsigned long long invalidMove = 1ULL<<63;
+    return searchAB(currentDepth,INT_MIN,INT_MAX,t,board,invalidMove);
 
 }
 
-MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board* board,Move m){
-    /*
-    bool side = board->sideToMove;
-    vector<Move> moves = generateAllMoves(board,t);
-    vector<Move> legals = findLegalMoves(board,moves,t);
+MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board* board,unsigned long long move){
 
-    int movesAvail = legals.size();
+    bool side = board->sideToMove;
+
+    unsigned long long list[256];
+    int listLength = 0;
+    generateAllMoves(board,t,&listLength,list);
+
     int repetitionCount =1;
     unsigned long long currentPos = board->currentPosition;
     for(int i =0;i<board->moveHistory.size()-1;i++){
         if(board->moveHistory[i]== currentPos) repetitionCount++;
-        if(repetitionCount >=3)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth,movesAvail));
+        if(repetitionCount >=3)return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,listLength));
     }
-
-    if(legals.size() == 0){
+    /*if(listLength == 0){
         unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
 
         unsigned long long kingBit = board->bitboards[K+side];
 
         if(attackMask & kingBit){
-            return MovePair(m,evaluatePosition(board,t,true,false,currentDepth,movesAvail));
+            return MovePair(move,evaluatePosition(board,t,true,false,currentDepth,0));
         }
-        else return MovePair(m,evaluatePosition(board,t,false,true,currentDepth,movesAvail));
+        else return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,0));
 
     }
-    if(board->fiftyMoveRuleHalfMoves.back() >=100)return MovePair(m,evaluatePosition(board,t,false,true,currentDepth,movesAvail));
-    if(currentDepth == 0) return MovePair(m,evaluatePosition(board,t,false,false,currentDepth,movesAvail));
+     */
 
+    if(board->fiftyMoveRuleHalfMoves[board->currentDepth] >=100)return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,listLength));
+    if(currentDepth == 0) return MovePair(move,evaluatePosition(board,t,false,false,currentDepth,listLength));
+
+
+    bool hasMoves = false;
     //minimizing player
     if(side == black){
 
         int minEval = INT_MAX;
 
-        MovePair minMove(Move(),minEval);
+        MovePair minMove(0,minEval);
 
-        for(Move m : legals){
+        for(int i =0; i <listLength; i++){
 
-            makeMove(m,board,t);
-            int score = searchAB(currentDepth-1,alpha,beta,t,board,m).evalScore;
-            unmakeMove(m,board,t);
+            unsigned long long move = list[i];
+            bool valid = makeMove(move,board,t);
+            if(valid) {
 
-            if(score < minEval){
-                minMove.m = m;
-                minMove.evalScore = score;
+                board->currentDepth++;
+                hasMoves = true;
+                int score = searchAB(currentDepth - 1, alpha, beta, t, board, move).evalScore;
+                unmakeMove(move, board, t);
+                board->currentDepth--;
+
+                if (score < minEval) {
+                    minMove.m = move;
+                    minMove.evalScore = score;
+                }
+
+                minEval = std::min(minEval, score);
+
+                beta = std::min(beta, score);
+
+                if (beta <= alpha) return minMove;
             }
+        }
+        if(!hasMoves){
+            //unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
 
-            minEval = std::min(minEval,score);
+            unsigned long long kingBit = board->bitboards[K+side];
 
-            beta = std::min(beta,score);
-
-            if(beta <= alpha) return minMove;
+            unsigned int square = popLSB(&kingBit);
+            if(checkIfSquareAttacked(side,board,t,square)){
+                return MovePair(move,evaluatePosition(board,t,true,false,currentDepth,0));
+            }
+            else return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,0));
         }
 
         return minMove;
@@ -116,29 +104,49 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
     //maximizing player
     else{
         int maxEval = INT_MIN;
-        MovePair maxMove(Move(),maxEval);
+        MovePair maxMove(0,maxEval);
 
-        for(Move m : legals){
+        for(int i =0; i <listLength; i++){
 
-            makeMove(m,board,t);
-            int score = searchAB(currentDepth-1,alpha,beta,t,board,m).evalScore;
-            unmakeMove(m,board,t);
+            unsigned long long move = list[i];
 
-            if(score > maxEval){
-                maxMove.m = m;
-                maxMove.evalScore = score;
+            bool valid = makeMove(move,board,t);
+            if(valid) {
+
+                board->currentDepth++;
+                hasMoves = true;
+                int score = searchAB(currentDepth - 1, alpha, beta, t, board, move).evalScore;
+                unmakeMove(move, board, t);
+                board->currentDepth--;
+
+                if(score > maxEval){
+                    maxMove.m = move;
+                    maxMove.evalScore = score;
+                }
+                maxEval = std::max(maxEval,score);
+                alpha = std::max(alpha,score);
+
+                if(beta <= alpha) return maxMove;
             }
-            maxEval = std::max(maxEval,score);
-            alpha = std::max(alpha,score);
 
-            if(beta <= alpha) return maxMove;
+
+        }
+        if(!hasMoves){
+            //unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
+
+            unsigned long long kingBit = board->bitboards[K+side];
+
+            unsigned int square = popLSB(&kingBit);
+            if(checkIfSquareAttacked(side,board,t,square)){
+                return MovePair(move,evaluatePosition(board,t,true,false,currentDepth,0));
+            }
+            else return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,0));
         }
 
         return maxMove;
 
     }
-    */
-    return MovePair(Move(),0);
+
 }
 
 

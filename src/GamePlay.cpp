@@ -16,6 +16,7 @@ using namespace std;
 
 void initializeZobristPosition(Board* board, LookupLibrary* t){
 
+    /*
     unsigned long long position;
 
     for(int piece = 2; piece<15;piece++){
@@ -41,6 +42,7 @@ void initializeZobristPosition(Board* board, LookupLibrary* t){
     if(board->sideToMove == black) position ^= t->zobristBlackTurn;
 
     board->currentPosition = position;
+     */
 }
 
 
@@ -264,12 +266,12 @@ void simGame(LookupLibrary* t,const char fen[]){
 
         MovePair movep = startAB(5,t,board);
 
-        Move m = movep.m;
+        unsigned long long m = movep.m;
         int eval = movep.evalScore;
 
 
-        if(!m.isValid) break;
-        makeMove(0,board,t);
+        if(m & (1ULL<<63)) break;
+        makeMove(m,board,t);
         //board->sideToMove = !board->sideToMove;
 
         displayWholeBoard(board);

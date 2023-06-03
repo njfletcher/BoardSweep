@@ -26,11 +26,11 @@ Move::Move(){
     isValid = false;
     squareFrom = 0;
     squareTo = 0;
-    doublePush = 0;
-    capture = 0;
-    promotion = 0;
-    enPassant = 0;
-    castle = 0;
+    doublePush = false;
+    capture = false;
+    promotion = false;
+    enPassant = false;
+    castle = false;
     movedPiece = 0;
     promotedTo = 0;
     capturedPiece = 0;
@@ -53,7 +53,7 @@ void Move::toUCI() {
 
 
 
-MovePair::MovePair(Move move, int eval) {
+MovePair::MovePair(unsigned long long move, int eval) {
 
     m = move;
     evalScore = eval;

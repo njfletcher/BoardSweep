@@ -1,33 +1,33 @@
 boardsweep.exe: main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o LookupLibrary.o
-	g++ -g -lstdc++ -o boardsweep.exe main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o LookupLibrary.o
+	g++ -O3 -lstdc++ -o boardsweep.exe main.o MoveGeneration.o TargetGeneration.o Board.o Move.o UsefulConstants.o Eval.o EvalConstants.o Search.o Tester.o BitUtil.o BoardVisualization.o GamePlay.o LookupLibrary.o
 main.o: main.cpp
-	g++ -c main.cpp
+	g++ -O3 -c main.cpp
 MoveGeneration.o: MoveGeneration/MoveGeneration.cpp MoveGeneration/MoveGeneration.h
-	g++ -c MoveGeneration/MoveGeneration.cpp
+	g++ -O3 -c MoveGeneration/MoveGeneration.cpp
 TargetGeneration.o: MoveGeneration/TargetGeneration.cpp MoveGeneration/TargetGeneration.h
-	g++ -c MoveGeneration/TargetGeneration.cpp
+	g++ -O3 -c MoveGeneration/TargetGeneration.cpp
 Board.o: Representation/Board.cpp Representation/Board.h
-	g++ -c Representation/Board.cpp
+	g++ -O3 -c Representation/Board.cpp
 Move.o: Representation/Move.cpp Representation/Move.h
-	g++ -c Representation/Move.cpp
+	g++ -O3 -c Representation/Move.cpp
 UsefulConstants.o: Representation/UsefulConstants.cpp Representation/UsefulConstants.h
-	g++ -c Representation/UsefulConstants.cpp
+	g++ -O3 -c Representation/UsefulConstants.cpp
 Eval.o: Search/Eval.cpp Search/Eval.h
-	g++ -c Search/Eval.cpp
+	g++ -O3 -c Search/Eval.cpp
 EvalConstants.o: Search/EvalConstants.cpp Search/EvalConstants.h
-	g++ -c Search/EvalConstants.cpp
+	g++ -O3 -c Search/EvalConstants.cpp
 Search.o: Search/Search.cpp Search/Search.h
-	g++ -c Search/Search.cpp
+	g++ -O3 -c Search/Search.cpp
 Tester.o: Testing/Tester.cpp Testing/Tester.h
-	g++ -c Testing/Tester.cpp
+	g++ -O3 -c Testing/Tester.cpp
 BitUtil.o: BitUtil.cpp BitUtil.h
-	g++ -c BitUtil.cpp
+	g++ -O3 -c BitUtil.cpp
 BoardVisualization.o: BoardVisualization.cpp BoardVisualization.h
-	g++ -c BoardVisualization.cpp
+	g++ -O3 -c BoardVisualization.cpp
 GamePlay.o: GamePlay.cpp GamePlay.h
-	g++ -c GamePlay.cpp
+	g++ -O3 -c GamePlay.cpp
 LookupLibrary.o: Representation/LookupLibrary.cpp Representation/LookupLibrary.h
-	g++ -c Representation/LookupLibrary.cpp
+	g++ -O3 -c Representation/LookupLibrary.cpp
 clean:
 	rm boardsweep.exe; rm -f *.o; rm valgrind-out.txt
 memory: boardsweep

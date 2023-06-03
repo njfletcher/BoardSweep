@@ -36,8 +36,8 @@ public:
 class MovePair{
 
 public:
-    MovePair(Move move, int eval);
-    Move m;
+    MovePair(unsigned long long move, int eval);
+    unsigned long long m;
     int evalScore;
 };
 

@@ -7,7 +7,7 @@
 #include "../Representation/Move.h"
 
 MovePair startAB(int currentDepth, LookupLibrary* t, Board* board);
-MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t, Board* board,Move m);
+MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t, Board* board,unsigned long long move);
 void initializeZobristArrays(LookupLibrary* t);
 
 
