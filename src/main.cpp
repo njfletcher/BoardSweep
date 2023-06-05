@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
     cout << argv[0] << endl;
 
-
+    //testAll(&lookup);
     simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
 
 

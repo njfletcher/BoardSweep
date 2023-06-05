@@ -884,11 +884,14 @@ unsigned long long* generateAllMoves(Board* board, LookupLibrary* t, int* moveCo
  * updates the board to reflect the move being made
  */
 
-bool makeMove(unsigned long long m, Board* b, LookupLibrary* t){
+bool makeMove(unsigned long long m, Board* b, LookupLibrary* t, bool isInSearch){
 
     //unsigned long long position = b->currentPosition;
 
     int currentDepth = b->currentDepth;
+    int nextDepth = currentDepth +1;
+
+    if(!isInSearch)nextDepth = currentDepth;
 
     //int squareFrom = m.squareFrom;
     unsigned int squareFrom = m & 0b111111;
@@ -949,11 +952,11 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t){
     }
     if(movedPiece == P || movedPiece == p){
         //b->fiftyMoveRuleHalfMoves.push_back(0);
-        b->fiftyMoveRuleHalfMoves[currentDepth+1] = 0;
+        b->fiftyMoveRuleHalfMoves[nextDepth] = 0;
     }
     else{
         //b->fiftyMoveRuleHalfMoves.push_back(b->fiftyMoveRuleHalfMoves.back()+1);
-        b->fiftyMoveRuleHalfMoves[currentDepth +1] = b->fiftyMoveRuleHalfMoves[currentDepth] + 1;
+        b->fiftyMoveRuleHalfMoves[nextDepth] = b->fiftyMoveRuleHalfMoves[currentDepth] + 1;
     }
 
 
@@ -962,9 +965,9 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t){
 
         //capture makes enPassant unavailable and resets 50 move rule count
         //b->enPassSquares.push_back(64);
-        b->enPassSquares[currentDepth+1] =64;
+        b->enPassSquares[nextDepth] =64;
         //b->fiftyMoveRuleHalfMoves.push_back(0);
-        b->fiftyMoveRuleHalfMoves[currentDepth+1] = 0;
+        b->fiftyMoveRuleHalfMoves[nextDepth] = 0;
 
         if(capturedPiece == R){
             if(squareTo == 0){
@@ -1022,7 +1025,7 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t){
         if(isDoubleP){
             int enPass = squareTo + (8 + ((!side) * -16));
             //b->enPassSquares.push_back(enPass);
-            b->enPassSquares[currentDepth+1] = enPass;
+            b->enPassSquares[nextDepth] = enPass;
             b->bitboards[movedPiece] |= squareToBit;
             //b->bitboards[friendlyIndex] |= squareToBit;
 
@@ -1031,7 +1034,7 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t){
         }
         else{
             //b->enPassSquares.push_back(64);
-            b->enPassSquares[currentDepth+1] = 64;
+            b->enPassSquares[nextDepth] = 64;
 
             if(isCastle){
 
@@ -1111,7 +1114,7 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t){
     bool newSide = !b->sideToMove;
     b->sideToMove = newSide;
     //b->castleRights.push_back(castleRights);
-    b->castleRights[currentDepth+1] = castleRights;
+    b->castleRights[nextDepth] = castleRights;
 
     //position^= t->zobristCastles[castleRights];
     //position^= t->zobristEnPass[b->enPassSquares.back()];
@@ -1343,7 +1346,7 @@ unsigned long long Perft(int finishDepth, int printDepth, Board* board, LookupLi
 
     for(int i =0; i<listLength; i++){
 
-        bool valid = makeMove(list[i],board,t);
+        bool valid = makeMove(list[i],board,t,true);
 
         //cout << "blah" << endl;
         if(valid) {

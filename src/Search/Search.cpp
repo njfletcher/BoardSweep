@@ -38,18 +38,6 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
         if(board->moveHistory[i]== currentPos) repetitionCount++;
         if(repetitionCount >=3)return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,listLength));
     }
-    /*if(listLength == 0){
-        unsigned long long attackMask = getAttackMask(!side,board->bitboards,t);
-
-        unsigned long long kingBit = board->bitboards[K+side];
-
-        if(attackMask & kingBit){
-            return MovePair(move,evaluatePosition(board,t,true,false,currentDepth,0));
-        }
-        else return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,0));
-
-    }
-     */
 
     if(board->fiftyMoveRuleHalfMoves[board->currentDepth] >=100)return MovePair(move,evaluatePosition(board,t,false,true,currentDepth,listLength));
     if(currentDepth == 0) return MovePair(move,evaluatePosition(board,t,false,false,currentDepth,listLength));
@@ -66,7 +54,7 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
         for(int i =0; i <listLength; i++){
 
             unsigned long long move = list[i];
-            bool valid = makeMove(move,board,t);
+            bool valid = makeMove(move,board,t,true);
             if(valid) {
 
                 board->currentDepth++;
@@ -110,7 +98,7 @@ MovePair searchAB(int currentDepth, int alpha, int beta, LookupLibrary* t,Board*
 
             unsigned long long move = list[i];
 
-            bool valid = makeMove(move,board,t);
+            bool valid = makeMove(move,board,t,true);
             if(valid) {
 
                 board->currentDepth++;

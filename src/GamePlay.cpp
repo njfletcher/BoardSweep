@@ -264,14 +264,14 @@ void simGame(LookupLibrary* t,const char fen[]){
 
     while(true){
 
-        MovePair movep = startAB(5,t,board);
+        MovePair movep = startAB(7,t,board);
 
         unsigned long long m = movep.m;
         int eval = movep.evalScore;
 
 
         if(m & (1ULL<<63)) break;
-        makeMove(m,board,t);
+        makeMove(m,board,t,false);
         //board->sideToMove = !board->sideToMove;
 
         displayWholeBoard(board);
