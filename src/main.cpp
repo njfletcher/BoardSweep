@@ -11,7 +11,6 @@
 using namespace std;
 int main(int argc, char** argv) {
 
-    //hi
     LookupLibrary lookup;
     lookup.pawnSinglePushLookups = initializePawnSinglePushTargetLookups();
     lookup.pawnDoublePushLookups = initializePawnDoublePushTargetLookups();
@@ -28,8 +27,12 @@ int main(int argc, char** argv) {
 
     cout << argv[0] << endl;
 
-    //testAll(&lookup);
-    simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
+    testAll(&lookup);
+    //simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
+    //simGame(&lookup,"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    //testPositionUnknown("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",6,&lookup);
+    //board->currentDepth = 0;
+    //cout << "nodes: " << PerftWrapper(6,400,board,&lookup) << endl;
 
 
 

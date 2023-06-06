@@ -264,7 +264,7 @@ void simGame(LookupLibrary* t,const char fen[]){
 
     while(true){
 
-        MovePair movep = startAB(7,t,board);
+        MovePair movep = startAB(5,t,board);
 
         unsigned long long m = movep.m;
         int eval = movep.evalScore;
