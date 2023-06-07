@@ -1109,7 +1109,7 @@ unsigned long long PerftWrapper(int finishDepth, int printDepth, Board* board, L
 
     auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
 
-    cout << "Time: "  << duration.count() << " ms "  << endl;
+    cout << "Found " << nodes << " nodes in time : " << duration.count() << " ms "  << endl;
 
     return nodes;
 

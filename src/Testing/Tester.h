@@ -10,4 +10,3 @@
 
 void testAll(LookupLibrary* t);
 void testPositionKnown(const char* fen, unsigned int depth, unsigned long long nodes,LookupLibrary* t);
-void testPositionUnknown(const char fen[], unsigned int depth, LookupLibrary* t);

@@ -74,7 +74,8 @@ void testAll(LookupLibrary* t){
 void testPositionKnown(const char* fen, unsigned int depth, unsigned long long nodes,LookupLibrary* t){
 
 
-    Board* board = initializeBoardFromFen(fen,t);
+    Board b;
+    Board* board = initializeBoardFromFen(fen,500,t,&b);
     board->currentDepth = 0;
     unsigned long long nodeCount = Perft(depth,400,board,t);
     //cout << nodeCount <<endl;
@@ -83,14 +84,5 @@ void testPositionKnown(const char* fen, unsigned int depth, unsigned long long n
 
     delete fen;
 
-    delete board;
 
-}
-//r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq –
-void testPositionUnknown(const char fen[], unsigned int depth, LookupLibrary* t){
-    Board* board = initializeBoardFromFen(fen,t);
-    unsigned long long nodeCount = Perft(depth,400,board,t);
-
-    cout<< "got " << nodeCount << " nodes" << endl;
-    delete board;
 }

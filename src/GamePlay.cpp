@@ -47,10 +47,11 @@ void initializeZobristPosition(Board* board, LookupLibrary* t){
 
 
 
-Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
+Board*  initializeBoardFromFen(const char fen[],int fenLength,LookupLibrary* t, Board* board){
     //"rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
 
-    Board  * board = new Board;
+
+    int length = fenLength;
 
     for(int i = 0; i<14;i++){
         board->bitboards[i] =0;
@@ -65,6 +66,7 @@ Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
 
         char occupancy = fen[charCount];
 
+        if(charCount > length) return board;
 
         if(occupancy == '/'){
             currentSquare-=16;
@@ -159,11 +161,13 @@ Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
 
 
     charCount++;
+    if(charCount > length)return board;
     if(fen[charCount] == 'w'){
         board->sideToMove = white;
     }
     else board->sideToMove = black;
     charCount+=2;
+    if(charCount > length)return board;
 
     unsigned int tempRights = 0;
     while(!(fen[charCount] == ' ')){
@@ -190,61 +194,71 @@ Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
         charCount++;
     }
     charCount++;
+    if(charCount > length)return board;
 
     if(fen[charCount] == '-'){
         //board->enPassSquares.push_back(64);
         board->enPassSquares[0] = 64;
         charCount++;
+        if(charCount > length)return board;
     }
     else{
         char file = fen[charCount];
         charCount++;
+        if(charCount > length)return board;
         char rank = fen[charCount];
 
         //board->enPassSquares.push_back(((rank - '0')*8)+ (file - '`'-9));
         board->enPassSquares[0] = ((rank - '0')*8)+ (file - '`'-9);
         charCount++;
+        if(charCount > length)return board;
 
     }
 
 
     charCount++;
-
+    if(charCount > length)return board;
     int decimalCountHalf =0;
     int halfMoveCount =0;
     while(!(fen[charCount] == ' ')){
         decimalCountHalf++;
         charCount++;
+        if(charCount > length)return board;
     }
 
     charCount-=decimalCountHalf;
-
+    if(charCount > length)return board;
 
     for(int i =decimalCountHalf-1; i>=0;i--){
 
         //cout << pow(10,i)* (fen[charCount]-'0')<<endl;
         halfMoveCount += pow(10,i)* (fen[charCount]-'0');
         charCount++;
+        if(charCount > length)return board;
     }
 
     //board->fiftyMoveRuleHalfMoves.push_back(halfMoveCount);
     board->fiftyMoveRuleHalfMoves[0] = halfMoveCount;
     charCount++;
+    if(charCount > length)return board;
 
     int decimalCountFull =0;
     int fullMoveCount =0;
     while(!(fen[charCount] == '\0')){
         decimalCountFull++;
         charCount++;
+        if(charCount > length)return board;
     }
 
     charCount-=decimalCountFull;
 
+    if(charCount > length)return board;
 
     for(int i =decimalCountFull-1; i >=0;i--){
 
         fullMoveCount += pow(10,i)* (fen[charCount]-'0');
         charCount++;
+        if(charCount > length)return board;
     }
 
     board->fullMoveCount = fullMoveCount;
@@ -256,15 +270,16 @@ Board*  initializeBoardFromFen(const char fen[],LookupLibrary* t){
 
 }
 
-void simGame(LookupLibrary* t,const char fen[]){
+void simGame(LookupLibrary* t,const char fen[],int fenLength){
 
-    Board* board = initializeBoardFromFen(fen,t);
+    Board b;
+    Board* board = initializeBoardFromFen(fen,fenLength,t,&b);
 
     displayWholeBoard(board);
 
     while(true){
 
-        MovePair movep = startAB(5,t,board);
+        MovePair movep = startAB(6,t,board);
 
         unsigned long long m = movep.m;
         int eval = movep.evalScore;

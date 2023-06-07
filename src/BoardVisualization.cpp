@@ -69,6 +69,7 @@ void displayChessboard(Board *board){
 
 void displayWholeBoard(Board * board){
 
+    cout<<endl;
     cout<< "Side to move: " <<board->sideToMove <<endl;
     cout<< "EnPassant Square: " << board->enPassSquares[board->currentDepth]<<endl;
     cout<< "Castle Rights: " << board->castleRights[board->currentDepth]<< endl;

@@ -6,5 +6,5 @@
 #include "Representation/Board.h"
 #include "Representation/LookupLibrary.h"
 
-Board *  initializeBoardFromFen(const char fen[],LookupLibrary* t);
-void simGame(LookupLibrary* t, const char fen[]);
+Board *  initializeBoardFromFen(const char fen[],int fenLength,LookupLibrary* t, Board* board);
+void simGame(LookupLibrary* t, const char fen[], int fenLength);
