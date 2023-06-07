@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "BoardSweep::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-BoardSweep-Debug-348c11f9158ac5600443.json",
+					"jsonFile" : "target-BoardSweep-Debug-e88fa97451c29f5c9ee6.json",
 					"name" : "BoardSweep",
 					"projectIndex" : 0
 				}
@@ -49,12 +49,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/nflet/Desktop/ChessEngine/cmake-build-debug",
+		"build" : "C:/Users/nflet/Desktop/ChessEngine/out/build/x64-Debug",
 		"source" : "C:/Users/nflet/Desktop/ChessEngine"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 3
+		"minor" : 5
 	}
 }

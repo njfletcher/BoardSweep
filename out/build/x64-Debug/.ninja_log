@@ -1,0 +1,13 @@
+# ninja log v5
+80	815	7070184998976500	CMakeFiles/BoardSweep.dir/src/Search/EvalConstants.cpp.obj	4def15df597c017e
+37	837	7070184999154503	CMakeFiles/BoardSweep.dir/src/BitUtil.cpp.obj	42daf0d0a67b531f
+8	949	7070185000275135	CMakeFiles/BoardSweep.dir/src/Representation/Board.cpp.obj	fca2928778f859b0
+50	982	7070185000601502	CMakeFiles/BoardSweep.dir/src/Representation/UsefulConstants.cpp.obj	f8fcc811a372f92a
+84	997	7070185000772596	CMakeFiles/BoardSweep.dir/src/Search/Search.cpp.obj	a8d8815551ca89a6
+75	1271	7070185003527789	CMakeFiles/BoardSweep.dir/src/Search/Eval.cpp.obj	f1decf65ffa7c0db
+18	1313	7070185003936560	CMakeFiles/BoardSweep.dir/src/BoardVisualization.cpp.obj	949f0c13ae6f47ae
+28	1315	7070185003956544	CMakeFiles/BoardSweep.dir/src/MoveGeneration/TargetGeneration.cpp.obj	3df99d7727bc2422
+23	1316	7070185003975945	CMakeFiles/BoardSweep.dir/src/Representation/Move.cpp.obj	d154b02e7d49e675
+4	1336	7070185004189028	CMakeFiles/BoardSweep.dir/src/main.cpp.obj	488b24ff9c7ac939
+12	1368	7070185004500646	CMakeFiles/BoardSweep.dir/src/GamePlay.cpp.obj	ca05ecc164f07f64
+55	1423	7070185005061512	CMakeFiles/BoardSweep.dir/src/MoveGeneration/MoveGeneration.cpp.obj	4b4c4c84aeb97c24

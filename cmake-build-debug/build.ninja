@@ -103,6 +103,12 @@ build CMakeFiles/BoardSweep.dir/src/MoveGeneration/MoveGeneration.cpp.obj: CXX_C
   OBJECT_DIR = CMakeFiles\BoardSweep.dir
   OBJECT_FILE_DIR = CMakeFiles\BoardSweep.dir\src\MoveGeneration
 
+build CMakeFiles/BoardSweep.dir/src/Representation/LookupLibrary.cpp.obj: CXX_COMPILER__BoardSweep_Debug C$:/Users/nflet/Desktop/ChessEngine/src/Representation/LookupLibrary.cpp || cmake_object_order_depends_target_BoardSweep
+  DEP_FILE = CMakeFiles\BoardSweep.dir\src\Representation\LookupLibrary.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  OBJECT_DIR = CMakeFiles\BoardSweep.dir
+  OBJECT_FILE_DIR = CMakeFiles\BoardSweep.dir\src\Representation
+
 build CMakeFiles/BoardSweep.dir/src/Testing/Tester.cpp.obj: CXX_COMPILER__BoardSweep_Debug C$:/Users/nflet/Desktop/ChessEngine/src/Testing/Tester.cpp || cmake_object_order_depends_target_BoardSweep
   DEP_FILE = CMakeFiles\BoardSweep.dir\src\Testing\Tester.cpp.obj.d
   FLAGS = -g -std=gnu++14
@@ -135,7 +141,7 @@ build CMakeFiles/BoardSweep.dir/src/Search/Search.cpp.obj: CXX_COMPILER__BoardSw
 #############################################
 # Link the executable BoardSweep.exe
 
-build BoardSweep.exe: CXX_EXECUTABLE_LINKER__BoardSweep_Debug CMakeFiles/BoardSweep.dir/src/main.cpp.obj CMakeFiles/BoardSweep.dir/src/Representation/Board.cpp.obj CMakeFiles/BoardSweep.dir/src/GamePlay.cpp.obj CMakeFiles/BoardSweep.dir/src/BoardVisualization.cpp.obj CMakeFiles/BoardSweep.dir/src/Representation/Move.cpp.obj CMakeFiles/BoardSweep.dir/src/MoveGeneration/TargetGeneration.cpp.obj CMakeFiles/BoardSweep.dir/src/BitUtil.cpp.obj CMakeFiles/BoardSweep.dir/src/Representation/UsefulConstants.cpp.obj CMakeFiles/BoardSweep.dir/src/MoveGeneration/MoveGeneration.cpp.obj CMakeFiles/BoardSweep.dir/src/Testing/Tester.cpp.obj CMakeFiles/BoardSweep.dir/src/Search/Eval.cpp.obj CMakeFiles/BoardSweep.dir/src/Search/EvalConstants.cpp.obj CMakeFiles/BoardSweep.dir/src/Search/Search.cpp.obj
+build BoardSweep.exe: CXX_EXECUTABLE_LINKER__BoardSweep_Debug CMakeFiles/BoardSweep.dir/src/main.cpp.obj CMakeFiles/BoardSweep.dir/src/Representation/Board.cpp.obj CMakeFiles/BoardSweep.dir/src/GamePlay.cpp.obj CMakeFiles/BoardSweep.dir/src/BoardVisualization.cpp.obj CMakeFiles/BoardSweep.dir/src/Representation/Move.cpp.obj CMakeFiles/BoardSweep.dir/src/MoveGeneration/TargetGeneration.cpp.obj CMakeFiles/BoardSweep.dir/src/BitUtil.cpp.obj CMakeFiles/BoardSweep.dir/src/Representation/UsefulConstants.cpp.obj CMakeFiles/BoardSweep.dir/src/MoveGeneration/MoveGeneration.cpp.obj CMakeFiles/BoardSweep.dir/src/Representation/LookupLibrary.cpp.obj CMakeFiles/BoardSweep.dir/src/Testing/Tester.cpp.obj CMakeFiles/BoardSweep.dir/src/Search/Eval.cpp.obj CMakeFiles/BoardSweep.dir/src/Search/EvalConstants.cpp.obj CMakeFiles/BoardSweep.dir/src/Search/Search.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\BoardSweep.dir
