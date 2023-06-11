@@ -8,3 +8,4 @@
 
 Board *  initializeBoardFromFen(const char fen[],int fenLength,LookupLibrary* t, Board* board);
 void simGame(LookupLibrary* t, const char fen[], int fenLength);
+void playGame(LookupLibrary* t, Board* b, int sideFirst);

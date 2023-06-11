@@ -69,6 +69,11 @@ int main(int argc, char** argv) {
             return 0;
         }
 
+        if(strcmp(command, "test") == 0){
+
+            testAll(&lookup);
+        }
+
         if(strcmp(command, "display") == 0){
 
             displayWholeBoard(board);
@@ -112,22 +117,21 @@ int main(int argc, char** argv) {
 
         }
 
+        if(strcmp(command, "play") == 0){
+
+            if(commandLength == inputLen) cout << "enter a side!" << endl;
+
+            int sideFirst = input[commandLength + 1]- '0';
+
+            playGame(&lookup, board,sideFirst);
+
+        }
+
 
 
         delete[] command;
 
     }
-
-
-    testAll(&lookup);
-    //simGame(&lookup,"8/8/8/8/8/k7/p1K5/8 b - - 0 1");
-    //simGame(&lookup,"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    //testPositionUnknown("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",6,&lookup);
-    //board->currentDepth = 0;
-    //cout << "nodes: " << PerftWrapper(6,400,board,&lookup) << endl;
-
-
-
 
 
     return 0;

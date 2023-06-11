@@ -782,6 +782,9 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t, bool isInSearch)
     int currentDepth = b->currentDepth;
     int nextDepth = currentDepth +1;
 
+    unsigned int halfMoveCount = 0;
+    unsigned int enPassSquare = 64;
+
     if(!isInSearch)nextDepth = currentDepth;
 
     unsigned int squareFrom = m & 0b111111;
@@ -829,10 +832,12 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t, bool isInSearch)
         castleRights &= ~(1ULL<<(1+(side * 2)));
     }
     if(movedPiece == P || movedPiece == p){
-        b->fiftyMoveRuleHalfMoves[nextDepth] = 0;
+        //b->fiftyMoveRuleHalfMoves[nextDepth] = 0;
+        halfMoveCount = 0;
     }
     else{
-        b->fiftyMoveRuleHalfMoves[nextDepth] = b->fiftyMoveRuleHalfMoves[currentDepth] + 1;
+        //b->fiftyMoveRuleHalfMoves[nextDepth] = b->fiftyMoveRuleHalfMoves[currentDepth] + 1;
+        halfMoveCount = b->fiftyMoveRuleHalfMoves[currentDepth]+1;
     }
 
 
@@ -840,8 +845,10 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t, bool isInSearch)
     if(isCapture){
 
         //capture makes enPassant unavailable and resets 50 move rule count
-        b->enPassSquares[nextDepth] =64;
-        b->fiftyMoveRuleHalfMoves[nextDepth] = 0;
+        //b->enPassSquares[nextDepth] =64;
+        enPassSquare = 64;
+        //b->fiftyMoveRuleHalfMoves[nextDepth] = 0;
+        halfMoveCount = 0;
 
         if(capturedPiece == R){
             if(squareTo == 0){
@@ -891,13 +898,15 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t, bool isInSearch)
 
         if(isDoubleP){
             int enPass = squareTo + (8 + ((!side) * -16));
-            b->enPassSquares[nextDepth] = enPass;
+            //b->enPassSquares[nextDepth] = enPass;
+            enPassSquare = enPass;
             b->bitboards[movedPiece] |= squareToBit;
             position^= t->zobristPieces[movedPiece][squareTo];
 
         }
         else{
-            b->enPassSquares[nextDepth] = 64;
+            //b->enPassSquares[nextDepth] = 64;
+            enPassSquare  =64;
 
             if(isCastle){
 
@@ -964,20 +973,28 @@ bool makeMove(unsigned long long m, Board* b, LookupLibrary* t, bool isInSearch)
 
     bool newSide = !b->sideToMove;
     b->sideToMove = newSide;
-    b->castleRights[nextDepth] = castleRights;
+    //b->castleRights[nextDepth] = castleRights;
 
     position^= t->zobristCastles[castleRights];
-    position^= t->zobristEnPass[b->enPassSquares[nextDepth]];
+    position^= t->zobristEnPass[enPassSquare];
     position ^= t->zobristBlackTurn;
 
     b->currentPosition = position;
     b->moveHistory.push_back(position);
 
     if(checkIfInCheck(side,b,t)){
+
         unmakeMove(m,b,t);
         return false;
     }
-    else return true;
+    else{
+
+        b->castleRights[nextDepth] = castleRights;
+        b->fiftyMoveRuleHalfMoves[nextDepth] = halfMoveCount;
+        b->enPassSquares[nextDepth] = enPassSquare;
+        return true;
+    }
+
 }
 
 

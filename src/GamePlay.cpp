@@ -5,6 +5,7 @@
 #include "GamePlay.h"
 #include <math.h>
 #include <iostream>
+#include <cstring>
 #include "BoardVisualization.h"
 #include "BitUtil.h"
 #include "Representation/Board.h"
@@ -296,3 +297,281 @@ void simGame(LookupLibrary* t,const char fen[],int fenLength){
 
     }
 }
+
+void playGame(LookupLibrary* t, Board* b, int sideFirst){
+
+    displayWholeBoard(b);
+
+    if(sideFirst ==0){
+        while(true){
+
+            MovePair movep = startAB(6,t,b);
+
+            unsigned long long m = movep.m;
+            if(m & (1ULL<<63)) break;
+            makeMove(m,b,t,false);
+            displayWholeBoard(b);
+
+            cout << "make a move: " << endl;
+            bool isValid = false;
+            unsigned long long move;
+            while(!isValid) {
+
+                bool side = b->sideToMove;
+
+                string input;
+
+                getline(cin, input);
+
+                int inputLen = 0;
+                for (int i = 0; input[i] != 0; i++) {
+
+                    inputLen++;
+                }
+
+
+                unsigned long long blackPieces = b->bitboards[1];
+                unsigned long long whitePieces = b->bitboards[0];
+
+                unsigned long long allPieces = blackPieces | whitePieces;
+
+                if(input== "O-O"){
+
+                    bool sideHasKingSideCastle = (b->castleRights[0] & (1ULL << (1 + (side * 2)))) != 0;
+
+                    if(sideHasKingSideCastle) {
+                        unsigned int kingSquare1 = 4 + 56 * side;
+                        unsigned int kingSquare2 = 5 + 56 * side;
+
+                        int castleIndex = side * 2;
+
+
+                        if (!((checkIfSquareAttacked(side, b, t, kingSquare1) ||(checkIfSquareAttacked(side, b, t, kingSquare2))) ||(CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL << kingSquare1))))) {
+                            move = packageMove(kingSquare1, kingSquare1 + 2, false, false, false,
+                                                                   false, true, K + side, 0, 0);
+                            isValid = true;
+
+                        }
+                    }
+
+                }
+                if(input== "O-O-O"){
+
+                    bool sideHasQueenSideCastle = (b->castleRights[0] & (1ULL << (0 + (side * 2)))) != 0;
+
+                    if(sideHasQueenSideCastle){
+
+                        unsigned int queenSquare1 = 4 + 56 * side;
+                        unsigned int queenSquare2 = 3 + 56 * side;
+
+                        int castleIndex = side * 2 + 1;
+                        //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
+                        if(!(((checkIfSquareAttacked(side,b,t,queenSquare1) || (checkIfSquareAttacked(side,b,t,queenSquare2))) || ( CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL<<queenSquare1))))) ){
+                            move = packageMove(queenSquare1,queenSquare1-2,false,false,false,false,true,K+side,0,0);
+                            isValid = true;
+
+                        }
+
+                    }
+
+                }
+
+                if((input != "O-O") && (input != "O-O-O")){
+
+                    if((inputLen < 4) || (inputLen > 5)){
+                        cout << "invalid move length" << endl;
+                        continue;
+                    }
+                    char fromFile = input[0];
+                    char fromRank = input[1];
+                    char toFile = input[2];
+                    char toRank = input[3];
+
+                    unsigned int squareFrom = ((fromRank - '0')*8)+ (fromFile - '`'-9);
+                    unsigned int squareTo = ((toRank - '0')*8)+ (toFile - '`'-9);
+
+                    cout<< squareFrom << " " << squareTo << endl;
+
+                    if((squareFrom > 63) || (squareTo > 63)){
+                        cout << "invalid move square" << endl;
+                        continue;
+                    }
+
+                    int movedPiece = -1;
+                    unsigned long long fromBit = 1ULL << squareFrom;
+                    for(int piece = (2+(side)); piece <14;piece+=2){
+                        if(b->bitboards[piece] & fromBit) {
+                            movedPiece = piece;
+                            break;
+                        }
+
+
+                    }
+                    if(movedPiece == -1){
+                        cout << "invalid moved piece" << endl;
+                        continue;
+                    }
+
+                    int nextPiece = -1;
+                    unsigned long long toBit = 1ULL << squareTo;
+                    for(int piece = (2+(side)); piece <14;piece+=2){
+                        if(b->bitboards[piece] & toBit) {
+                            nextPiece = piece;
+                            break;
+                        }
+
+
+                    }
+
+                    if(nextPiece != -1){
+                        cout << "invalid landing spot" << endl;
+                        continue;
+                    }
+
+                    for(int piece = (2+(!side)); piece <14;piece+=2){
+                        if(b->bitboards[piece] & toBit) {
+                            nextPiece = piece;
+                            break;
+                        }
+
+
+                    }
+
+                    unsigned long long promRank = RankMasks[7+(-7*side)];
+                    //capture
+                    if(nextPiece != -1){
+
+                        bool isPromotion = false;
+
+                        if((toBit & promRank) && (movedPiece == P+side) ) {
+
+                            if (inputLen == 5) {
+                                isPromotion = true;
+                                bool validProm = false;
+                                char promotedTo = input[4];
+                                if (promotedTo == Q + side) {
+                                    move = packageMove(squareFrom, squareTo, false, true, true, false, false, P + side,
+                                                       nextPiece, Q + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (promotedTo == R + side) {
+                                    move = packageMove(squareFrom, squareTo, false, true, true, false, false, P + side,
+                                                       nextPiece, R + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (promotedTo == N + side) {
+                                    move = packageMove(squareFrom, squareTo, false, true, true, false, false, P + side,
+                                                       nextPiece, N + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (promotedTo == B + side) {
+                                    move = packageMove(squareFrom, squareTo, false, true, true, false, false, P + side,
+                                                       nextPiece, B + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (!validProm) {
+                                    cout << "invalid move" << endl;
+                                    continue;
+                                }
+                            } else {
+                                cout << "invalid move" << endl;
+                                continue;
+                            }
+                        }
+
+                        if(!isPromotion){
+                            move = packageMove(squareFrom,squareTo,false,true,false,false,false,movedPiece,nextPiece,0);
+                            isValid = true;
+                        }
+
+                    }
+                    //non capture or could be enpassant
+                    else{
+
+                        bool isEnPassant = false;
+                        bool isPromotion = false;
+                        bool isDoubleP = false;
+
+                        if(squareTo == b->enPassSquares[0] && (movedPiece == P+side)){
+                            move = packageMove(squareFrom,squareTo,false,true,false,true,false,P+side,P+!side,0);
+                            isValid = true;
+                            isEnPassant = true;
+                        }
+                        if((toBit & promRank) && (movedPiece == P+side) ) {
+
+                            if (inputLen == 5) {
+                                isPromotion = true;
+                                bool validProm = false;
+                                char promotedTo = input[4];
+                                if (promotedTo == Q + side) {
+                                    move = packageMove(squareFrom, squareTo, false, false, true, false, false, P + side,
+                                                       0, Q + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (promotedTo == R + side) {
+                                    move = packageMove(squareFrom, squareTo, false, false, true, false, false, P + side,
+                                                       0, R + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (promotedTo == N + side) {
+                                    move = packageMove(squareFrom, squareTo, false, false, true, false, false, P + side,
+                                                       0, N + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (promotedTo == B + side) {
+                                    move = packageMove(squareFrom, squareTo, false, false, true, false, false, P + side,
+                                                       0, B + side);
+                                    isValid = true;
+                                    validProm = true;
+                                }
+                                if (!validProm) {
+                                    cout << "invalid move" << endl;
+                                    continue;
+                                }
+                            } else {
+                                cout << "invalid move" << endl;
+                                continue;
+                            }
+                        }
+
+                        if((squareFrom == (squareTo + 8 - 16 *side))&&(movedPiece == P+side)){
+                            move = packageMove(squareFrom,squareTo,true,false,false,false,false,P+side,0,0);
+                            isValid = true;
+                            isDoubleP = true;
+
+                        }
+
+                        if(!isDoubleP && !isPromotion && !isEnPassant){
+                            move = packageMove(squareFrom,squareTo,false,false,false,false,false,movedPiece,0,0);
+                            isValid = true;
+                        }
+
+                    }
+
+
+
+                }
+
+
+
+            }
+
+
+
+
+                bool valid = makeMove(move,b,t,false);
+                displayWholeBoard(b);
+        }
+
+    }
+
+
+}
+
