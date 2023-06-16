@@ -95,3 +95,10 @@
 19	580	7078714441052564	CMakeFiles/BoardSweep.dir/src/Testing/Tester.cpp.obj	c98636cf19d6f3e
 3	459	7078714765042871	CMakeFiles/BoardSweep.dir/src/GamePlay.cpp.obj	712683e7342c3570
 460	1008	7078714770516260	BoardSweep.exe	e19fe46a6fb4a2cc
+14	789	7082205801568237	CMakeFiles/BoardSweep.dir/src/BoardVisualization.cpp.obj	b246ea7e1d034f45
+47	791	7082205801568237	CMakeFiles/BoardSweep.dir/src/Search/Search.cpp.obj	3465790fc675be37
+4	821	7082205801941410	CMakeFiles/BoardSweep.dir/src/main.cpp.obj	15150ab82d8b1af5
+21	880	7082205802524138	CMakeFiles/BoardSweep.dir/src/GamePlay.cpp.obj	712683e7342c3570
+30	924	7082205802964911	CMakeFiles/BoardSweep.dir/src/Testing/Tester.cpp.obj	c98636cf19d6f3e
+38	987	7082205803606445	CMakeFiles/BoardSweep.dir/src/MoveGeneration/MoveGeneration.cpp.obj	b162dd8cf63dcd5
+987	1288	7082205806592969	BoardSweep.exe	e19fe46a6fb4a2cc

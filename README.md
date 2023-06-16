@@ -17,9 +17,9 @@ perft [depth]. This will run a perft test for the set postion and given depth, a
 
 **To exit the program: quit**
 
-**Game vs the engine(work in progress):**
+**Game vs the engine:**
 
-first start the game and say which side you would like to be(0 for black, 1 for white) with the command "play [side]"
+first start the game and say who you want to move first(0 for engine, 1 for you) with the command "play [moveFirst]"
 I use a shortened notation for chess moves. For anything but promotions, simply enter the from square and to square in string notation.
 Ex: a move bishop move from b1 to a2 would be "b1a2".
 If the move is a promotion, append the promoted piece char to the end.(Q,B,N,R for white and the lowercase versions for black).
