@@ -25,12 +25,12 @@ void countAndScoreBits(int* score, unsigned long long bitboard, int piece, int* 
 
         int square = (int)popLSB(&bitboard);
 
-        square = ((square ^ 63) * mirrorFlag) + (square * !mirrorFlag);
+        //square = ((square ^ 63) * mirrorFlag) + (square * !mirrorFlag);
 
         //since both colors for a given piece map to the same pst table
-        int adjustedPiece = (piece/2)-1;
+        //int adjustedPiece = (piece/2)-1;
 
-        *score += scoreSign * MiddlePieceSquareTables[adjustedPiece][square];
+        //*score += scoreSign * MiddlePieceSquareTables[adjustedPiece][square];
         count++;
     }
     pieceCounts[piece-2] = count;

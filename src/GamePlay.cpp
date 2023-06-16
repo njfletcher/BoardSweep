@@ -13,6 +13,7 @@
 #include "Representation/Move.h"
 #include "Search/Search.h"
 #include "MoveGeneration/MoveGeneration.h"
+#include "MoveGeneration/TargetGeneration.h"
 using namespace std;
 
 void initializeZobristPosition(Board* board, LookupLibrary* t){
@@ -301,21 +302,26 @@ void simGame(LookupLibrary* t,const char fen[],int fenLength){
 void playGame(LookupLibrary* t, Board* b, int sideFirst){
 
     displayWholeBoard(b);
+    bool playerTurn = false;
 
-    if(sideFirst ==0){
-        while(true){
+    if(sideFirst == 1)playerTurn = true;
 
-            MovePair movep = startAB(6,t,b);
+
+    while(true) {
+
+        if (!playerTurn) {
+            MovePair movep = startAB(6, t, b);
 
             unsigned long long m = movep.m;
-            if(m & (1ULL<<63)) break;
-            makeMove(m,b,t,false);
+            if (m & (1ULL << 63)) break;
+            makeMove(m, b, t, false);
             displayWholeBoard(b);
-
+            playerTurn = !playerTurn;
+        } else {
             cout << "make a move: " << endl;
             bool isValid = false;
             unsigned long long move;
-            while(!isValid) {
+            while (!isValid) {
 
                 bool side = b->sideToMove;
 
@@ -335,50 +341,67 @@ void playGame(LookupLibrary* t, Board* b, int sideFirst){
 
                 unsigned long long allPieces = blackPieces | whitePieces;
 
-                if(input== "O-O"){
+                if (input == "O-O") {
 
                     bool sideHasKingSideCastle = (b->castleRights[0] & (1ULL << (1 + (side * 2)))) != 0;
 
-                    if(sideHasKingSideCastle) {
+                    if (sideHasKingSideCastle) {
                         unsigned int kingSquare1 = 4 + 56 * side;
                         unsigned int kingSquare2 = 5 + 56 * side;
 
                         int castleIndex = side * 2;
 
 
-                        if (!((checkIfSquareAttacked(side, b, t, kingSquare1) ||(checkIfSquareAttacked(side, b, t, kingSquare2))) ||(CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL << kingSquare1))))) {
+                        if (!((checkIfSquareAttacked(side, b, t, kingSquare1) ||
+                               (checkIfSquareAttacked(side, b, t, kingSquare2))) ||
+                              (CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL << kingSquare1))))) {
                             move = packageMove(kingSquare1, kingSquare1 + 2, false, false, false,
-                                                                   false, true, K + side, 0, 0);
+                                               false, true, K + side, 0, 0);
                             isValid = true;
 
+                        } else {
+                            cout << "invalid castle" << endl;
+                            continue;
                         }
+                    } else {
+                        cout << "invalid castle" << endl;
+                        continue;
                     }
 
                 }
-                if(input== "O-O-O"){
+                if (input == "O-O-O") {
 
                     bool sideHasQueenSideCastle = (b->castleRights[0] & (1ULL << (0 + (side * 2)))) != 0;
 
-                    if(sideHasQueenSideCastle){
+                    if (sideHasQueenSideCastle) {
 
                         unsigned int queenSquare1 = 4 + 56 * side;
                         unsigned int queenSquare2 = 3 + 56 * side;
 
                         int castleIndex = side * 2 + 1;
                         //cant castle if a piece is in between king and rook, or if opponent is attacking relevant castle squares.
-                        if(!(((checkIfSquareAttacked(side,b,t,queenSquare1) || (checkIfSquareAttacked(side,b,t,queenSquare2))) || ( CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL<<queenSquare1))))) ){
-                            move = packageMove(queenSquare1,queenSquare1-2,false,false,false,false,true,K+side,0,0);
+                        if (!(((checkIfSquareAttacked(side, b, t, queenSquare1) ||
+                                (checkIfSquareAttacked(side, b, t, queenSquare2))) ||
+                               (CastleBlockSquares[castleIndex] & (allPieces & ~(1ULL << queenSquare1)))))) {
+                            move = packageMove(queenSquare1, queenSquare1 - 2, false, false, false, false, true,
+                                               K + side, 0, 0);
                             isValid = true;
 
+                        } else {
+                            cout << "invalid castle" << endl;
+                            continue;
                         }
 
+                    } else {
+                        cout << "invalid castle" << endl;
+                        continue;
                     }
 
                 }
 
-                if((input != "O-O") && (input != "O-O-O")){
+                if ((input != "O-O") && (input != "O-O-O")) {
 
-                    if((inputLen < 4) || (inputLen > 5)){
+                    if ((inputLen < 4) || (inputLen > 5)) {
                         cout << "invalid move length" << endl;
                         continue;
                     }
@@ -387,35 +410,60 @@ void playGame(LookupLibrary* t, Board* b, int sideFirst){
                     char toFile = input[2];
                     char toRank = input[3];
 
-                    unsigned int squareFrom = ((fromRank - '0')*8)+ (fromFile - '`'-9);
-                    unsigned int squareTo = ((toRank - '0')*8)+ (toFile - '`'-9);
+                    unsigned int squareFrom = ((fromRank - '0') * 8) + (fromFile - '`' - 9);
+                    unsigned int squareTo = ((toRank - '0') * 8) + (toFile - '`' - 9);
 
-                    cout<< squareFrom << " " << squareTo << endl;
+                    //cout<< squareFrom << " " << squareTo << endl;
 
-                    if((squareFrom > 63) || (squareTo > 63)){
+                    if ((squareFrom > 63) || (squareTo > 63)) {
                         cout << "invalid move square" << endl;
                         continue;
                     }
 
                     int movedPiece = -1;
                     unsigned long long fromBit = 1ULL << squareFrom;
-                    for(int piece = (2+(side)); piece <14;piece+=2){
-                        if(b->bitboards[piece] & fromBit) {
+                    for (int piece = (2 + (side)); piece < 14; piece += 2) {
+                        if (b->bitboards[piece] & fromBit) {
                             movedPiece = piece;
                             break;
                         }
 
 
                     }
-                    if(movedPiece == -1){
+                    if (movedPiece == -1) {
                         cout << "invalid moved piece" << endl;
                         continue;
                     }
 
+                    unsigned long long targets = ~0;
+                    if (movedPiece == B + side) {
+                        targets = getBishopTargetFromBlockers(squareFrom,
+                                                              allPieces & t->bishopTargetLookups[squareFrom],
+                                                              t->bishopMagicAttacks);
+
+                    }
+                    if (movedPiece == R + side) {
+                        targets = getRookTargetFromBlockers(squareFrom, allPieces & t->rookTargetLookups[squareFrom],
+                                                            t->rookMagicAttacks);
+                    }
+                    if (movedPiece == N + side) {
+                        targets = t->knightMoveLookups[squareFrom];
+                    }
+                    if (movedPiece == Q + side) {
+                        targets = getQueenTargetFromBlockers(squareFrom, allPieces, t);
+                    }
+                    if (movedPiece == K + side) {
+                        targets = t->kingMoveLookups[squareFrom];
+                    }
+
+                    if (!(targets & (1ULL << squareTo))) {
+                        cout << "invalid landing spot" << endl;
+                        continue;
+                    }
                     int nextPiece = -1;
                     unsigned long long toBit = 1ULL << squareTo;
-                    for(int piece = (2+(side)); piece <14;piece+=2){
-                        if(b->bitboards[piece] & toBit) {
+                    for (int piece = (2 + (side)); piece < 14; piece += 2) {
+                        if (b->bitboards[piece] & toBit) {
                             nextPiece = piece;
                             break;
                         }
@@ -423,13 +471,13 @@ void playGame(LookupLibrary* t, Board* b, int sideFirst){
 
                     }
 
-                    if(nextPiece != -1){
+                    if (nextPiece != -1) {
                         cout << "invalid landing spot" << endl;
                         continue;
                     }
 
-                    for(int piece = (2+(!side)); piece <14;piece+=2){
-                        if(b->bitboards[piece] & toBit) {
+                    for (int piece = (2 + (!side)); piece < 14; piece += 2) {
+                        if (b->bitboards[piece] & toBit) {
                             nextPiece = piece;
                             break;
                         }
@@ -437,13 +485,25 @@ void playGame(LookupLibrary* t, Board* b, int sideFirst){
 
                     }
 
-                    unsigned long long promRank = RankMasks[7+(-7*side)];
+                    unsigned long long promRank = RankMasks[7 + (-7 * side)];
                     //capture
-                    if(nextPiece != -1){
+                    if (nextPiece != -1) {
+
+                        if (movedPiece == P) {
+                            targets = t->pawnAttackLookups[0][squareFrom];
+                        }
+                        if (movedPiece == p) {
+                            targets = t->pawnAttackLookups[1][squareFrom];
+                        }
+
+                        if (!(targets & (1ULL << squareTo))) {
+                            cout << "invalid landing spot" << endl;
+                            continue;
+                        }
 
                         bool isPromotion = false;
 
-                        if((toBit & promRank) && (movedPiece == P+side) ) {
+                        if ((toBit & promRank) && (movedPiece == P + side)) {
 
                             if (inputLen == 5) {
                                 isPromotion = true;
@@ -483,25 +543,52 @@ void playGame(LookupLibrary* t, Board* b, int sideFirst){
                             }
                         }
 
-                        if(!isPromotion){
-                            move = packageMove(squareFrom,squareTo,false,true,false,false,false,movedPiece,nextPiece,0);
+                        if (!isPromotion) {
+                            move = packageMove(squareFrom, squareTo, false, true, false, false, false, movedPiece,
+                                               nextPiece, 0);
                             isValid = true;
                         }
 
                     }
-                    //non capture or could be enpassant
-                    else{
+                        //non capture or could be enpassant
+                    else {
 
                         bool isEnPassant = false;
                         bool isPromotion = false;
                         bool isDoubleP = false;
 
-                        if(squareTo == b->enPassSquares[0] && (movedPiece == P+side)){
-                            move = packageMove(squareFrom,squareTo,false,true,false,true,false,P+side,P+!side,0);
+                        if (squareTo == b->enPassSquares[0] && (movedPiece == P + side)) {
+
+                            if (movedPiece == P) {
+                                targets = t->pawnAttackLookups[0][squareFrom];
+                            }
+                            if (movedPiece == p) {
+                                targets = t->pawnAttackLookups[1][squareFrom];
+                            }
+
+                            if (!(targets & (1ULL << squareTo))) {
+                                cout << "invalid landing enpass spot" << endl;
+                                continue;
+                            }
+
+                            move = packageMove(squareFrom, squareTo, false, true, false, true, false, P + side,
+                                               P + !side, 0);
                             isValid = true;
                             isEnPassant = true;
                         }
-                        if((toBit & promRank) && (movedPiece == P+side) ) {
+                        if ((toBit & promRank) && (movedPiece == P + side)) {
+
+                            if (movedPiece == P) {
+                                targets = t->pawnSinglePushLookups[0][squareFrom];
+                            }
+                            if (movedPiece == p) {
+                                targets = t->pawnSinglePushLookups[1][squareFrom];
+                            }
+
+                            if (!(targets & (1ULL << squareTo))) {
+                                cout << "invalid landing prom  spot" << endl;
+                                continue;
+                            }
 
                             if (inputLen == 5) {
                                 isPromotion = true;
@@ -541,36 +628,69 @@ void playGame(LookupLibrary* t, Board* b, int sideFirst){
                             }
                         }
 
-                        if((squareFrom == (squareTo + 8 - 16 *side))&&(movedPiece == P+side)){
-                            move = packageMove(squareFrom,squareTo,true,false,false,false,false,P+side,0,0);
+                        if ((squareTo == (squareFrom + 16 - 32 * side)) && (movedPiece == P + side)) {
+
+                            if (movedPiece == P) {
+                                targets = t->pawnDoublePushLookups[0][squareFrom];
+                            }
+                            if (movedPiece == p) {
+                                targets = t->pawnDoublePushLookups[1][squareFrom];
+                            }
+
+                            if (!(targets & (1ULL << squareTo))) {
+                                cout << "invalid landing double spot" << endl;
+                                continue;
+                            }
+                            move = packageMove(squareFrom, squareTo, true, false, false, false, false, P + side, 0, 0);
                             isValid = true;
                             isDoubleP = true;
 
                         }
 
-                        if(!isDoubleP && !isPromotion && !isEnPassant){
-                            move = packageMove(squareFrom,squareTo,false,false,false,false,false,movedPiece,0,0);
+                        if (!isDoubleP && !isPromotion && !isEnPassant) {
+
+                            if (movedPiece == P) {
+                                targets = t->pawnSinglePushLookups[0][squareFrom];
+                            }
+                            if (movedPiece == p) {
+                                targets = t->pawnSinglePushLookups[1][squareFrom];
+                            }
+
+                            if (!(targets & (1ULL << squareTo))) {
+                                cout << "invalid landing single spot" << endl;
+                                continue;
+                            }
+                            move = packageMove(squareFrom, squareTo, false, false, false, false, false, movedPiece, 0,
+                                               0);
                             isValid = true;
                         }
 
                     }
 
 
-
                 }
 
+                if(isValid){
+                    bool valid = makeMove(move, b, t, false);
+                    if(!valid){
+                        cout << "move results in check" << endl;
+                        unmakeMove(move,b,t);
+                        continue;
+                    }
+                    displayWholeBoard(b);
+                    playerTurn = !playerTurn;
 
+                }
 
             }
 
 
 
-
-                bool valid = makeMove(move,b,t,false);
-                displayWholeBoard(b);
         }
 
     }
+
+
 
 
 }
